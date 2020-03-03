@@ -1,0 +1,29 @@
+{
+  "name": "http-request-in-editor-impl",
+  "version": "0.0.1",
+  "description": "Praser for Http Request in Editor Specification",
+  "main": "index.js",
+  "scripts": {
+    "compile": "nearleyc ./grammar.ne --out ./grammar.js",
+    "test": "cat example.http | nearley-test ./grammar.js",
+    "railroad": "nearley-railroad ./grammar.ne > railroad.html",
+    "unparse": "nearley-unparse ./grammar.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/char0n/http-request-in-editor-impl.git"
+  },
+  "keywords": [
+    "parser",
+    "RFC7230"
+  ],
+  "author": "Vladimir Gorej (char0n)",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/char0n/http-request-in-editor-impl/issues"
+  },
+  "homepage": "https://github.com/char0n/http-request-in-editor-impl#readme",
+  "dependencies": {
+    "nearly": "^1.8.1"
+  }
+}
