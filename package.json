@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "compile": "nearleyc ./grammar.ne --out ./grammar.js",
-    "test": "cat example.http | nearley-test ./grammar.js",
+    "test": "npm run compile && cat example.http | nearley-test ./grammar.js",
     "railroad": "nearley-railroad ./grammar.ne > railroad.html",
     "unparse": "nearley-unparse ./grammar.js"
   },
@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/char0n/http-request-in-editor-impl#readme",
   "dependencies": {
-    "nearly": "^1.8.1"
+    "nearley": "=2.19.1",
+    "request-target": "=1.0.2"
   }
 }
