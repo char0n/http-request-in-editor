@@ -1,9 +1,11 @@
 @builtin "number.ne"
+@{% const { request, requestLine } = require('.');  %}
 
-@{%
-  const requestTarget = require('request-target');
-  const parseRequestTarget = (method, url) => requestTarget({ method, url });
-%}
+#########
+# TODOS #
+#########
+# Comments
+# Required empty line at the end of file
 
 
 #################
@@ -13,23 +15,23 @@
 REQUESTS_FILE ->
     REQUEST  {% id %}
   | REQUEST_WITH_SEPARATOR:+ {% id %}
-REQUEST_WITH_SEPARATOR -> REQUEST_SEPARATOR:+ REQUEST
+REQUEST_WITH_SEPARATOR -> REQUEST_SEPARATOR:+ REQUEST {% d => d[1] %}
 
 ###########
 # Request #
 ###########
 
 REQUEST ->
-  REQUEST_LINE NEW_LINE:* {% d => d[0] %}
-  | REQUEST_LINE NEW_LINE HEADERS NEW_LINE:* {% d => ({ ...d[0], headers: d[2] }) %}
+  REQUEST_LINE NEW_LINE:* {% d => request(d[0], []) %}
+  | REQUEST_LINE NEW_LINE HEADERS NEW_LINE:* {% d => request(d[0], d[2]) %}
 
 ################
 # Request line #
 ################
 
 REQUEST_LINE ->
-    METHOD __ REQUEST_TARGET {% d => ({ method: d[0], requestTarget: parseRequestTarget(d[0], d[2]) }) %}
-  | METHOD __ REQUEST_TARGET __ HTTP_VERSION {% d => ({ method: d[0], requestTarget: parseRequestTarget(d[0], d[2]), httpVersion: d[4] }) %}
+    METHOD __ REQUEST_TARGET {% d => requestLine(d[0], d[2], '1.1') %}
+  | METHOD __ REQUEST_TARGET __ HTTP_VERSION {% d => requestLine(d[0], d[2], d[4]) %}
 
 METHOD ->
     "GET" {% id %}
@@ -54,7 +56,7 @@ REQUEST_TARGET -> [\S]:+ {% d => d[0].join('') %}
 # Headers #
 ###########
 
-HEADERS -> HEADER_FIELD:* {% d => d[0] %}
+HEADERS -> HEADER_FIELD:+ {% d => d[0] %}
 HEADER_FIELD -> FIELD_NAME ":" FIELD_VALUE {% d => ({ name: d[0], value: d[2] }) %}
 FIELD_NAME -> [^\r\n\:]:+ {% d => d[0].join('') %}
 FIELD_VALUE ->
@@ -105,7 +107,6 @@ __ -> REQUIRED_WHITESPACE {% d => null %}
 ############
 # Comments #
 ############
-# NOT YET SUPPORTED
 
 LINE_COMMENT ->
     "#" __ INPUT_CHARACTER:* NEW_LINE {% d => d[2].join('') %}

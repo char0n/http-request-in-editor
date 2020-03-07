@@ -2,10 +2,7 @@
 // http://github.com/Hardmath123/nearley
 (function () {
 function id(x) { return x[0]; }
-
-  const requestTarget = require('request-target');
-  const parseRequestTarget = (method, url) => requestTarget({ method, url });
-var grammar = {
+ const { request, requestLine } = require('.');  var grammar = {
     Lexer: undefined,
     ParserRules: [
     {"name": "unsigned_int$ebnf$1", "symbols": [/[0-9]/]},
@@ -100,15 +97,15 @@ var grammar = {
     {"name": "REQUESTS_FILE", "symbols": ["REQUESTS_FILE$ebnf$1"], "postprocess": id},
     {"name": "REQUEST_WITH_SEPARATOR$ebnf$1", "symbols": ["REQUEST_SEPARATOR"]},
     {"name": "REQUEST_WITH_SEPARATOR$ebnf$1", "symbols": ["REQUEST_WITH_SEPARATOR$ebnf$1", "REQUEST_SEPARATOR"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
-    {"name": "REQUEST_WITH_SEPARATOR", "symbols": ["REQUEST_WITH_SEPARATOR$ebnf$1", "REQUEST"]},
+    {"name": "REQUEST_WITH_SEPARATOR", "symbols": ["REQUEST_WITH_SEPARATOR$ebnf$1", "REQUEST"], "postprocess": d => d[1]},
     {"name": "REQUEST$ebnf$1", "symbols": []},
     {"name": "REQUEST$ebnf$1", "symbols": ["REQUEST$ebnf$1", "NEW_LINE"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
-    {"name": "REQUEST", "symbols": ["REQUEST_LINE", "REQUEST$ebnf$1"], "postprocess": d => d[0]},
+    {"name": "REQUEST", "symbols": ["REQUEST_LINE", "REQUEST$ebnf$1"], "postprocess": d => request(d[0], [])},
     {"name": "REQUEST$ebnf$2", "symbols": []},
     {"name": "REQUEST$ebnf$2", "symbols": ["REQUEST$ebnf$2", "NEW_LINE"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
-    {"name": "REQUEST", "symbols": ["REQUEST_LINE", "NEW_LINE", "HEADERS", "REQUEST$ebnf$2"], "postprocess": d => ({ ...d[0], headers: d[2] })},
-    {"name": "REQUEST_LINE", "symbols": ["METHOD", "__", "REQUEST_TARGET"], "postprocess": d => ({ method: d[0], requestTarget: parseRequestTarget(d[0], d[2]) })},
-    {"name": "REQUEST_LINE", "symbols": ["METHOD", "__", "REQUEST_TARGET", "__", "HTTP_VERSION"], "postprocess": d => ({ method: d[0], requestTarget: parseRequestTarget(d[0], d[2]), httpVersion: d[4] })},
+    {"name": "REQUEST", "symbols": ["REQUEST_LINE", "NEW_LINE", "HEADERS", "REQUEST$ebnf$2"], "postprocess": d => request(d[0], d[2])},
+    {"name": "REQUEST_LINE", "symbols": ["METHOD", "__", "REQUEST_TARGET"], "postprocess": d => requestLine(d[0], d[2], '1.1')},
+    {"name": "REQUEST_LINE", "symbols": ["METHOD", "__", "REQUEST_TARGET", "__", "HTTP_VERSION"], "postprocess": d => requestLine(d[0], d[2], d[4])},
     {"name": "METHOD$string$1", "symbols": [{"literal":"G"}, {"literal":"E"}, {"literal":"T"}], "postprocess": function joiner(d) {return d.join('');}},
     {"name": "METHOD", "symbols": ["METHOD$string$1"], "postprocess": id},
     {"name": "METHOD$string$2", "symbols": [{"literal":"H"}, {"literal":"E"}, {"literal":"A"}, {"literal":"D"}], "postprocess": function joiner(d) {return d.join('');}},
@@ -136,7 +133,7 @@ var grammar = {
     {"name": "REQUEST_TARGET$ebnf$1", "symbols": [/[\S]/]},
     {"name": "REQUEST_TARGET$ebnf$1", "symbols": ["REQUEST_TARGET$ebnf$1", /[\S]/], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
     {"name": "REQUEST_TARGET", "symbols": ["REQUEST_TARGET$ebnf$1"], "postprocess": d => d[0].join('')},
-    {"name": "HEADERS$ebnf$1", "symbols": []},
+    {"name": "HEADERS$ebnf$1", "symbols": ["HEADER_FIELD"]},
     {"name": "HEADERS$ebnf$1", "symbols": ["HEADERS$ebnf$1", "HEADER_FIELD"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
     {"name": "HEADERS", "symbols": ["HEADERS$ebnf$1"], "postprocess": d => d[0]},
     {"name": "HEADER_FIELD", "symbols": ["FIELD_NAME", {"literal":":"}, "FIELD_VALUE"], "postprocess": d => ({ name: d[0], value: d[2] })},
