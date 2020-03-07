@@ -10,15 +10,18 @@
 # Requests file #
 #################
 
-REQUESTS_FILE -> REQUEST_SEPARATOR:* REQUEST REQUEST_WITH_SEPARATOR:* REQUEST_SEPARATOR:* {% d => [{lineTail: d[0][0], ...d[1]}, d[2][0]] %}
-
-REQUEST_WITH_SEPARATOR -> REQUEST_SEPARATOR:+ REQUEST {% d => ({ lineTail: '', ...d[1]}) %}
+REQUESTS_FILE ->
+    REQUEST  {% id %}
+  | REQUEST_WITH_SEPARATOR:+ {% id %}
+REQUEST_WITH_SEPARATOR -> REQUEST_SEPARATOR:+ REQUEST
 
 ###########
 # Request #
 ###########
 
-REQUEST -> REQUEST_LINE NEW_LINE:* {% id %}
+REQUEST ->
+  REQUEST_LINE NEW_LINE:* {% d => d[0] %}
+  | REQUEST_LINE NEW_LINE HEADERS NEW_LINE:* {% d => ({ ...d[0], headers: d[2] }) %}
 
 ################
 # Request line #
@@ -39,13 +42,24 @@ METHOD ->
   | "OPTIONS" {% id %}
   | "TRACE" {% id %}
 
-HTTP_VERSION -> "HTTP/" DIGIT:+ "." DIGIT:+ {% d => d[1] + "." + d[3] %}
+HTTP_VERSION -> "HTTP/" DIGIT:+ "." DIGIT:+ {% d => d[1].join('') + "." + d[3].join('') %}
 
 ##################
 # Request target #
 ##################
 
-REQUEST_TARGET -> [^WHITESPACE]:+ {% d => d[0].join('') %}
+REQUEST_TARGET -> [\S]:+ {% d => d[0].join('') %}
+
+###########
+# Headers #
+###########
+
+HEADERS -> HEADER_FIELD:* {% d => d[0] %}
+HEADER_FIELD -> FIELD_NAME ":" FIELD_VALUE {% d => ({ name: d[0], value: d[2] }) %}
+FIELD_NAME -> [^\r\n\:]:+ {% d => d[0].join('') %}
+FIELD_VALUE ->
+  LINE_TAIL {% d => d[0].trim() %}
+ | NEW_LINE_WITH_INDENT FIELD_VALUE {% d => d[1][0] %}
 
 ################
 # Base symbols #
@@ -80,13 +94,13 @@ SP -> " "
 HT -> [\t]
 FF -> [\f]
 WHITESPACE ->
-    SP
-  | HT
-  | FF
-OPTIONAL_WHITESPACE -> WHITESPACE:*
-REQUIRED_WHITESPACE -> WHITESPACE:+
-_ -> OPTIONAL_WHITESPACE
-__ -> REQUIRED_WHITESPACE
+    SP {% id %}
+  | HT {% id %}
+  | FF {% id %}
+OPTIONAL_WHITESPACE -> WHITESPACE:* {% d => null %}
+REQUIRED_WHITESPACE -> WHITESPACE:+ {% d => null %}
+_ -> OPTIONAL_WHITESPACE {% d => null %}
+__ -> REQUIRED_WHITESPACE {% d => null %}
 
 ############
 # Comments #

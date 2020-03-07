@@ -1,5 +1,9 @@
-### test
-GET http://example.com/api/add HTTP/1.1
+### test2
+GET http://example.com/api/add2 HTTP/1.1
+From: test2
+From1: test2
 
 ### test1
-GET http://example.com/api/add1
+GET http://example.com/api/add1 HTTP/1.1
+From: test1
+From1: test1
