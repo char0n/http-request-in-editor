@@ -10,16 +10,15 @@ that can be consumed and executed by various runtime environments. I'll provide 
 of a reference runtime implementation as soon as the parser is finished.
 
 ```http
-### TEST1
+### request 1
 POST https://httpbin.org/post HTTP/1.1
 Authorization: token1
 Authorization: token1
 Authorization: token1
 
-MESSAGE1
-MESSAGE11
+request body 1
 
-### TEST2
+### request 2
 POST https://httpbin.org/post HTTP/1.1
 Authorization: token2
 Authorization: token2
@@ -30,16 +29,13 @@ Authorization: token2
   "a": "b"
 }
 
-### TEST2
+### request 3
 POST https://httpbin.org/post HTTP/1.1
 Authorization: token3
 Authorization: token3
 Authorization: token3
 
-{
-  "test": 3,
-  "a": "b"
-}
+{}
 
 ```
 
