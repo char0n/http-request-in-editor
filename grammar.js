@@ -2,7 +2,7 @@
 // http://github.com/Hardmath123/nearley
 (function () {
 function id(x) { return x[0]; }
- const { request, requestLine } = require('.');  var grammar = {
+ const { request, requestWithBody, requestLine, messageLine } = require('.');  var grammar = {
     Lexer: undefined,
     ParserRules: [
     {"name": "unsigned_int$ebnf$1", "symbols": [/[0-9]/]},
@@ -91,10 +91,16 @@ function id(x) { return x[0]; }
             );
         }
         },
-    {"name": "REQUESTS_FILE", "symbols": ["REQUEST"], "postprocess": id},
-    {"name": "REQUESTS_FILE$ebnf$1", "symbols": ["REQUEST_WITH_SEPARATOR"]},
-    {"name": "REQUESTS_FILE$ebnf$1", "symbols": ["REQUESTS_FILE$ebnf$1", "REQUEST_WITH_SEPARATOR"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
-    {"name": "REQUESTS_FILE", "symbols": ["REQUESTS_FILE$ebnf$1"], "postprocess": id},
+    {"name": "REQUESTS_FILE$ebnf$1", "symbols": []},
+    {"name": "REQUESTS_FILE$ebnf$1$subexpression$1", "symbols": ["REQUEST_SEPARATOR"]},
+    {"name": "REQUESTS_FILE$ebnf$1", "symbols": ["REQUESTS_FILE$ebnf$1", "REQUESTS_FILE$ebnf$1$subexpression$1"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
+    {"name": "REQUESTS_FILE$ebnf$2", "symbols": []},
+    {"name": "REQUESTS_FILE$ebnf$2$subexpression$1", "symbols": ["REQUEST_WITH_SEPARATOR"]},
+    {"name": "REQUESTS_FILE$ebnf$2", "symbols": ["REQUESTS_FILE$ebnf$2", "REQUESTS_FILE$ebnf$2$subexpression$1"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
+    {"name": "REQUESTS_FILE$ebnf$3", "symbols": []},
+    {"name": "REQUESTS_FILE$ebnf$3$subexpression$1", "symbols": ["REQUEST_SEPARATOR"]},
+    {"name": "REQUESTS_FILE$ebnf$3", "symbols": ["REQUESTS_FILE$ebnf$3", "REQUESTS_FILE$ebnf$3$subexpression$1"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
+    {"name": "REQUESTS_FILE", "symbols": ["REQUESTS_FILE$ebnf$1", "REQUEST", "REQUESTS_FILE$ebnf$2", "REQUESTS_FILE$ebnf$3"], "postprocess": d => [d[1], d[2]].flat(2)},
     {"name": "REQUEST_WITH_SEPARATOR$ebnf$1", "symbols": ["REQUEST_SEPARATOR"]},
     {"name": "REQUEST_WITH_SEPARATOR$ebnf$1", "symbols": ["REQUEST_WITH_SEPARATOR$ebnf$1", "REQUEST_SEPARATOR"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
     {"name": "REQUEST_WITH_SEPARATOR", "symbols": ["REQUEST_WITH_SEPARATOR$ebnf$1", "REQUEST"], "postprocess": d => d[1]},
@@ -104,6 +110,9 @@ function id(x) { return x[0]; }
     {"name": "REQUEST$ebnf$2", "symbols": []},
     {"name": "REQUEST$ebnf$2", "symbols": ["REQUEST$ebnf$2", "NEW_LINE"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
     {"name": "REQUEST", "symbols": ["REQUEST_LINE", "NEW_LINE", "HEADERS", "REQUEST$ebnf$2"], "postprocess": d => request(d[0], d[2])},
+    {"name": "REQUEST$ebnf$3", "symbols": ["NEW_LINE"]},
+    {"name": "REQUEST$ebnf$3", "symbols": ["REQUEST$ebnf$3", "NEW_LINE"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
+    {"name": "REQUEST", "symbols": ["REQUEST_LINE", "NEW_LINE", "HEADERS", "REQUEST$ebnf$3", "MESSAGE_BODY"], "postprocess": d => requestWithBody(d[0], d[2], d[4])},
     {"name": "REQUEST_LINE", "symbols": ["METHOD", "__", "REQUEST_TARGET"], "postprocess": d => requestLine(d[0], d[2], '1.1')},
     {"name": "REQUEST_LINE", "symbols": ["METHOD", "__", "REQUEST_TARGET", "__", "HTTP_VERSION"], "postprocess": d => requestLine(d[0], d[2], d[4])},
     {"name": "METHOD$string$1", "symbols": [{"literal":"G"}, {"literal":"E"}, {"literal":"T"}], "postprocess": function joiner(d) {return d.join('');}},
@@ -142,6 +151,16 @@ function id(x) { return x[0]; }
     {"name": "FIELD_NAME", "symbols": ["FIELD_NAME$ebnf$1"], "postprocess": d => d[0].join('')},
     {"name": "FIELD_VALUE", "symbols": ["LINE_TAIL"], "postprocess": d => d[0].trim()},
     {"name": "FIELD_VALUE", "symbols": ["NEW_LINE_WITH_INDENT", "FIELD_VALUE"], "postprocess": d => d[1][0]},
+    {"name": "MESSAGE_BODY", "symbols": ["MESSAGES"], "postprocess": id},
+    {"name": "MESSAGES$ebnf$1", "symbols": ["MESSAGE_LINE"]},
+    {"name": "MESSAGES$ebnf$1", "symbols": ["MESSAGES$ebnf$1", "MESSAGE_LINE"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
+    {"name": "MESSAGES", "symbols": ["MESSAGES$ebnf$1"], "postprocess": d => d[0].join('')},
+    {"name": "MESSAGE_LINE", "symbols": ["INPUT_FILE_REF"]},
+    {"name": "MESSAGE_LINE$ebnf$1", "symbols": []},
+    {"name": "MESSAGE_LINE$ebnf$1", "symbols": ["MESSAGE_LINE$ebnf$1", "INPUT_CHARACTER"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
+    {"name": "MESSAGE_LINE", "symbols": ["MESSAGE_LINE$ebnf$1", "NEW_LINE"], "postprocess": messageLine},
+    {"name": "INPUT_FILE_REF", "symbols": [{"literal":"<"}, "__", "FILE_PATH"]},
+    {"name": "FILE_PATH", "symbols": ["LINE_TAIL"]},
     {"name": "INPUT_CHARACTER", "symbols": [/[^\r\n]/]},
     {"name": "ALPHA", "symbols": [/[a-zA-Z]/]},
     {"name": "DIGIT", "symbols": ["unsigned_int"]},

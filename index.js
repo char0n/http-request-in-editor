@@ -7,6 +7,8 @@ const requestTarget = require('request-target');
 //     Headers = [{name: value}]
 //     Url = String
 //     RequestLine = {method: String, requestTarget: RequestTarget | Url, httpVersion: String}
+//     Data = [*]
+//     Reject = Object
 
 // parseRequestTarget :: (String, Headers, Url) -> RequestTarget
 const parseRequestTarget = (method, headers, url) => {
@@ -29,6 +31,11 @@ const request = (requestLine, headers) => {
   };
 };
 
+// requestWithBody :: (RequestLine, Headers, String) -> RequestLine
+const requestWithBody = (requestLine, headers, body) => ({
+  ...request(requestLine, headers), body: body
+});
+
 // requestLine :: (String, Url, String) -> RequestLine
 const requestLine = (method, requestTarget, httpVersion) => ({
   method,
@@ -36,7 +43,19 @@ const requestLine = (method, requestTarget, httpVersion) => ({
   httpVersion,
 });
 
+// messageLine :: (Data, Number, Reject) -> String | Reject
+const messageLine = (data, location, reject) => {
+  const lineTail = data[0].join('');
+  const newLine = data[1];
+
+  if (lineTail.includes('###')) return reject;
+
+  return `${lineTail}${newLine}`;
+};
+
 module.exports = {
   request,
+  requestWithBody,
   requestLine,
+  messageLine,
 };

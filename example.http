@@ -1,3 +1,31 @@
-### t
-GET http://example.com/api/add2 HTTP/1.1
-From: 1
+### TEST1
+POST https://httpbin.org/post HTTP/1.1
+Authorization: token1
+Authorization: token1
+Authorization: token1
+
+MESSAGE1
+MESSAGE11
+
+### TEST2
+POST https://httpbin.org/post HTTP/1.1
+Authorization: token2
+Authorization: token2
+Authorization: token2
+
+{
+  "test": 3,
+  "a": "b"
+}
+
+### TEST2
+POST https://httpbin.org/post HTTP/1.1
+Authorization: token3
+Authorization: token3
+Authorization: token3
+
+{
+  "test": 3,
+  "a": "b"
+}
+

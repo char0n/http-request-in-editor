@@ -1,5 +1,5 @@
 @builtin "number.ne"
-@{% const { request, requestLine } = require('.');  %}
+@{% const { request, requestWithBody, requestLine, messageLine } = require('.');  %}
 
 #########
 # TODOS #
@@ -12,9 +12,7 @@
 # Requests file #
 #################
 
-REQUESTS_FILE ->
-    REQUEST  {% id %}
-  | REQUEST_WITH_SEPARATOR:+ {% id %}
+REQUESTS_FILE -> (REQUEST_SEPARATOR):* REQUEST (REQUEST_WITH_SEPARATOR):* (REQUEST_SEPARATOR):* {% d => [d[1], d[2]].flat(2) %}
 REQUEST_WITH_SEPARATOR -> REQUEST_SEPARATOR:+ REQUEST {% d => d[1] %}
 
 ###########
@@ -24,6 +22,7 @@ REQUEST_WITH_SEPARATOR -> REQUEST_SEPARATOR:+ REQUEST {% d => d[1] %}
 REQUEST ->
   REQUEST_LINE NEW_LINE:* {% d => request(d[0], []) %}
   | REQUEST_LINE NEW_LINE HEADERS NEW_LINE:* {% d => request(d[0], d[2]) %}
+  | REQUEST_LINE NEW_LINE HEADERS NEW_LINE:+ MESSAGE_BODY {% d => requestWithBody(d[0], d[2], d[4]) %}
 
 ################
 # Request line #
@@ -62,6 +61,19 @@ FIELD_NAME -> [^\r\n\:]:+ {% d => d[0].join('') %}
 FIELD_VALUE ->
   LINE_TAIL {% d => d[0].trim() %}
  | NEW_LINE_WITH_INDENT FIELD_VALUE {% d => d[1][0] %}
+
+################
+# Message body #
+################
+
+MESSAGE_BODY -> MESSAGES {% id %}
+MESSAGES -> MESSAGE_LINE:+ {% d => d[0].join('') %}
+MESSAGE_LINE ->
+    INPUT_FILE_REF
+  # following line makes this grammar non context-free; how can we replace this?
+  | INPUT_CHARACTER:* NEW_LINE {% messageLine %}
+INPUT_FILE_REF -> "<" __ FILE_PATH
+FILE_PATH -> LINE_TAIL
 
 ################
 # Base symbols #
