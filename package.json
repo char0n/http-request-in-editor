@@ -34,6 +34,7 @@
     "url": "https://github.com/char0n/http-request-in-editor-impl/issues"
   },
   "homepage": "https://github.com/char0n/http-request-in-editor-impl#readme",
+  "readme": "README.md",
   "dependencies": {
     "nearley": "=2.19.1",
     "request-target": "=1.0.2"
