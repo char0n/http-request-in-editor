@@ -1,7 +1,7 @@
 {
-  "name": "http-request-in-editor-impl",
+  "name": "http-request-in-editor",
   "version": "0.0.1",
-  "description": "Praser for Http Request in Editor Specification",
+  "description": "Parser for Http Request in Editor Specification",
   "main": "./src/index.js",
   "engine": {
     "node": "13.3.0",
