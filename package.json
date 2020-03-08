@@ -2,12 +2,19 @@
   "name": "http-request-in-editor-impl",
   "version": "0.0.1",
   "description": "Praser for Http Request in Editor Specification",
-  "main": "index.js",
+  "main": "./src/index.js",
+  "engine": {
+    "node": "13.3.0",
+    "npm": "6.14.2"
+  },
   "scripts": {
-    "compile": "nearleyc ./grammar.ne --out ./grammar.js",
-    "test": "npm run compile && cat example.http | nearley-test ./grammar.js",
-    "railroad": "nearley-railroad ./grammar.ne > railroad.html",
-    "unparse": "nearley-unparse ./grammar.js"
+    "compile": "nearleyc ./src/parser/grammar.ne --out ./src/parser/grammar.js",
+    "test": "npm run test:parser",
+    "test:parser": "mocha",
+    "test:parser:00000": "npm run compile && cat ./test/parser/fixtures/http/00000.http | nearley-test ./src/parser/grammar.js",
+    "fixtures:ast:regenerate": "npm run compile && node ./scripts/ast_regenerate.js",
+    "railroad": "nearley-railroad ./src/parser/grammar.ne > railroad.html",
+    "unparse": "nearley-unparse ./src/parser/grammar.js"
   },
   "repository": {
     "type": "git",
@@ -26,5 +33,9 @@
   "dependencies": {
     "nearley": "=2.19.1",
     "request-target": "=1.0.2"
+  },
+  "devDependencies": {
+    "glob": "^7.1.6",
+    "mocha": "^7.1.0"
   }
 }

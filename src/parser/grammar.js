@@ -2,7 +2,7 @@
 // http://github.com/Hardmath123/nearley
 (function () {
 function id(x) { return x[0]; }
- const { request, requestWithBody, requestLine, messageLine } = require('.');  var grammar = {
+ const { request, requestWithBody, requestLine, messageLine } = require('./postprocessors');  var grammar = {
     Lexer: undefined,
     ParserRules: [
     {"name": "unsigned_int$ebnf$1", "symbols": [/[0-9]/]},

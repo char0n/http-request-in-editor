@@ -1,5 +1,5 @@
 @builtin "number.ne"
-@{% const { request, requestWithBody, requestLine, messageLine } = require('.');  %}
+@{% const { request, requestWithBody, requestLine, messageLine } = require('./postprocessors');  %}
 
 #########
 # TODOS #

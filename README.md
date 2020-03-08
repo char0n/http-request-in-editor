@@ -12,16 +12,12 @@ of a reference runtime implementation as soon as the parser is finished.
 ```http
 ### request 1
 POST https://httpbin.org/post HTTP/1.1
-Authorization: token1
-Authorization: token1
-Authorization: token1
+Authorization: token
 
 request body 1
 
 ### request 2
-POST https://httpbin.org/post HTTP/1.1
-Authorization: token2
-Authorization: token2
+POST https://httpbin.org/post HTTP/2.0
 Authorization: token2
 
 {
@@ -30,9 +26,7 @@ Authorization: token2
 }
 
 ### request 3
-POST https://httpbin.org/post HTTP/1.1
-Authorization: token3
-Authorization: token3
+POST https://httpbin.org/post HTTP/3.0
 Authorization: token3
 
 {}
@@ -47,24 +41,24 @@ Authorization: token3
 
 # Development
 
-Edit `grammer.ne` and create a grammar that maps to HTTP Request in Editor Spec.
+Edit `src/parser/grammer.ne` and create a grammar that maps to HTTP Request in Editor Spec.
 
-Compiles `grammar.ne` file into `grammar.js`.
+Compiles `src/parser/grammar.ne` file into `src/parser/grammar.js`.
 ```sh 
  $ npm run compile
 ```
 
-Test `example.http` file agains compiled grammar.
+Test parser grammar against predefined fixtures.
 ```sh
  $ npm test 
 ```
 
-Generate railroad diagrams from `grammar.ne` file.
+Generate railroad diagrams from `src/parser/grammar.ne` file.
 ```sh
  $ npm run railroad
 ```
 
-Generate random strings that satisfy the grammar defined in`grammar.ne` file.
+Generate random strings that satisfy the grammar defined in`src/parser/grammar.ne` file.
 ```sh
  $ npm run unparse
 ```

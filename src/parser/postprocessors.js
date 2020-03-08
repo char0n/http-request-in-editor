@@ -26,7 +26,10 @@ const request = (requestLine, headers) => {
 
   return {
     ...requestLine,
-    requestTarget: parseRequestTarget(method, headers, requestTarget),
+    requestTarget: {
+      value: requestTarget,
+      meta: parseRequestTarget(method, headers, requestTarget)
+    },
     headers,
   };
 };

@@ -1,0 +1,91 @@
+[
+ [
+  {
+   "method": "POST",
+   "requestTarget": {
+    "value": "https://httpbin.org/post",
+    "meta": {
+     "protocol": "https:",
+     "hostname": "httpbin.org",
+     "port": "443",
+     "pathname": "/post",
+     "search": ""
+    }
+   },
+   "httpVersion": "1.1",
+   "headers": [
+    {
+     "name": "Authorization",
+     "value": "token1"
+    },
+    {
+     "name": "Authorization",
+     "value": "token1"
+    },
+    {
+     "name": "Authorization",
+     "value": "token1"
+    }
+   ],
+   "body": "MESSAGE1\nMESSAGE11\n\n"
+  },
+  {
+   "method": "POST",
+   "requestTarget": {
+    "value": "https://httpbin.org/post",
+    "meta": {
+     "protocol": "https:",
+     "hostname": "httpbin.org",
+     "port": "443",
+     "pathname": "/post",
+     "search": ""
+    }
+   },
+   "httpVersion": "1.1",
+   "headers": [
+    {
+     "name": "Authorization",
+     "value": "token2"
+    },
+    {
+     "name": "Authorization",
+     "value": "token2"
+    },
+    {
+     "name": "Authorization",
+     "value": "token2"
+    }
+   ],
+   "body": "{\n  \"test\": 3,\n  \"a\": \"b\"\n}\n\n"
+  },
+  {
+   "method": "POST",
+   "requestTarget": {
+    "value": "https://httpbin.org/post",
+    "meta": {
+     "protocol": "https:",
+     "hostname": "httpbin.org",
+     "port": "443",
+     "pathname": "/post",
+     "search": ""
+    }
+   },
+   "httpVersion": "1.1",
+   "headers": [
+    {
+     "name": "Authorization",
+     "value": "token3"
+    },
+    {
+     "name": "Authorization",
+     "value": "token3"
+    },
+    {
+     "name": "Authorization",
+     "value": "token3"
+    }
+   ],
+   "body": "{\n  \"test\": 3,\n  \"a\": \"b\"\n}\n\n"
+  }
+ ]
+]
