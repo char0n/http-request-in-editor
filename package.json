@@ -24,7 +24,11 @@
     "parser",
     "RFC7230"
   ],
-  "author": "Vladimir Gorej (char0n)",
+  "author": {
+    "name": "Vladimir Gorej",
+    "email": "vladimir.gorej@gmail.com",
+    "url": "https://www.linkedin.com/in/vladimirgorej/"
+  },
   "license": "BSD-3-Clause",
   "bugs": {
     "url": "https://github.com/char0n/http-request-in-editor-impl/issues"
