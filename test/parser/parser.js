@@ -18,7 +18,7 @@ describe('given http fixtures', function() {
       const parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
       parser.feed(http);
 
-      it('should produce proper AST', function() {
+      specify('should produce proper AST', function() {
         assert.deepStrictEqual(parser.results, ast);
       });
     });
