@@ -46,19 +46,9 @@ const requestLine = (method, requestTarget, httpVersion) => ({
   httpVersion,
 });
 
-// messageLine :: (Data, Number, Reject) -> String | Reject
-const messageLine = (data, location, reject) => {
-  const lineTail = data[0].join('');
-  const newLine = data[1];
-
-  if (lineTail.includes('###')) return reject;
-
-  return `${lineTail}${newLine}`;
-};
 
 module.exports = {
   request,
   requestWithBody,
   requestLine,
-  messageLine,
 };

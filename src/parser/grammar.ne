@@ -1,13 +1,6 @@
 @builtin "number.ne"
 @{% const { request, requestWithBody, requestLine, messageLine } = require('./postprocessors');  %}
 
-#########
-# TODOS #
-#########
-# Comments
-# Required empty line at the end of file
-
-
 #################
 # Requests file #
 #################
@@ -60,7 +53,7 @@ HEADERS -> HEADER_FIELD:+ {% d => d[0] %}
 HEADER_FIELD -> FIELD_NAME ":" FIELD_VALUE {% d => ({ name: d[0], value: d[2] }) %}
 FIELD_NAME -> [^\r\n\:]:+ {% d => d[0].join('') %}
 FIELD_VALUE ->
-  LINE_TAIL {% d => d[0].trim() %}
+  INPUT_CHARACTER:+ {% d => d[0].join('').trim() %}
  | NEW_LINE_WITH_INDENT FIELD_VALUE {% d => d[1][0] %}
 
 ################
@@ -71,7 +64,7 @@ MESSAGE_BODY -> MESSAGES {% id %}
 MESSAGES -> MESSAGE_LINE:+ {% d => d[0].join('') %}
 MESSAGE_LINE ->
     INPUT_FILE_REF
-  | INPUT_CHARACTER:+ NEW_LINE {% messageLine %}
+  | INPUT_CHARACTER:+ NEW_LINE {% d => d[0].join('') + d[1] %}
 INPUT_FILE_REF -> "<" __ FILE_PATH
 FILE_PATH -> LINE_TAIL
 
@@ -121,5 +114,5 @@ __ -> REQUIRED_WHITESPACE {% d => null %}
 ######################
 
 REQUEST_SEPARATOR ->
-    "###" NEW_LINE:+ {% () => null %}
+    "###" NEW_LINE:* {% () => null %}
   | "### " LINE_TAIL NEW_LINE:* {% d => null %}
