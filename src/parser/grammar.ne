@@ -12,7 +12,7 @@
 # Requests file #
 #################
 
-REQUESTS_FILE -> (REQUEST_SEPARATOR):* REQUEST (REQUEST_WITH_SEPARATOR):* (REQUEST_SEPARATOR):* {% d => [d[1], d[2]].flat(2) %}
+REQUESTS_FILE -> NEW_LINE:* (REQUEST_SEPARATOR):* REQUEST (REQUEST_WITH_SEPARATOR):* (REQUEST_SEPARATOR):* {% d => [d[2], d[3]].flat(2) %}
 REQUEST_WITH_SEPARATOR -> REQUEST_SEPARATOR:+ REQUEST {% d => d[1] %}
 
 ###########
@@ -20,9 +20,9 @@ REQUEST_WITH_SEPARATOR -> REQUEST_SEPARATOR:+ REQUEST {% d => d[1] %}
 ###########
 
 REQUEST ->
-    NEW_LINE:* REQUEST_LINE NEW_LINE:* {% d => request(d[1], []) %}
-  | NEW_LINE:* REQUEST_LINE NEW_LINE HEADERS NEW_LINE:* {% d => request(d[1], d[3]) %}
-  | NEW_LINE:* REQUEST_LINE NEW_LINE HEADERS NEW_LINE:+ MESSAGE_BODY {% d => requestWithBody(d[1], d[3], d[5]) %}
+    REQUEST_LINE NEW_LINE:* {% d => request(d[0], []) %}
+  | REQUEST_LINE NEW_LINE HEADERS NEW_LINE:* {% d => request(d[0], d[2]) %}
+  | REQUEST_LINE NEW_LINE HEADERS NEW_LINE:+ MESSAGE_BODY NEW_LINE:* {% d => requestWithBody(d[0], d[2], d[4]) %}
 
 
 ################
@@ -71,8 +71,7 @@ MESSAGE_BODY -> MESSAGES {% id %}
 MESSAGES -> MESSAGE_LINE:+ {% d => d[0].join('') %}
 MESSAGE_LINE ->
     INPUT_FILE_REF
-  # following line makes this grammar non context-free; how can we replace this?
-  | INPUT_CHARACTER:* NEW_LINE {% messageLine %}
+  | INPUT_CHARACTER:+ NEW_LINE {% messageLine %}
 INPUT_FILE_REF -> "<" __ FILE_PATH
 FILE_PATH -> LINE_TAIL
 
@@ -117,18 +116,10 @@ REQUIRED_WHITESPACE -> WHITESPACE:+ {% d => null %}
 _ -> OPTIONAL_WHITESPACE {% d => null %}
 __ -> REQUIRED_WHITESPACE {% d => null %}
 
-############
-# Comments #
-############
-
-LINE_COMMENT ->
-    "#" __ INPUT_CHARACTER:* NEW_LINE {% d => d[2].join('') %}
-  | "//" __ INPUT_CHARACTER:* NEW_LINE {% d => d[2].join('') %}
-
 ######################
 # Request separators #
 ######################
 
 REQUEST_SEPARATOR ->
-    "###" NEW_LINE:+ {% () => '' %}
-  | "### " LINE_TAIL {% d => d[1] %}
+    "###" NEW_LINE:+ {% () => null %}
+  | "### " LINE_TAIL NEW_LINE:* {% d => null %}

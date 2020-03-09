@@ -1,3 +1,12 @@
-# test
-##
-POST https://httpbin.org/post HTTP/1.1
+### separator
+
+POST https://httpbin.org/post
+Authorization: test
+
+message body
+### separator
+
+POST https://httpbin.org/post1
+Authorization: test
+
+message body

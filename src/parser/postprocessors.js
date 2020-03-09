@@ -3,7 +3,7 @@
 const requestTarget = require('request-target');
 
 // Type definitions:
-//     RequestTarget = {protocol: String, hostname: String, port: String, pathname: String, search: String}
+//     RequestTarget = String | {value: String, meta: {protocol: String, hostname: String, port: String, pathname: String, search: String}}
 //     Headers = [{name: value}]
 //     Url = String
 //     RequestLine = {method: String, requestTarget: RequestTarget | Url, httpVersion: String}
