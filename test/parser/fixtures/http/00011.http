@@ -3,5 +3,3 @@
 
 POST https://httpbin.org/post HTTP/1.1
 Authorization: token
-
-MESSAGE_BODY

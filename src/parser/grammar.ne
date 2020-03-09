@@ -20,9 +20,10 @@ REQUEST_WITH_SEPARATOR -> REQUEST_SEPARATOR:+ REQUEST {% d => d[1] %}
 ###########
 
 REQUEST ->
-  REQUEST_LINE NEW_LINE:* {% d => request(d[0], []) %}
-  | REQUEST_LINE NEW_LINE HEADERS NEW_LINE:* {% d => request(d[0], d[2]) %}
-  | REQUEST_LINE NEW_LINE HEADERS NEW_LINE:+ MESSAGE_BODY {% d => requestWithBody(d[0], d[2], d[4]) %}
+    NEW_LINE:* REQUEST_LINE NEW_LINE:* {% d => request(d[1], []) %}
+  | NEW_LINE:* REQUEST_LINE NEW_LINE HEADERS NEW_LINE:* {% d => request(d[1], d[3]) %}
+  | NEW_LINE:* REQUEST_LINE NEW_LINE HEADERS NEW_LINE:+ MESSAGE_BODY {% d => requestWithBody(d[1], d[3], d[5]) %}
+
 
 ################
 # Request line #
@@ -129,5 +130,5 @@ LINE_COMMENT ->
 ######################
 
 REQUEST_SEPARATOR ->
-    "###" NEW_LINE {% () => '' %}
+    "###" NEW_LINE:+ {% () => '' %}
   | "### " LINE_TAIL {% d => d[1] %}

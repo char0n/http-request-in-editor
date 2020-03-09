@@ -13,13 +13,7 @@
     }
    },
    "httpVersion": "1.1",
-   "headers": [
-    {
-     "name": "Authorization",
-     "value": "token"
-    }
-   ],
-   "body": "MESSAGE_BODY\n"
+   "headers": []
   }
  ]
 ]
