@@ -1,6 +1,5 @@
+### separator
 POST https://httpbin.org/post
 Authorization: token
 
-{}
 < ./file.json
-{}

@@ -46,9 +46,21 @@ const requestLine = (method, requestTarget, httpVersion) => ({
   httpVersion,
 });
 
+// messageLine :: (Data, Number, Reject) -> String | Reject
+const messageLine = (data, location, reject) => {
+  const lineTail = data[0].join('');
+
+  if (lineTail.startsWith('<') || lineTail.startsWith('<>') || lineTail.startsWith('###')) {
+    return reject;
+  }
+
+  return lineTail;
+};
+
 
 module.exports = {
   request,
   requestWithBody,
   requestLine,
+  messageLine,
 };

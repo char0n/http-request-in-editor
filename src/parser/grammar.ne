@@ -61,12 +61,13 @@ FIELD_VALUE ->
 ################
 
 MESSAGE_BODY -> MESSAGES {% id %}
-MESSAGES -> MESSAGE_LINE:+ {% d => d[0].join('') %}
+MESSAGES -> MESSAGE_LINE:+ {% id %}
 MESSAGE_LINE ->
-    INPUT_FILE_REF
-  | INPUT_CHARACTER:+ NEW_LINE {% d => d[0].join('') + d[1] %}
-INPUT_FILE_REF -> "<" __ FILE_PATH
-FILE_PATH -> LINE_TAIL
+    INPUT_CHARACTER:+ NEW_LINE {% messageLine %}
+  | INPUT_FILE_REF NEW_LINE {% d => d[0] %}
+
+INPUT_FILE_REF -> "<" __ FILE_PATH {% d => d[0] + " " + d[2] %}
+FILE_PATH -> [^\r\n]:+ {% d => d[0].join('') %}
 
 ################
 # Base symbols #

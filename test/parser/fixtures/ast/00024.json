@@ -20,7 +20,8 @@
     }
    ],
    "body": [
-    "Message body"
+    "< ./file1.json",
+    "< ./file2.json"
    ]
   }
  ]

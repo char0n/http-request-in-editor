@@ -19,7 +19,9 @@
      "value": "token"
     }
    ],
-   "body": "Message body\n"
+   "body": [
+    "Message body"
+   ]
   }
  ]
 ]

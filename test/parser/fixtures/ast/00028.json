@@ -20,7 +20,9 @@
     }
    ],
    "body": [
-    "Message body"
+    "{}",
+    "< ./file.json",
+    "{}"
    ]
   }
  ]
