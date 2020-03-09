@@ -11,7 +11,7 @@
   "scripts": {
     "compile": "nearleyc ./src/parser/grammar.ne --out ./src/parser/grammar.js",
     "test": "npm run test:parser",
-    "test:parser": "mocha",
+    "test:parser": "npm run compile && mocha",
     "test:parser:00000": "npm run compile && cat ./test/parser/fixtures/http/00000.http | nearley-test ./src/parser/grammar.js",
     "fixtures:ast:regenerate": "npm run compile && node ./scripts/ast_regenerate.js",
     "railroad": "nearley-railroad ./src/parser/grammar.ne > railroad.html",

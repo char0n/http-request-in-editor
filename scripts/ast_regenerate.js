@@ -29,5 +29,7 @@ glob.sync(astFilesPattern, {}).forEach(
 
 // regenerate AST
 glob(httpFilesPattern, {}, (error, files) => {
-  files.forEach(generateAST);
+  files
+    .filter(file => !file.endsWith('00000.http'))
+    .forEach(generateAST);
 });
