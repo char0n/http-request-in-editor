@@ -1,0 +1,19 @@
+[
+ [
+  {
+   "method": "GET",
+   "requestTarget": {
+    "value": "http://example.com/api/get#q=hello+world",
+    "meta": {
+     "protocol": "http:",
+     "hostname": "example.com",
+     "port": "80",
+     "pathname": "/api/get",
+     "search": ""
+    }
+   },
+   "httpVersion": "1.1",
+   "headers": []
+  }
+ ]
+]

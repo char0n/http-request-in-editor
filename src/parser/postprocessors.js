@@ -1,6 +1,6 @@
 'use strict';
 
-const requestTarget = require('request-target');
+const { parseRequestTarget } = require('./helpers');
 
 // Type definitions:
 //     RequestTarget = String | {value: String, meta: {protocol: String, hostname: String, port: String, pathname: String, search: String}}
@@ -9,16 +9,6 @@ const requestTarget = require('request-target');
 //     RequestLine = {method: String, requestTarget: RequestTarget | Url, httpVersion: String}
 //     Data = [*]
 //     Reject = Object
-
-// parseRequestTarget :: (String, Headers, Url) -> RequestTarget
-const parseRequestTarget = (method, headers, url) => {
-  const nheaders = headers.reduce((acc, header) => {
-    acc[header.name.toLowerCase()] = header.value;
-    return acc;
-  }, {});
-
-  return requestTarget({ method, headers: nheaders, url });
-};
 
 // request :: (RequestLine, Headers) -> RequestLine
 const request = (requestLine, headers) => {
