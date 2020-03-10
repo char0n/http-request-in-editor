@@ -13,7 +13,8 @@
     }
    },
    "httpVersion": "2.0",
-   "headers": []
+   "headers": [],
+   "body": []
   }
  ]
 ]

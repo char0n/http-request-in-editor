@@ -18,7 +18,8 @@
      "name": "Authorization",
      "value": "token"
     }
-   ]
+   ],
+   "body": []
   }
  ]
 ]

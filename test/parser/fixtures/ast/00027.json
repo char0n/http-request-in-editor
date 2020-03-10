@@ -20,7 +20,8 @@
     }
    ],
    "body": [
-    "MESSAGE BODY"
+    "MESSAGE BODY",
+    "\n"
    ]
   }
  ]

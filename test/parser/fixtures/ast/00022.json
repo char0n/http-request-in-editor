@@ -20,7 +20,8 @@
     }
    ],
    "body": [
-    "< ./file.json"
+    "< ./file.json",
+    "\n"
    ]
   }
  ]

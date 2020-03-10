@@ -9,9 +9,10 @@ const { parseRequestTarget } = require('./helpers');
 //     RequestLine = {method: String, requestTarget: RequestTarget | Url, httpVersion: String}
 //     Data = [*]
 //     Reject = Object
+//     Body = [String]
 
-// request :: (RequestLine, Headers) -> RequestLine
-const request = (requestLine, headers) => {
+// request :: (RequestLine, Headers, [String]) -> RequestLine
+const request = (requestLine, headers, body) => {
   const { method, requestTarget } = requestLine;
 
   return {
@@ -21,13 +22,9 @@ const request = (requestLine, headers) => {
       meta: parseRequestTarget(method, headers, requestTarget)
     },
     headers,
+    body: body,
   };
 };
-
-// requestWithBody :: (RequestLine, Headers, String) -> RequestLine
-const requestWithBody = (requestLine, headers, body) => ({
-  ...request(requestLine, headers), body: body
-});
 
 // requestLine :: (String, Url, String) -> RequestLine
 const requestLine = ([method, requestTarget, httpVersion]) => ({
@@ -36,11 +33,25 @@ const requestLine = ([method, requestTarget, httpVersion]) => ({
   httpVersion: httpVersion || '1.1'
 });
 
+// messages :: Data -> Body
+const messages = (data) => data.flat(4);
+
 // messageLine :: (Data, Number, Reject) -> String | Reject
 const messageLine = (data, location, reject) => {
   const lineTail = data[0].join('');
 
-  if (lineTail.startsWith('<') || lineTail.startsWith('<>') || lineTail.startsWith('###')) {
+  if (lineTail.startsWith('<') || lineTail.startsWith('###')) {
+    return reject;
+  }
+
+  return lineTail;
+};
+
+// fieldValue :: (Data, Number, Reject) -> String | Reject
+const fieldValue = (data, location, reject) => {
+  const lineTail = data[0].join('');
+
+  if (lineTail.startsWith(' ') || lineTail.endsWith(' ')) {
     return reject;
   }
 
@@ -50,7 +61,8 @@ const messageLine = (data, location, reject) => {
 
 module.exports = {
   request,
-  requestWithBody,
   requestLine,
+  messages,
   messageLine,
+  fieldValue,
 };

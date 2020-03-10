@@ -13,7 +13,8 @@
     }
    },
    "httpVersion": "1.1",
-   "headers": []
+   "headers": [],
+   "body": []
   }
  ]
 ]

@@ -1,5 +1,5 @@
 @builtin "number.ne"
-@{% const { request, requestWithBody, requestLine, messageLine } = require('./postprocessors');  %}
+@{% const { request, requestLine, messages, messageLine, fieldValue } = require('./postprocessors');  %}
 
 #################
 # Requests file #
@@ -12,11 +12,7 @@ REQUEST_WITH_SEPARATOR -> REQUEST_SEPARATOR:+ REQUEST {% d => d[1] %}
 # Request #
 ###########
 
-REQUEST ->
-    REQUEST_LINE NEW_LINE:* {% d => request(d[0], []) %}
-  | REQUEST_LINE NEW_LINE HEADERS NEW_LINE:* {% d => request(d[0], d[2]) %}
-  | REQUEST_LINE NEW_LINE HEADERS NEW_LINE:+ MESSAGE_BODY NEW_LINE:* {% d => requestWithBody(d[0], d[2], d[4]) %}
-
+REQUEST -> REQUEST_LINE NEW_LINE HEADERS NEW_LINE MESSAGES NEW_LINE:* {% d => request(d[0], d[2], d[4]) %}
 
 ################
 # Request line #
@@ -48,25 +44,25 @@ REQUEST_TARGET -> [\S]:+ {% d => d[0].join('') %}
 # Headers #
 ###########
 
-HEADERS -> HEADER_FIELD:+ {% d => d[0] %}
-HEADER_FIELD -> FIELD_NAME ":" FIELD_VALUE {% d => ({ name: d[0], value: d[2] }) %}
+HEADERS -> (HEADER_FIELD NEW_LINE {% id %}):* {% id %}
+HEADER_FIELD -> FIELD_NAME ":" _ FIELD_VALUE _ {% d => ({ name: d[0], value: d[3] }) %}
 FIELD_NAME -> [^\r\n\:]:+ {% d => d[0].join('') %}
 FIELD_VALUE ->
-  INPUT_CHARACTER:+ {% d => d[0].join('').trim() %}
- | NEW_LINE_WITH_INDENT FIELD_VALUE {% d => d[1][0] %}
+    INPUT_CHARACTER:* {% fieldValue %}
+  | NEW_LINE_WITH_INDENT FIELD_VALUE {% d => d[1][0] %}
 
 ################
 # Message body #
 ################
 
 MESSAGE_BODY -> MESSAGES {% id %}
-MESSAGES -> MESSAGE_LINE:+ {% id %}
+MESSAGES -> (MESSAGE_LINE NEW_LINE):* {% messages %}
 MESSAGE_LINE ->
-    INPUT_CHARACTER:+ NEW_LINE {% messageLine %}
-  | INPUT_FILE_REF NEW_LINE {% d => d[0] %}
+    INPUT_CHARACTER:* {% messageLine %}
+  | INPUT_FILE_REF {% id %}
 
 INPUT_FILE_REF -> "<" __ FILE_PATH {% d => d[0] + " " + d[2] %}
-FILE_PATH -> [^\r\n]:+ {% d => d[0].join('') %}
+FILE_PATH -> INPUT_CHARACTER:+ {% d => d[0].join('') %}
 
 ################
 # Base symbols #
