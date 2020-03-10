@@ -33,13 +33,13 @@ Authorization: token3
 
 ```
 
-# Installation
+## Installation
 
 ```sh
  $ npm i
 ```
 
-# Development
+## Development
 
 Edit `src/parser/grammer.ne` and create a grammar that maps to HTTP Request in Editor Spec.
 
@@ -62,3 +62,12 @@ Generate random strings that satisfy the grammar defined in`src/parser/grammar.n
 ```sh
  $ npm run unparse
 ```
+
+## Missing features
+
+ - Line comments
+ - No support for multiline `request-target`
+ - Multipart-form-data
+ - Response Handler
+ - Response reference
+ - Environment variables
