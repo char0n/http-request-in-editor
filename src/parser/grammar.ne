@@ -22,9 +22,8 @@ REQUEST ->
 # Request line #
 ################
 
-REQUEST_LINE ->
-    METHOD __ REQUEST_TARGET {% d => requestLine(d[0], d[2], '1.1') %}
-  | METHOD __ REQUEST_TARGET __ HTTP_VERSION {% d => requestLine(d[0], d[2], d[4]) %}
+REQUEST_LINE -> (METHOD __ {% id %}):? REQUEST_TARGET (__ HTTP_VERSION {% d => d[1] %}):? {% requestLine %}
+
 
 METHOD ->
     "GET" {% id %}

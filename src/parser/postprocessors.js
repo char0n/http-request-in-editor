@@ -40,10 +40,10 @@ const requestWithBody = (requestLine, headers, body) => ({
 });
 
 // requestLine :: (String, Url, String) -> RequestLine
-const requestLine = (method, requestTarget, httpVersion) => ({
-  method,
+const requestLine = ([method, requestTarget, httpVersion]) => ({
+  method: method || 'GET',
   requestTarget,
-  httpVersion,
+  httpVersion: httpVersion || '1.1'
 });
 
 // messageLine :: (Data, Number, Reject) -> String | Reject
