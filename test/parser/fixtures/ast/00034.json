@@ -1,0 +1,39 @@
+[
+ [
+  {
+   "method": "GET",
+   "requestTarget": {
+    "value": "http://www.example.com",
+    "meta": {
+     "protocol": "http:",
+     "hostname": "www.example.com",
+     "port": "80",
+     "pathname": "/",
+     "search": ""
+    }
+   },
+   "httpVersion": "1.1",
+   "headers": [
+    {
+     "name": "Host",
+     "value": "http://example.com:8080"
+    },
+    {
+     "name": "Host",
+     "value": "http://example.com:8080"
+    },
+    {
+     "name": "Host",
+     "value": ""
+    },
+    {
+     "name": "Host",
+     "value": "value"
+    }
+   ],
+   "body": [
+    ""
+   ]
+  }
+ ]
+]
