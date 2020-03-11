@@ -14,6 +14,8 @@
     "test:parser": "npm run compile && mocha",
     "test:parser:00000": "npm run compile && cat ./test/parser/fixtures/http/00000.http | nearley-test ./src/parser/grammar.js",
     "fixtures:ast:regenerate": "npm run compile && node ./scripts/ast_regenerate.js",
+    "lint": "eslint ./",
+    "lint:fix": "eslint ./ --fix",
     "railroad": "nearley-railroad ./src/parser/grammar.ne > railroad.html",
     "unparse": "nearley-unparse ./src/parser/grammar.js"
   },
@@ -41,7 +43,14 @@
     "request-target": "=1.0.2"
   },
   "devDependencies": {
-    "glob": "^7.1.6",
-    "mocha": "^7.1.0"
+    "eslint": "=6.8.0",
+    "eslint-config-airbnb-base": "=14.0.0",
+    "eslint-config-prettier": "=6.10.0",
+    "eslint-plugin-import": "=2.20.1",
+    "eslint-plugin-mocha": "=6.3.0",
+    "eslint-plugin-prettier": "=3.1.2",
+    "glob": "=7.1.6",
+    "mocha": "=7.1.0",
+    "prettier": "=1.19.1"
   }
 }

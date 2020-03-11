@@ -2,12 +2,27 @@
 
 const fs = require('fs');
 const path = require('path');
-const glob = require('glob');
+const glob = require('glob'); // eslint-disable-line import/no-extraneous-dependencies
 const nearley = require('nearley');
+
 const grammar = require('../src/parser/grammar');
 
-const httpFixturePath = path.join(__dirname, '..', 'test', 'parser', 'fixtures', 'http');
-const astFixturePath = path.join(__dirname, '..', 'test', 'parser', 'fixtures', 'ast');
+const httpFixturePath = path.join(
+  __dirname,
+  '..',
+  'test',
+  'parser',
+  'fixtures',
+  'http'
+);
+const astFixturePath = path.join(
+  __dirname,
+  '..',
+  'test',
+  'parser',
+  'fixtures',
+  'ast'
+);
 const httpFilesPattern = `${httpFixturePath}${path.sep}*.http`;
 const astFilesPattern = `${astFixturePath}${path.sep}*.json`;
 
@@ -23,13 +38,9 @@ const generateAST = file => {
 };
 
 // clean old AST
-glob.sync(astFilesPattern, {}).forEach(
-  file => fs.unlinkSync(file)
-);
+glob.sync(astFilesPattern, {}).forEach(file => fs.unlinkSync(file));
 
 // regenerate AST
 glob(httpFilesPattern, {}, (error, files) => {
-  files
-    .filter(file => !file.endsWith('00000.http'))
-    .forEach(generateAST);
+  files.filter(file => !file.endsWith('00000.http')).forEach(generateAST);
 });

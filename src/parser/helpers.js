@@ -1,10 +1,9 @@
 'use strict';
 
-const requestTarget = require('request-target');
-
+const requestTargetParser = require('request-target');
 
 // stripRequestTargetFragment :: String -> String
-const stripRequestTargetFragment = (requestTarget) => {
+const stripRequestTargetFragment = requestTarget => {
   try {
     const url = new URL(requestTarget);
     url.hash = '';
@@ -21,13 +20,12 @@ const parseRequestTarget = (method, headers, url) => {
     return acc;
   }, {});
 
-  return requestTarget({
+  return requestTargetParser({
     method,
     headers: nheaders,
     url: stripRequestTargetFragment(url),
   });
 };
-
 
 module.exports = {
   parseRequestTarget,

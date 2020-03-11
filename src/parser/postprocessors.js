@@ -19,10 +19,10 @@ const request = (requestLine, headers, body) => {
     ...requestLine,
     requestTarget: {
       value: requestTarget,
-      meta: parseRequestTarget(method, headers, requestTarget)
+      meta: parseRequestTarget(method, headers, requestTarget),
     },
     headers,
-    body: body,
+    body,
   };
 };
 
@@ -30,11 +30,16 @@ const request = (requestLine, headers, body) => {
 const requestLine = ([method, requestTarget, httpVersion]) => ({
   method: method || 'GET',
   requestTarget,
-  httpVersion: httpVersion || '1.1'
+  httpVersion: httpVersion || '1.1',
 });
 
 // messages :: Data -> Body
-const messages = data => data[0].flat(4).join('').trim().split('\n');
+const messages = data =>
+  data[0]
+    .flat(4)
+    .join('')
+    .trim()
+    .split('\n');
 
 // messageLine :: (Data, Number, Reject) -> String | Reject
 const messageLine = (data, location, reject) => {
@@ -57,7 +62,6 @@ const fieldValue = (data, location, reject) => {
 
   return lineTail;
 };
-
 
 module.exports = {
   request,
