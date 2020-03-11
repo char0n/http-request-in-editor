@@ -34,7 +34,7 @@ const requestLine = ([method, requestTarget, httpVersion]) => ({
 });
 
 // messages :: Data -> Body
-const messages = (data) => data.flat(4);
+const messages = data => data[0].flat(4).join('').trim().split('\n');
 
 // messageLine :: (Data, Number, Reject) -> String | Reject
 const messageLine = (data, location, reject) => {

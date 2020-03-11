@@ -14,7 +14,9 @@
    },
    "httpVersion": "1.1",
    "headers": [],
-   "body": []
+   "body": [
+    ""
+   ]
   }
  ]
 ]
