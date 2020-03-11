@@ -1,0 +1,21 @@
+[
+ [
+  {
+   "method": "OPTIONS",
+   "requestTarget": {
+    "value": "*",
+    "meta": null
+   },
+   "httpVersion": "1.1",
+   "headers": [
+    {
+     "name": "Host",
+     "value": "http://example.com:8080"
+    }
+   ],
+   "body": [
+    ""
+   ]
+  }
+ ]
+]
