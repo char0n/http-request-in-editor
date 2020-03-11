@@ -43,6 +43,8 @@
     "request-target": "=1.0.2"
   },
   "devDependencies": {
+    "@commitlint/cli": "^8.3.5",
+    "@commitlint/config-conventional": "^8.3.4",
     "eslint": "=6.8.0",
     "eslint-config-airbnb-base": "=14.0.0",
     "eslint-config-prettier": "=6.10.0",
@@ -50,6 +52,8 @@
     "eslint-plugin-mocha": "=6.3.0",
     "eslint-plugin-prettier": "=3.1.2",
     "glob": "=7.1.6",
+    "husky": "^4.2.3",
+    "lint-staged": "^10.0.8",
     "mocha": "=7.1.0",
     "prettier": "=1.19.1"
   }
