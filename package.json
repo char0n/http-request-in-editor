@@ -13,7 +13,7 @@
     "test": "npm run test:parser",
     "test:parser": "npm run compile && mocha",
     "test:parser:00000": "npm run compile && cat ./test/parser/fixtures/http/00000.http | nearley-test ./src/parser/grammar.js",
-    "fixtures:ast:regenerate": "npm run compile && node ./scripts/ast_regenerate.js",
+    "fixtures:ast:regenerate": "npm run compile && node ./scripts/ast-regenerate.js",
     "lint": "eslint ./",
     "lint:fix": "eslint ./ --fix",
     "railroad": "nearley-railroad ./src/parser/grammar.ne > railroad.html",
