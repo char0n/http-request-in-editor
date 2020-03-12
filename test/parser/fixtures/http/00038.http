@@ -1,5 +1,4 @@
 GET http://www.example.com
-Header: test
 
 <> ./file.json
 

@@ -44,13 +44,13 @@ Authorization: token3
 Edit `src/parser/grammer.ne` and create a grammar that maps to HTTP Request in Editor Spec.
 
 Compiles `src/parser/grammar.ne` file into `src/parser/grammar.js`.
-```sh 
+```sh
  $ npm run compile
 ```
 
 Test parser grammar against predefined fixtures.
 ```sh
- $ npm test 
+ $ npm test
 ```
 
 Generate railroad diagrams from `src/parser/grammar.ne` file.
@@ -69,5 +69,4 @@ Generate random strings that satisfy the grammar defined in`src/parser/grammar.n
  - No support for multiline `request-target`
  - Multipart-form-data
  - Response Handler
- - Response reference
  - Environment variables

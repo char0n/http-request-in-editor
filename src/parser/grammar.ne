@@ -12,7 +12,7 @@ REQUEST_WITH_SEPARATOR -> REQUEST_SEPARATOR:+ REQUEST {% d => d[1] %}
 # Request #
 ###########
 
-REQUEST -> REQUEST_LINE NEW_LINE HEADERS NEW_LINE MESSAGES {% d => request(d[0], d[2], d[4]) %}
+REQUEST -> REQUEST_LINE NEW_LINE HEADERS NEW_LINE MESSAGE_BODY {% d => request(d[0], d[2], d[4]) %}
 
 ################
 # Request line #
@@ -60,8 +60,12 @@ MESSAGES -> (MESSAGE_LINE NEW_LINE):* {% messages %}
 MESSAGE_LINE ->
     INPUT_CHARACTER:* {% messageLine %}
   | INPUT_FILE_REF {% id %}
+  | RESPONSE_REF {% id %}
 
 INPUT_FILE_REF -> "<" __ FILE_PATH {% d => d[0] + " " + d[2] %}
+
+RESPONSE_REF -> "<>" __ FILE_PATH {% d => d[0] + " " + d[2] %}
+
 FILE_PATH -> INPUT_CHARACTER:+ {% d => d[0].join('') %}
 
 ################
