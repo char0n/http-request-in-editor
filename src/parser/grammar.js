@@ -2,7 +2,33 @@
 // http://github.com/Hardmath123/nearley
 (function () {
 function id(x) { return x[0]; }
- const { request, requestLine, messages, messageLine, fieldValue } = require('./postprocessors');  var grammar = {
+
+const {
+  // general postprocessors
+  nth,
+  stubNull,
+  // Request file
+  requestFile,
+  // Request
+  request,
+  // Request line
+  requestLine,
+  requestTarget,
+  httpVersion,
+  // Headers
+  headerField,
+  fieldName,
+  fieldValue,
+  // Message body
+  messages,
+  messageLine,
+  inputFileRef,
+  responseRef,
+  filePath,
+  // Line Terminators
+  lineTail,
+} = require('./postprocessors');
+var grammar = {
     Lexer: undefined,
     ParserRules: [
     {"name": "unsigned_int$ebnf$1", "symbols": [/[0-9]/]},
@@ -102,15 +128,15 @@ function id(x) { return x[0]; }
     {"name": "REQUESTS_FILE$ebnf$4", "symbols": []},
     {"name": "REQUESTS_FILE$ebnf$4$subexpression$1", "symbols": ["REQUEST_SEPARATOR"]},
     {"name": "REQUESTS_FILE$ebnf$4", "symbols": ["REQUESTS_FILE$ebnf$4", "REQUESTS_FILE$ebnf$4$subexpression$1"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
-    {"name": "REQUESTS_FILE", "symbols": ["REQUESTS_FILE$ebnf$1", "REQUESTS_FILE$ebnf$2", "REQUEST", "REQUESTS_FILE$ebnf$3", "REQUESTS_FILE$ebnf$4"], "postprocess": d => [d[2], d[3]].flat(2)},
+    {"name": "REQUESTS_FILE", "symbols": ["REQUESTS_FILE$ebnf$1", "REQUESTS_FILE$ebnf$2", "REQUEST", "REQUESTS_FILE$ebnf$3", "REQUESTS_FILE$ebnf$4"], "postprocess": requestFile},
     {"name": "REQUEST_WITH_SEPARATOR$ebnf$1", "symbols": ["REQUEST_SEPARATOR"]},
     {"name": "REQUEST_WITH_SEPARATOR$ebnf$1", "symbols": ["REQUEST_WITH_SEPARATOR$ebnf$1", "REQUEST_SEPARATOR"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
-    {"name": "REQUEST_WITH_SEPARATOR", "symbols": ["REQUEST_WITH_SEPARATOR$ebnf$1", "REQUEST"], "postprocess": d => d[1]},
+    {"name": "REQUEST_WITH_SEPARATOR", "symbols": ["REQUEST_WITH_SEPARATOR$ebnf$1", "REQUEST"], "postprocess": nth(1)},
     {"name": "REQUEST", "symbols": ["REQUEST_LINE", "NEW_LINE", "HEADERS", "NEW_LINE", "MESSAGE_BODY"], "postprocess": d => request(d[0], d[2], d[4])},
     {"name": "REQUEST_LINE$ebnf$1$subexpression$1", "symbols": ["METHOD", "__"], "postprocess": id},
     {"name": "REQUEST_LINE$ebnf$1", "symbols": ["REQUEST_LINE$ebnf$1$subexpression$1"], "postprocess": id},
     {"name": "REQUEST_LINE$ebnf$1", "symbols": [], "postprocess": function(d) {return null;}},
-    {"name": "REQUEST_LINE$ebnf$2$subexpression$1", "symbols": ["__", "HTTP_VERSION"], "postprocess": d => d[1]},
+    {"name": "REQUEST_LINE$ebnf$2$subexpression$1", "symbols": ["__", "HTTP_VERSION"], "postprocess": nth(1)},
     {"name": "REQUEST_LINE$ebnf$2", "symbols": ["REQUEST_LINE$ebnf$2$subexpression$1"], "postprocess": id},
     {"name": "REQUEST_LINE$ebnf$2", "symbols": [], "postprocess": function(d) {return null;}},
     {"name": "REQUEST_LINE", "symbols": ["REQUEST_LINE$ebnf$1", "REQUEST_TARGET", "REQUEST_LINE$ebnf$2"], "postprocess": requestLine},
@@ -137,18 +163,18 @@ function id(x) { return x[0]; }
     {"name": "HTTP_VERSION$ebnf$1", "symbols": ["HTTP_VERSION$ebnf$1", "DIGIT"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
     {"name": "HTTP_VERSION$ebnf$2", "symbols": ["DIGIT"]},
     {"name": "HTTP_VERSION$ebnf$2", "symbols": ["HTTP_VERSION$ebnf$2", "DIGIT"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
-    {"name": "HTTP_VERSION", "symbols": ["HTTP_VERSION$string$1", "HTTP_VERSION$ebnf$1", {"literal":"."}, "HTTP_VERSION$ebnf$2"], "postprocess": d => d[1].join('') + "." + d[3].join('')},
+    {"name": "HTTP_VERSION", "symbols": ["HTTP_VERSION$string$1", "HTTP_VERSION$ebnf$1", {"literal":"."}, "HTTP_VERSION$ebnf$2"], "postprocess": httpVersion},
     {"name": "REQUEST_TARGET$ebnf$1", "symbols": [/[\S]/]},
     {"name": "REQUEST_TARGET$ebnf$1", "symbols": ["REQUEST_TARGET$ebnf$1", /[\S]/], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
-    {"name": "REQUEST_TARGET", "symbols": ["REQUEST_TARGET$ebnf$1"], "postprocess": d => d[0].join('')},
+    {"name": "REQUEST_TARGET", "symbols": ["REQUEST_TARGET$ebnf$1"], "postprocess": requestTarget},
     {"name": "HEADERS$ebnf$1", "symbols": []},
     {"name": "HEADERS$ebnf$1$subexpression$1", "symbols": ["HEADER_FIELD", "NEW_LINE"], "postprocess": id},
     {"name": "HEADERS$ebnf$1", "symbols": ["HEADERS$ebnf$1", "HEADERS$ebnf$1$subexpression$1"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
     {"name": "HEADERS", "symbols": ["HEADERS$ebnf$1"], "postprocess": id},
-    {"name": "HEADER_FIELD", "symbols": ["FIELD_NAME", {"literal":":"}, "_", "FIELD_VALUE", "_"], "postprocess": d => ({ name: d[0], value: d[3] })},
+    {"name": "HEADER_FIELD", "symbols": ["FIELD_NAME", {"literal":":"}, "_", "FIELD_VALUE", "_"], "postprocess": headerField},
     {"name": "FIELD_NAME$ebnf$1", "symbols": [/[^\r\n\:]/]},
     {"name": "FIELD_NAME$ebnf$1", "symbols": ["FIELD_NAME$ebnf$1", /[^\r\n\:]/], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
-    {"name": "FIELD_NAME", "symbols": ["FIELD_NAME$ebnf$1"], "postprocess": d => d[0].join('')},
+    {"name": "FIELD_NAME", "symbols": ["FIELD_NAME$ebnf$1"], "postprocess": fieldName},
     {"name": "FIELD_VALUE$ebnf$1", "symbols": []},
     {"name": "FIELD_VALUE$ebnf$1", "symbols": ["FIELD_VALUE$ebnf$1", "INPUT_CHARACTER"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
     {"name": "FIELD_VALUE", "symbols": ["FIELD_VALUE$ebnf$1"], "postprocess": fieldValue},
@@ -163,12 +189,12 @@ function id(x) { return x[0]; }
     {"name": "MESSAGE_LINE", "symbols": ["MESSAGE_LINE$ebnf$1"], "postprocess": messageLine},
     {"name": "MESSAGE_LINE", "symbols": ["INPUT_FILE_REF"], "postprocess": id},
     {"name": "MESSAGE_LINE", "symbols": ["RESPONSE_REF"], "postprocess": id},
-    {"name": "INPUT_FILE_REF", "symbols": [{"literal":"<"}, "__", "FILE_PATH"], "postprocess": d => d[0] + " " + d[2]},
+    {"name": "INPUT_FILE_REF", "symbols": [{"literal":"<"}, "__", "FILE_PATH"], "postprocess": inputFileRef},
     {"name": "RESPONSE_REF$string$1", "symbols": [{"literal":"<"}, {"literal":">"}], "postprocess": function joiner(d) {return d.join('');}},
-    {"name": "RESPONSE_REF", "symbols": ["RESPONSE_REF$string$1", "__", "FILE_PATH"], "postprocess": d => d[0] + " " + d[2]},
+    {"name": "RESPONSE_REF", "symbols": ["RESPONSE_REF$string$1", "__", "FILE_PATH"], "postprocess": responseRef},
     {"name": "FILE_PATH$ebnf$1", "symbols": ["INPUT_CHARACTER"]},
     {"name": "FILE_PATH$ebnf$1", "symbols": ["FILE_PATH$ebnf$1", "INPUT_CHARACTER"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
-    {"name": "FILE_PATH", "symbols": ["FILE_PATH$ebnf$1"], "postprocess": d => d[0].join('')},
+    {"name": "FILE_PATH", "symbols": ["FILE_PATH$ebnf$1"], "postprocess": filePath},
     {"name": "INPUT_CHARACTER", "symbols": [/[^\r\n]/]},
     {"name": "ALPHA", "symbols": [/[a-zA-Z]/]},
     {"name": "DIGIT", "symbols": ["unsigned_int"]},
@@ -185,7 +211,7 @@ function id(x) { return x[0]; }
     {"name": "NEW_LINE_WITH_INDENT", "symbols": ["NEW_LINE", "__"]},
     {"name": "LINE_TAIL$ebnf$1", "symbols": []},
     {"name": "LINE_TAIL$ebnf$1", "symbols": ["LINE_TAIL$ebnf$1", "INPUT_CHARACTER"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
-    {"name": "LINE_TAIL", "symbols": ["LINE_TAIL$ebnf$1", "NEW_LINE"], "postprocess": d => d[0].join('')},
+    {"name": "LINE_TAIL", "symbols": ["LINE_TAIL$ebnf$1", "NEW_LINE"], "postprocess": lineTail},
     {"name": "SP", "symbols": [{"literal":" "}]},
     {"name": "HT", "symbols": [/[\t]/]},
     {"name": "FF", "symbols": [/[\f]/]},
@@ -194,20 +220,20 @@ function id(x) { return x[0]; }
     {"name": "WHITESPACE", "symbols": ["FF"], "postprocess": id},
     {"name": "OPTIONAL_WHITESPACE$ebnf$1", "symbols": []},
     {"name": "OPTIONAL_WHITESPACE$ebnf$1", "symbols": ["OPTIONAL_WHITESPACE$ebnf$1", "WHITESPACE"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
-    {"name": "OPTIONAL_WHITESPACE", "symbols": ["OPTIONAL_WHITESPACE$ebnf$1"], "postprocess": d => null},
+    {"name": "OPTIONAL_WHITESPACE", "symbols": ["OPTIONAL_WHITESPACE$ebnf$1"], "postprocess": stubNull},
     {"name": "REQUIRED_WHITESPACE$ebnf$1", "symbols": ["WHITESPACE"]},
     {"name": "REQUIRED_WHITESPACE$ebnf$1", "symbols": ["REQUIRED_WHITESPACE$ebnf$1", "WHITESPACE"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
-    {"name": "REQUIRED_WHITESPACE", "symbols": ["REQUIRED_WHITESPACE$ebnf$1"], "postprocess": d => null},
-    {"name": "_", "symbols": ["OPTIONAL_WHITESPACE"], "postprocess": d => null},
-    {"name": "__", "symbols": ["REQUIRED_WHITESPACE"], "postprocess": d => null},
+    {"name": "REQUIRED_WHITESPACE", "symbols": ["REQUIRED_WHITESPACE$ebnf$1"], "postprocess": stubNull},
+    {"name": "_", "symbols": ["OPTIONAL_WHITESPACE"], "postprocess": stubNull},
+    {"name": "__", "symbols": ["REQUIRED_WHITESPACE"], "postprocess": stubNull},
     {"name": "REQUEST_SEPARATOR$string$1", "symbols": [{"literal":"#"}, {"literal":"#"}, {"literal":"#"}], "postprocess": function joiner(d) {return d.join('');}},
     {"name": "REQUEST_SEPARATOR$ebnf$1", "symbols": []},
     {"name": "REQUEST_SEPARATOR$ebnf$1", "symbols": ["REQUEST_SEPARATOR$ebnf$1", "NEW_LINE"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
-    {"name": "REQUEST_SEPARATOR", "symbols": ["REQUEST_SEPARATOR$string$1", "REQUEST_SEPARATOR$ebnf$1"], "postprocess": () => null},
+    {"name": "REQUEST_SEPARATOR", "symbols": ["REQUEST_SEPARATOR$string$1", "REQUEST_SEPARATOR$ebnf$1"], "postprocess": stubNull},
     {"name": "REQUEST_SEPARATOR$string$2", "symbols": [{"literal":"#"}, {"literal":"#"}, {"literal":"#"}, {"literal":" "}], "postprocess": function joiner(d) {return d.join('');}},
     {"name": "REQUEST_SEPARATOR$ebnf$2", "symbols": []},
     {"name": "REQUEST_SEPARATOR$ebnf$2", "symbols": ["REQUEST_SEPARATOR$ebnf$2", "NEW_LINE"], "postprocess": function arrpush(d) {return d[0].concat([d[1]]);}},
-    {"name": "REQUEST_SEPARATOR", "symbols": ["REQUEST_SEPARATOR$string$2", "LINE_TAIL", "REQUEST_SEPARATOR$ebnf$2"], "postprocess": d => null}
+    {"name": "REQUEST_SEPARATOR", "symbols": ["REQUEST_SEPARATOR$string$2", "LINE_TAIL", "REQUEST_SEPARATOR$ebnf$2"], "postprocess": stubNull}
 ]
   , ParserStart: "REQUESTS_FILE"
 }

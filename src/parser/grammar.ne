@@ -1,12 +1,38 @@
 @builtin "number.ne"
-@{% const { request, requestLine, messages, messageLine, fieldValue } = require('./postprocessors');  %}
+@{%
+const {
+  // general postprocessors
+  nth,
+  stubNull,
+  // Request file
+  requestFile,
+  // Request
+  request,
+  // Request line
+  requestLine,
+  requestTarget,
+  httpVersion,
+  // Headers
+  headerField,
+  fieldName,
+  fieldValue,
+  // Message body
+  messages,
+  messageLine,
+  inputFileRef,
+  responseRef,
+  filePath,
+  // Line Terminators
+  lineTail,
+} = require('./postprocessors');
+%}
 
 #################
 # Requests file #
 #################
 
-REQUESTS_FILE -> NEW_LINE:* (REQUEST_SEPARATOR):* REQUEST (REQUEST_WITH_SEPARATOR):* (REQUEST_SEPARATOR):* {% d => [d[2], d[3]].flat(2) %}
-REQUEST_WITH_SEPARATOR -> REQUEST_SEPARATOR:+ REQUEST {% d => d[1] %}
+REQUESTS_FILE -> NEW_LINE:* (REQUEST_SEPARATOR):* REQUEST (REQUEST_WITH_SEPARATOR):* (REQUEST_SEPARATOR):* {% requestFile %}
+REQUEST_WITH_SEPARATOR -> REQUEST_SEPARATOR:+ REQUEST {% nth(1) %}
 
 ###########
 # Request #
@@ -18,38 +44,36 @@ REQUEST -> REQUEST_LINE NEW_LINE HEADERS NEW_LINE MESSAGE_BODY {% d => request(d
 # Request line #
 ################
 
-REQUEST_LINE -> (METHOD __ {% id %}):? REQUEST_TARGET (__ HTTP_VERSION {% d => d[1] %}):? {% requestLine %}
+REQUEST_LINE -> (METHOD __ {% id %}):? REQUEST_TARGET (__ HTTP_VERSION {% nth(1) %}):? {% requestLine %}
 
 
-METHOD ->
-    "GET" {% id %}
-  | "HEAD" {% id %}
-  | "POST" {% id %}
-  | "PUT" {% id %}
-  | "DELETE" {% id %}
-  | "CONNECT" {% id %}
-  | "PATCH" {% id %}
-  | "OPTIONS" {% id %}
-  | "TRACE" {% id %}
+METHOD -> "GET" {% id %}
+        | "HEAD" {% id %}
+        | "POST" {% id %}
+        | "PUT" {% id %}
+        | "DELETE" {% id %}
+        | "CONNECT" {% id %}
+        | "PATCH" {% id %}
+        | "OPTIONS" {% id %}
+        | "TRACE" {% id %}
 
-HTTP_VERSION -> "HTTP/" DIGIT:+ "." DIGIT:+ {% d => d[1].join('') + "." + d[3].join('') %}
+HTTP_VERSION -> "HTTP/" DIGIT:+ "." DIGIT:+ {% httpVersion %}
 
 ##################
 # Request target #
 ##################
 
-REQUEST_TARGET -> [\S]:+ {% d => d[0].join('') %}
+REQUEST_TARGET -> [\S]:+ {% requestTarget %}
 
 ###########
 # Headers #
 ###########
 
 HEADERS -> (HEADER_FIELD NEW_LINE {% id %}):* {% id %}
-HEADER_FIELD -> FIELD_NAME ":" _ FIELD_VALUE _ {% d => ({ name: d[0], value: d[3] }) %}
-FIELD_NAME -> [^\r\n\:]:+ {% d => d[0].join('') %}
-FIELD_VALUE ->
-    INPUT_CHARACTER:* {% fieldValue %}
-  | NEW_LINE_WITH_INDENT FIELD_VALUE {% d => d[1][0] %}
+HEADER_FIELD -> FIELD_NAME ":" _ FIELD_VALUE _ {% headerField %}
+FIELD_NAME -> [^\r\n\:]:+ {% fieldName %}
+FIELD_VALUE -> INPUT_CHARACTER:* {% fieldValue %}
+             | NEW_LINE_WITH_INDENT FIELD_VALUE {% d => d[1][0] %}
 
 ################
 # Message body #
@@ -57,16 +81,15 @@ FIELD_VALUE ->
 
 MESSAGE_BODY -> MESSAGES {% id %}
 MESSAGES -> (MESSAGE_LINE NEW_LINE):* {% messages %}
-MESSAGE_LINE ->
-    INPUT_CHARACTER:* {% messageLine %}
-  | INPUT_FILE_REF {% id %}
-  | RESPONSE_REF {% id %}
+MESSAGE_LINE -> INPUT_CHARACTER:* {% messageLine %}
+              | INPUT_FILE_REF {% id %}
+              | RESPONSE_REF {% id %}
 
-INPUT_FILE_REF -> "<" __ FILE_PATH {% d => d[0] + " " + d[2] %}
+INPUT_FILE_REF -> "<" __ FILE_PATH {% inputFileRef %}
 
-RESPONSE_REF -> "<>" __ FILE_PATH {% d => d[0] + " " + d[2] %}
+RESPONSE_REF -> "<>" __ FILE_PATH {% responseRef %}
 
-FILE_PATH -> INPUT_CHARACTER:+ {% d => d[0].join('') %}
+FILE_PATH -> INPUT_CHARACTER:+ {% filePath %}
 
 ################
 # Base symbols #
@@ -85,12 +108,11 @@ IDENTIFIER -> IDENTIFIER_CHARACTER:+
 CR -> [\r]
 LF -> [\n]
 CRLF -> CR LF
-NEW_LINE ->
-    CR
-  | LF
-  | CRLF
+NEW_LINE -> CR
+          | LF
+          | CRLF
 NEW_LINE_WITH_INDENT -> NEW_LINE __
-LINE_TAIL -> INPUT_CHARACTER:* NEW_LINE {% d => d[0].join('') %}
+LINE_TAIL -> INPUT_CHARACTER:* NEW_LINE {% lineTail %}
 
 
 ###############
@@ -104,15 +126,14 @@ WHITESPACE ->
     SP {% id %}
   | HT {% id %}
   | FF {% id %}
-OPTIONAL_WHITESPACE -> WHITESPACE:* {% d => null %}
-REQUIRED_WHITESPACE -> WHITESPACE:+ {% d => null %}
-_ -> OPTIONAL_WHITESPACE {% d => null %}
-__ -> REQUIRED_WHITESPACE {% d => null %}
+OPTIONAL_WHITESPACE -> WHITESPACE:* {% stubNull %}
+REQUIRED_WHITESPACE -> WHITESPACE:+ {% stubNull %}
+_ -> OPTIONAL_WHITESPACE {% stubNull %}
+__ -> REQUIRED_WHITESPACE {% stubNull %}
 
 ######################
 # Request separators #
 ######################
 
-REQUEST_SEPARATOR ->
-    "###" NEW_LINE:* {% () => null %}
-  | "### " LINE_TAIL NEW_LINE:* {% d => null %}
+REQUEST_SEPARATOR -> "###" NEW_LINE:* {% stubNull %}
+                   | "### " LINE_TAIL NEW_LINE:* {% stubNull %}
