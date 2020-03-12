@@ -23,7 +23,8 @@
     "{}",
     "< ./file.json",
     "{}"
-   ]
+   ],
+   "responseRef": null
   }
  ]
 ]

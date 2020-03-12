@@ -365,6 +365,14 @@
         symbols: ['REQUEST_WITH_SEPARATOR$ebnf$1', 'REQUEST'],
         postprocess: nth(1),
       },
+      { name: 'REQUEST$ebnf$1', symbols: ['RESPONSE_REF'], postprocess: id },
+      {
+        name: 'REQUEST$ebnf$1',
+        symbols: [],
+        postprocess: function(d) {
+          return null;
+        },
+      },
       {
         name: 'REQUEST',
         symbols: [
@@ -373,8 +381,9 @@
           'HEADERS',
           'NEW_LINE',
           'MESSAGE_BODY',
+          'REQUEST$ebnf$1',
         ],
-        postprocess: d => request(d[0], d[2], d[4]),
+        postprocess: request,
       },
       {
         name: 'REQUEST_LINE$ebnf$1$subexpression$1',

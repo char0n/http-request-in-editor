@@ -3,13 +3,13 @@
   {
    "method": "GET",
    "requestTarget": {
-    "value": "http://example.com/api/get?id=42",
+    "value": "http://www.example.com",
     "meta": {
      "protocol": "http:",
-     "hostname": "example.com",
+     "hostname": "www.example.com",
      "port": "80",
-     "pathname": "/api/get",
-     "search": "?id=42"
+     "pathname": "/",
+     "search": ""
     }
    },
    "httpVersion": "1.1",
@@ -17,7 +17,7 @@
    "body": [
     ""
    ],
-   "responseRef": null
+   "responseRef": "<> ./file.json"
   }
  ]
 ]

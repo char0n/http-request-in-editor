@@ -41,7 +41,7 @@ REQUEST_WITH_SEPARATOR -> REQUEST_SEPARATOR:+ REQUEST {% nth(1) %}
 # Request #
 ###########
 
-REQUEST -> REQUEST_LINE NEW_LINE HEADERS NEW_LINE MESSAGE_BODY {% d => request(d[0], d[2], d[4]) %}
+REQUEST -> REQUEST_LINE NEW_LINE HEADERS NEW_LINE MESSAGE_BODY RESPONSE_REF:? {% request %}
 
 ################
 # Request line #

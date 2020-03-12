@@ -1,0 +1,7 @@
+GET http://www.example.com
+
+MESSAGE BODY
+
+<> ./file.json
+
+###

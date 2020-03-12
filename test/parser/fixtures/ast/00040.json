@@ -1,7 +1,7 @@
 [
  [
   {
-   "method": "POST",
+   "method": "GET",
    "requestTarget": {
     "value": "http://www.example.com",
     "meta": {
@@ -13,19 +13,14 @@
     }
    },
    "httpVersion": "1.1",
-   "headers": [
-    {
-     "name": "Header",
-     "value": "test"
-    }
-   ],
+   "headers": [],
    "body": [
-    ""
+    "MESSAGE BODY"
    ],
-   "responseRef": null
+   "responseRef": "<> ./file.json"
   },
   {
-   "method": "POST",
+   "method": "GET",
    "requestTarget": {
     "value": "http://www.example.com",
     "meta": {
@@ -37,16 +32,11 @@
     }
    },
    "httpVersion": "1.1",
-   "headers": [
-    {
-     "name": "Header",
-     "value": "test"
-    }
-   ],
+   "headers": [],
    "body": [
-    ""
+    "MESSAGE BODY"
    ],
-   "responseRef": null
+   "responseRef": "<> ./file.json"
   }
  ]
 ]

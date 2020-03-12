@@ -21,7 +21,8 @@
    ],
    "body": [
     "MESSAGE_BODY"
-   ]
+   ],
+   "responseRef": null
   }
  ]
 ]

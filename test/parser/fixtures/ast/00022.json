@@ -21,7 +21,8 @@
    ],
    "body": [
     "< ./file.json"
-   ]
+   ],
+   "responseRef": null
   }
  ]
 ]

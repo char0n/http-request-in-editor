@@ -63,7 +63,7 @@ const requestFile = data => [data[2], data[3]].flat(2);
  */
 
 // request :: (RequestLine, Headers, [String]) -> Request
-const request = (requestLine, headers, body) => {
+const request = ([requestLine, , headers, , body, responseRef]) => {
   const { method, requestTarget } = requestLine;
 
   return {
@@ -74,6 +74,7 @@ const request = (requestLine, headers, body) => {
     },
     headers,
     body,
+    responseRef,
   };
 };
 
