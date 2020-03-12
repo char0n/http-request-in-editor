@@ -11,6 +11,8 @@ const {
   // Request line
   requestLine,
   requestTarget,
+  originForm,
+  absoluteForm,
   httpVersion,
   // Headers
   headerField,
@@ -20,8 +22,9 @@ const {
   messages,
   messageLine,
   inputFileRef,
-  responseRef,
   filePath,
+  // Response reference
+  responseRef,
   // Line Terminators
   lineTail,
 } = require('./postprocessors');
@@ -63,7 +66,13 @@ HTTP_VERSION -> "HTTP/" DIGIT:+ "." DIGIT:+ {% httpVersion %}
 # Request target #
 ##################
 
-REQUEST_TARGET -> [\S]:+ {% requestTarget %}
+REQUEST_TARGET -> (ORIGIN_FORM | ABSOLUTE_FORM | ASTERISK_FORM) {% requestTarget %}
+
+ORIGIN_FORM -> "/" [\S]:+ {% originForm %}
+ABSOLUTE_FORM -> SCHEME "://" [\S]:+ {% absoluteForm %}
+ASTERISK_FORM -> "*" {% id %}
+SCHEME -> ("http" | "https") {% id %}
+
 
 ###########
 # Headers #
@@ -83,13 +92,16 @@ MESSAGE_BODY -> MESSAGES {% id %}
 MESSAGES -> (MESSAGE_LINE NEW_LINE):* {% messages %}
 MESSAGE_LINE -> INPUT_CHARACTER:* {% messageLine %}
               | INPUT_FILE_REF {% id %}
-              | RESPONSE_REF {% id %}
 
 INPUT_FILE_REF -> "<" __ FILE_PATH {% inputFileRef %}
 
-RESPONSE_REF -> "<>" __ FILE_PATH {% responseRef %}
-
 FILE_PATH -> INPUT_CHARACTER:+ {% filePath %}
+
+######################
+# Response reference #
+######################
+
+RESPONSE_REF -> "<>" __ FILE_PATH NEW_LINE:+ {% responseRef %}
 
 ################
 # Base symbols #

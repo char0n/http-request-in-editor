@@ -1,6 +1,9 @@
-GET http://www.example.com
+###
+POST http://www.example.com
 Header: test
 
-<> ./file.json
+###
+POST http://www.example.com
+Header: test
 
 ###

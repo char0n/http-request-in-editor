@@ -1,6 +1,3 @@
-GET http://www.example.com
-Header: test
-
-<> ./file.json
+http://www.google.com
 
 ###

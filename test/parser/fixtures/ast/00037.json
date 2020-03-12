@@ -1,7 +1,7 @@
 [
  [
   {
-   "method": "GET",
+   "method": "POST",
    "requestTarget": {
     "value": "http://www.example.com",
     "meta": {
@@ -20,7 +20,30 @@
     }
    ],
    "body": [
-    "<> ./file.json"
+    ""
+   ]
+  },
+  {
+   "method": "POST",
+   "requestTarget": {
+    "value": "http://www.example.com",
+    "meta": {
+     "protocol": "http:",
+     "hostname": "www.example.com",
+     "port": "80",
+     "pathname": "/",
+     "search": ""
+    }
+   },
+   "httpVersion": "1.1",
+   "headers": [
+    {
+     "name": "Header",
+     "value": "test"
+    }
+   ],
+   "body": [
+    ""
    ]
   }
  ]

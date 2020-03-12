@@ -85,7 +85,13 @@ const requestLine = ([method, requestTarget, httpVersion]) => ({
 });
 
 // requestTarget :: Data -> String
-const requestTarget = data => data[0].join('');
+const requestTarget = data => data[0][0];
+
+// originForm :: Data -> String
+const originForm = data => data[0] + data[1].join('');
+
+// absoluteForm :: Data -> String
+const absoluteForm = data => data[0] + data[1] + data[2].join('');
 
 // httpVersion :: Data -> String
 const httpVersion = data => `${data[1].join('')}.${data[3].join('')}`;
@@ -127,7 +133,11 @@ const messages = data =>
 const messageLine = (data, location, reject) => {
   const lineTail = data[0].join('');
 
-  if (lineTail.startsWith('<') || lineTail.startsWith('###')) {
+  if (
+    lineTail.startsWith('<') ||
+    lineTail.startsWith('<>') ||
+    lineTail.startsWith('###')
+  ) {
     return reject;
   }
 
@@ -137,11 +147,15 @@ const messageLine = (data, location, reject) => {
 // inputFileRef :: Data -> String
 const inputFileRef = data => `${data[0]} ${data[2]}`;
 
-// responseRef :: Data -> String
-const responseRef = data => `${data[0]} ${data[2]}`;
-
 // filePath
 const filePath = data => data[0].join('');
+
+/**
+ * Response reference
+ */
+
+// responseRef :: Data -> String
+const responseRef = data => `${data[0]} ${data[2]}`;
 
 /**
  * Line Terminators
@@ -161,6 +175,8 @@ module.exports = {
   // Request line
   requestLine,
   requestTarget,
+  originForm,
+  absoluteForm,
   httpVersion,
   // Headers
   headerField,
@@ -170,8 +186,9 @@ module.exports = {
   messages,
   messageLine,
   inputFileRef,
-  responseRef,
   filePath,
+  // Response reference
+  responseRef,
   // Line Terminators
   lineTail,
 };
