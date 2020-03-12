@@ -1,7 +1,6 @@
 ###
 GET http://www.example.com
-Header: value
 
-> {% script %}
+> ./file.js
 
 ###

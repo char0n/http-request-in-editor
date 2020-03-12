@@ -23,6 +23,7 @@
     "< ./file1.json",
     "< ./file2.json"
    ],
+   "responseHandler": null,
    "responseRef": null
   }
  ]

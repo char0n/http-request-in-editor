@@ -63,7 +63,15 @@ const requestFile = data => [data[2], data[3]].flat(2);
  */
 
 // request :: (RequestLine, Headers, [String]) -> Request
-const request = ([requestLine, , headers, , body, responseRef]) => {
+const request = ([
+  requestLine,
+  ,
+  headers,
+  ,
+  body,
+  responseHandler,
+  responseRef,
+]) => {
   const { method, requestTarget } = requestLine;
 
   return {
@@ -74,6 +82,7 @@ const request = ([requestLine, , headers, , body, responseRef]) => {
     },
     headers,
     body,
+    responseHandler,
     responseRef,
   };
 };
@@ -135,9 +144,10 @@ const messageLine = (data, location, reject) => {
   const lineTail = data[0].join('');
 
   if (
-    lineTail.startsWith('<') ||
-    lineTail.startsWith('<>') ||
-    lineTail.startsWith('###')
+    lineTail.includes('<') ||
+    lineTail.includes('> ') ||
+    lineTail.includes('<> ') ||
+    lineTail.includes('###')
   ) {
     return reject;
   }
@@ -150,6 +160,28 @@ const inputFileRef = data => `${data[0]} ${data[2]}`;
 
 // filePath
 const filePath = data => data[0].join('');
+
+/**
+ * Response handler
+ */
+
+// responseHandlerFilePath :: (Data, Number, Reject) -> String
+const responseHandlerFilePath = (data, location, reject) => {
+  const lineTail = data[2];
+
+  if (lineTail.startsWith('{%')) return reject;
+
+  return lineTail;
+};
+
+// handlerScript :: (Data, Number, Reject) -> String
+const handlerScript = (data, location, reject) => {
+  const script = data[1].join('');
+
+  if (script.includes('%}') || script.includes('###')) return reject;
+
+  return script;
+};
 
 /**
  * Response reference
@@ -188,6 +220,9 @@ module.exports = {
   messageLine,
   inputFileRef,
   filePath,
+  // Response handler
+  responseHandlerFilePath,
+  handlerScript,
   // Response reference
   responseRef,
   // Line Terminators

@@ -24,6 +24,7 @@
     "< ./file.json",
     "{}"
    ],
+   "responseHandler": null,
    "responseRef": null
   }
  ]

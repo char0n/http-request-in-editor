@@ -28,6 +28,10 @@
     messageLine,
     inputFileRef,
     filePath,
+    // Response handler
+    responseHandlerFilePath,
+    responseHandler,
+    handlerScript,
     // Response reference
     responseRef,
     // Line Terminators
@@ -365,9 +369,21 @@
         symbols: ['REQUEST_WITH_SEPARATOR$ebnf$1', 'REQUEST'],
         postprocess: nth(1),
       },
-      { name: 'REQUEST$ebnf$1', symbols: ['RESPONSE_REF'], postprocess: id },
       {
         name: 'REQUEST$ebnf$1',
+        symbols: ['RESPONSE_HANDLER'],
+        postprocess: id,
+      },
+      {
+        name: 'REQUEST$ebnf$1',
+        symbols: [],
+        postprocess: function(d) {
+          return null;
+        },
+      },
+      { name: 'REQUEST$ebnf$2', symbols: ['RESPONSE_REF'], postprocess: id },
+      {
+        name: 'REQUEST$ebnf$2',
         symbols: [],
         postprocess: function(d) {
           return null;
@@ -382,6 +398,7 @@
           'NEW_LINE',
           'MESSAGE_BODY',
           'REQUEST$ebnf$1',
+          'REQUEST$ebnf$2',
         ],
         postprocess: request,
       },
@@ -755,6 +772,73 @@
         name: 'FILE_PATH',
         symbols: ['FILE_PATH$ebnf$1'],
         postprocess: filePath,
+      },
+      { name: 'RESPONSE_HANDLER$ebnf$1', symbols: ['NEW_LINE'] },
+      {
+        name: 'RESPONSE_HANDLER$ebnf$1',
+        symbols: ['RESPONSE_HANDLER$ebnf$1', 'NEW_LINE'],
+        postprocess: function arrpush(d) {
+          return d[0].concat([d[1]]);
+        },
+      },
+      {
+        name: 'RESPONSE_HANDLER',
+        symbols: [
+          { literal: '>' },
+          '__',
+          'HANDLER_SCRIPT',
+          'RESPONSE_HANDLER$ebnf$1',
+        ],
+        postprocess: nth(2),
+      },
+      { name: 'RESPONSE_HANDLER$ebnf$2', symbols: ['NEW_LINE'] },
+      {
+        name: 'RESPONSE_HANDLER$ebnf$2',
+        symbols: ['RESPONSE_HANDLER$ebnf$2', 'NEW_LINE'],
+        postprocess: function arrpush(d) {
+          return d[0].concat([d[1]]);
+        },
+      },
+      {
+        name: 'RESPONSE_HANDLER',
+        symbols: [
+          { literal: '>' },
+          '__',
+          'FILE_PATH',
+          'RESPONSE_HANDLER$ebnf$2',
+        ],
+        postprocess: responseHandlerFilePath,
+      },
+      {
+        name: 'HANDLER_SCRIPT$string$1',
+        symbols: [{ literal: '{' }, { literal: '%' }],
+        postprocess: function joiner(d) {
+          return d.join('');
+        },
+      },
+      { name: 'HANDLER_SCRIPT$ebnf$1', symbols: [/[\S\s]/] },
+      {
+        name: 'HANDLER_SCRIPT$ebnf$1',
+        symbols: ['HANDLER_SCRIPT$ebnf$1', /[\S\s]/],
+        postprocess: function arrpush(d) {
+          return d[0].concat([d[1]]);
+        },
+      },
+      {
+        name: 'HANDLER_SCRIPT$string$2',
+        symbols: [{ literal: '%' }, { literal: '}' }],
+        postprocess: function joiner(d) {
+          return d.join('');
+        },
+      },
+      {
+        name: 'HANDLER_SCRIPT',
+        symbols: [
+          'HANDLER_SCRIPT$string$1',
+          'HANDLER_SCRIPT$ebnf$1',
+          'HANDLER_SCRIPT$string$2',
+        ],
+        postprocess: handlerScript,
       },
       {
         name: 'RESPONSE_REF$string$1',

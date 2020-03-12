@@ -23,6 +23,10 @@ const {
   messageLine,
   inputFileRef,
   filePath,
+  // Response handler
+  responseHandlerFilePath,
+  responseHandler,
+  handlerScript,
   // Response reference
   responseRef,
   // Line Terminators
@@ -41,7 +45,7 @@ REQUEST_WITH_SEPARATOR -> REQUEST_SEPARATOR:+ REQUEST {% nth(1) %}
 # Request #
 ###########
 
-REQUEST -> REQUEST_LINE NEW_LINE HEADERS NEW_LINE MESSAGE_BODY RESPONSE_REF:? {% request %}
+REQUEST -> REQUEST_LINE NEW_LINE HEADERS NEW_LINE MESSAGE_BODY RESPONSE_HANDLER:? RESPONSE_REF:? {% request %}
 
 ################
 # Request line #
@@ -96,6 +100,15 @@ MESSAGE_LINE -> INPUT_CHARACTER:* {% messageLine %}
 INPUT_FILE_REF -> "<" __ FILE_PATH {% inputFileRef %}
 
 FILE_PATH -> INPUT_CHARACTER:+ {% filePath %}
+
+####################
+# Response handler #
+####################
+
+RESPONSE_HANDLER -> ">" __ HANDLER_SCRIPT NEW_LINE:+ {% nth(2) %}
+                  | ">" __ FILE_PATH NEW_LINE:+ {% responseHandlerFilePath %}
+
+HANDLER_SCRIPT -> "{%" [\S\s]:+ "%}" {% handlerScript %}
 
 ######################
 # Response reference #

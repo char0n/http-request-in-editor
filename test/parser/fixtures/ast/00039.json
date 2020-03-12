@@ -17,6 +17,7 @@
    "body": [
     "MESSAGE BODY"
    ],
+   "responseHandler": null,
    "responseRef": "<> ./file.json"
   }
  ]

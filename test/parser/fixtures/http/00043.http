@@ -1,7 +1,8 @@
 ###
 GET http://www.example.com
-Header: value
 
-> {% script %}
+MESSAGE BODY
+
+> ./file.js
 
 ###

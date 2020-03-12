@@ -3,11 +3,11 @@
   {
    "method": "GET",
    "requestTarget": {
-    "value": "http://127.0.0.1:8080",
+    "value": "http://www.example.com",
     "meta": {
      "protocol": "http:",
-     "hostname": "127.0.0.1",
-     "port": "8080",
+     "hostname": "www.example.com",
+     "port": "80",
      "pathname": "/",
      "search": ""
     }
@@ -15,9 +15,9 @@
    "httpVersion": "1.1",
    "headers": [],
    "body": [
-    ""
+    "MESSAGE BODY"
    ],
-   "responseHandler": null,
+   "responseHandler": " script ",
    "responseRef": null
   }
  ]

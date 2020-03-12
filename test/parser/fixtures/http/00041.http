@@ -1,6 +1,7 @@
 ###
 GET http://www.example.com
-Header: value
+
+MESSAGE BODY
 
 > {% script %}
 
