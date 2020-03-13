@@ -67,4 +67,3 @@ Generate random strings that satisfy the grammar defined in`src/parser/grammar.n
 
  - Line comments
  - No support for multiline `request-target`
- - Environment variables

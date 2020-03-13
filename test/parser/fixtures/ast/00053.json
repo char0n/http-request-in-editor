@@ -1,0 +1,26 @@
+[
+ [
+  {
+   "method": "GET",
+   "requestTarget": {
+    "value": "http://www.example.com",
+    "meta": {
+     "protocol": "http:",
+     "hostname": "www.example.com",
+     "port": "80",
+     "pathname": "/",
+     "search": ""
+    }
+   },
+   "httpVersion": "1.1",
+   "headers": [],
+   "body": [
+    "body",
+    "{{ var }}",
+    "body"
+   ],
+   "responseHandler": null,
+   "responseRef": null
+  }
+ ]
+]
