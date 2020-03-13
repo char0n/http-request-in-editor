@@ -15,13 +15,14 @@
     request,
     // Request line
     requestLine,
+    httpVersion,
+    // Request Target
     requestTarget,
     originForm,
     originFormTail,
     originFormTailEnvVar,
     absoluteForm,
     scheme,
-    httpVersion,
     // Headers
     headerField,
     fieldName,
@@ -33,12 +34,15 @@
     filePath,
     // Response handler
     responseHandlerFilePath,
-    responseHandler,
     handlerScript,
     // Response reference
     responseRef,
     // Line Terminators
     lineTail,
+    // Comments
+    lineComment,
+    // Environment variables
+    envVariable,
   } = require('./postprocessors');
   var grammar = {
     Lexer: undefined,
@@ -297,8 +301,15 @@
       },
       { name: 'REQUESTS_FILE$ebnf$1', symbols: [] },
       {
+        name: 'REQUESTS_FILE$ebnf$1$subexpression$1',
+        symbols: ['REQUEST_SEPARATOR'],
+      },
+      {
         name: 'REQUESTS_FILE$ebnf$1',
-        symbols: ['REQUESTS_FILE$ebnf$1', 'NEW_LINE'],
+        symbols: [
+          'REQUESTS_FILE$ebnf$1',
+          'REQUESTS_FILE$ebnf$1$subexpression$1',
+        ],
         postprocess: function arrpush(d) {
           return d[0].concat([d[1]]);
         },
@@ -306,7 +317,7 @@
       { name: 'REQUESTS_FILE$ebnf$2', symbols: [] },
       {
         name: 'REQUESTS_FILE$ebnf$2$subexpression$1',
-        symbols: ['REQUEST_SEPARATOR'],
+        symbols: ['REQUEST_WITH_SEPARATOR'],
       },
       {
         name: 'REQUESTS_FILE$ebnf$2',
@@ -321,7 +332,7 @@
       { name: 'REQUESTS_FILE$ebnf$3', symbols: [] },
       {
         name: 'REQUESTS_FILE$ebnf$3$subexpression$1',
-        symbols: ['REQUEST_WITH_SEPARATOR'],
+        symbols: ['REQUEST_SEPARATOR'],
       },
       {
         name: 'REQUESTS_FILE$ebnf$3',
@@ -333,29 +344,14 @@
           return d[0].concat([d[1]]);
         },
       },
-      { name: 'REQUESTS_FILE$ebnf$4', symbols: [] },
-      {
-        name: 'REQUESTS_FILE$ebnf$4$subexpression$1',
-        symbols: ['REQUEST_SEPARATOR'],
-      },
-      {
-        name: 'REQUESTS_FILE$ebnf$4',
-        symbols: [
-          'REQUESTS_FILE$ebnf$4',
-          'REQUESTS_FILE$ebnf$4$subexpression$1',
-        ],
-        postprocess: function arrpush(d) {
-          return d[0].concat([d[1]]);
-        },
-      },
       {
         name: 'REQUESTS_FILE',
         symbols: [
+          'WHIT?',
           'REQUESTS_FILE$ebnf$1',
-          'REQUESTS_FILE$ebnf$2',
           'REQUEST',
+          'REQUESTS_FILE$ebnf$2',
           'REQUESTS_FILE$ebnf$3',
-          'REQUESTS_FILE$ebnf$4',
         ],
         postprocess: requestFile,
       },
@@ -786,12 +782,12 @@
           '_',
           'ENV_VARIABLE$string$2',
         ],
-        postprocess: d => d.flat().join(''),
+        postprocess: envVariable,
       },
       { name: 'HEADERS$ebnf$1', symbols: [] },
       {
         name: 'HEADERS$ebnf$1$subexpression$1',
-        symbols: ['HEADER_FIELD', 'NEW_LINE'],
+        symbols: ['HEADER_FIELD', 'NEW_LINE', 'WHIT?'],
         postprocess: id,
       },
       {
@@ -958,22 +954,9 @@
           return d.join('');
         },
       },
-      { name: 'RESPONSE_REF$ebnf$1', symbols: ['NEW_LINE'] },
-      {
-        name: 'RESPONSE_REF$ebnf$1',
-        symbols: ['RESPONSE_REF$ebnf$1', 'NEW_LINE'],
-        postprocess: function arrpush(d) {
-          return d[0].concat([d[1]]);
-        },
-      },
       {
         name: 'RESPONSE_REF',
-        symbols: [
-          'RESPONSE_REF$string$1',
-          '__',
-          'FILE_PATH',
-          'RESPONSE_REF$ebnf$1',
-        ],
+        symbols: ['RESPONSE_REF$string$1', '__', 'FILE_PATH', 'WHIT'],
         postprocess: responseRef,
       },
       { name: 'INPUT_CHARACTER', symbols: [/[^\r\n]/] },
@@ -1043,6 +1026,31 @@
       },
       { name: '_', symbols: ['OPTIONAL_WHITESPACE'], postprocess: stubNull },
       { name: '__', symbols: ['REQUIRED_WHITESPACE'], postprocess: stubNull },
+      { name: 'WHIT', symbols: ['WHITRAW'] },
+      { name: 'WHIT', symbols: ['WHITRAW?', 'LINE_COMMENT', 'WHIT?'] },
+      { name: 'WHIT?', symbols: [] },
+      { name: 'WHIT?', symbols: ['WHIT'] },
+      { name: 'WHITRAW', symbols: [/[\s]/] },
+      { name: 'WHITRAW', symbols: ['WHITRAW', /[\s]/] },
+      { name: 'WHITRAW?', symbols: [] },
+      { name: 'WHITRAW?', symbols: ['WHITRAW'] },
+      {
+        name: 'LINE_COMMENT',
+        symbols: [{ literal: '#' }, 'LINE_TAIL'],
+        postprocess: lineComment,
+      },
+      {
+        name: 'LINE_COMMENT$string$1',
+        symbols: [{ literal: '/' }, { literal: '/' }],
+        postprocess: function joiner(d) {
+          return d.join('');
+        },
+      },
+      {
+        name: 'LINE_COMMENT',
+        symbols: ['LINE_COMMENT$string$1', 'LINE_TAIL'],
+        postprocess: lineComment,
+      },
       {
         name: 'REQUEST_SEPARATOR$string$1',
         symbols: [{ literal: '#' }, { literal: '#' }, { literal: '#' }],
@@ -1050,17 +1058,9 @@
           return d.join('');
         },
       },
-      { name: 'REQUEST_SEPARATOR$ebnf$1', symbols: [] },
-      {
-        name: 'REQUEST_SEPARATOR$ebnf$1',
-        symbols: ['REQUEST_SEPARATOR$ebnf$1', 'NEW_LINE'],
-        postprocess: function arrpush(d) {
-          return d[0].concat([d[1]]);
-        },
-      },
       {
         name: 'REQUEST_SEPARATOR',
-        symbols: ['REQUEST_SEPARATOR$string$1', 'REQUEST_SEPARATOR$ebnf$1'],
+        symbols: ['REQUEST_SEPARATOR$string$1', 'WHIT?'],
         postprocess: stubNull,
       },
       {
@@ -1075,21 +1075,9 @@
           return d.join('');
         },
       },
-      { name: 'REQUEST_SEPARATOR$ebnf$2', symbols: [] },
-      {
-        name: 'REQUEST_SEPARATOR$ebnf$2',
-        symbols: ['REQUEST_SEPARATOR$ebnf$2', 'NEW_LINE'],
-        postprocess: function arrpush(d) {
-          return d[0].concat([d[1]]);
-        },
-      },
       {
         name: 'REQUEST_SEPARATOR',
-        symbols: [
-          'REQUEST_SEPARATOR$string$2',
-          'LINE_TAIL',
-          'REQUEST_SEPARATOR$ebnf$2',
-        ],
+        symbols: ['REQUEST_SEPARATOR$string$2', 'LINE_TAIL', 'WHIT?'],
         postprocess: stubNull,
       },
     ],

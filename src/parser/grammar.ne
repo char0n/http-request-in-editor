@@ -1,7 +1,7 @@
 @builtin "number.ne"
 @{%
 const {
-  // general postprocessors
+ // general postprocessors
   nth,
   stubNull,
   // Request file
@@ -10,13 +10,14 @@ const {
   request,
   // Request line
   requestLine,
+  httpVersion,
+  // Request Target
   requestTarget,
   originForm,
   originFormTail,
   originFormTailEnvVar,
   absoluteForm,
   scheme,
-  httpVersion,
   // Headers
   headerField,
   fieldName,
@@ -28,12 +29,15 @@ const {
   filePath,
   // Response handler
   responseHandlerFilePath,
-  responseHandler,
   handlerScript,
   // Response reference
   responseRef,
   // Line Terminators
   lineTail,
+  // Comments
+  lineComment,
+  // Environment variables
+  envVariable,
 } = require('./postprocessors');
 %}
 
@@ -41,7 +45,7 @@ const {
 # Requests file #
 #################
 
-REQUESTS_FILE -> NEW_LINE:* (REQUEST_SEPARATOR):* REQUEST (REQUEST_WITH_SEPARATOR):* (REQUEST_SEPARATOR):* {% requestFile %}
+REQUESTS_FILE -> WHIT? (REQUEST_SEPARATOR):* REQUEST (REQUEST_WITH_SEPARATOR):* (REQUEST_SEPARATOR):* {% requestFile %}
 REQUEST_WITH_SEPARATOR -> REQUEST_SEPARATOR:+ REQUEST {% nth(1) %}
 
 ###########
@@ -90,14 +94,14 @@ SCHEME -> "http" {% id %}
         | "https" {% id %}
         | ENV_VARIABLE {% id %}
 
-ENV_VARIABLE -> "{{" _ [\S]:+ _ "}}" {% d => d.flat().join('') %}
+ENV_VARIABLE -> "{{" _ [\S]:+ _ "}}" {% envVariable %}
 
 
 ###########
 # Headers #
 ###########
 
-HEADERS -> (HEADER_FIELD NEW_LINE {% id %}):* {% id %}
+HEADERS -> (HEADER_FIELD NEW_LINE WHIT? {% id %}):* {% id %}
 HEADER_FIELD -> FIELD_NAME ":" _ FIELD_VALUE _ {% headerField %}
 FIELD_NAME -> [^\r\n\:]:+ {% fieldName %}
 FIELD_VALUE -> INPUT_CHARACTER:* {% fieldValue %}
@@ -129,7 +133,7 @@ HANDLER_SCRIPT -> "{%" [\S\s]:+ "%}" {% handlerScript %}
 # Response reference #
 ######################
 
-RESPONSE_REF -> "<>" __ FILE_PATH NEW_LINE:+ {% responseRef %}
+RESPONSE_REF -> "<>" __ FILE_PATH WHIT {% responseRef %}
 
 ################
 # Base symbols #
@@ -171,9 +175,32 @@ REQUIRED_WHITESPACE -> WHITESPACE:+ {% stubNull %}
 _ -> OPTIONAL_WHITESPACE {% stubNull %}
 __ -> REQUIRED_WHITESPACE {% stubNull %}
 
+# Whitespace with a comment
+WHIT -> WHITRAW
+      | WHITRAW? LINE_COMMENT WHIT?
+
+# Optional whitespace with a comment
+WHIT? -> null
+       | WHIT
+
+# Literally a string of whitespace
+WHITRAW -> [\s]
+         | WHITRAW [\s]
+
+# A string of whitespace OR the empty string
+WHITRAW? -> null
+          | WHITRAW
+
+############
+# Comments #
+############
+
+LINE_COMMENT -> "#" LINE_TAIL {% lineComment %}
+              | "//" LINE_TAIL {% lineComment %}
+
 ######################
 # Request separators #
 ######################
 
-REQUEST_SEPARATOR -> "###" NEW_LINE:* {% stubNull %}
-                   | "### " LINE_TAIL NEW_LINE:* {% stubNull %}
+REQUEST_SEPARATOR -> "###" WHIT? {% stubNull %}
+                   | "### " LINE_TAIL WHIT? {% stubNull %}

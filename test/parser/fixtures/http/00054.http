@@ -1,11 +1,11 @@
-// test
+# test
 ### test
 
-//test
+#test
 
 GET http://www.example.com
 Header1: value1
-// test
+# test
 Header2: value2
 
 body
@@ -13,9 +13,9 @@ body
 > {% script %}
 <> file.json
 
-// test
+# test
 
-// test
+# test
 ###
 GET http://www.example.com
 

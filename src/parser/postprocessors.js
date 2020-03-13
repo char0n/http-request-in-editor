@@ -87,6 +87,10 @@ const request = ([
   };
 };
 
+/**
+ * Request line
+ */
+
 // requestLine :: (String, String, String) -> RequestLine
 const requestLine = ([method, requestTarget, httpVersion]) => ({
   method: method || 'GET',
@@ -94,11 +98,24 @@ const requestLine = ([method, requestTarget, httpVersion]) => ({
   httpVersion: httpVersion || '1.1',
 });
 
+// httpVersion :: Data -> String
+const httpVersion = data => `${data[1].join('')}.${data[3].join('')}`;
+
+/**
+ * Request target
+ */
+
 // requestTarget :: Data -> String
 const requestTarget = data => data[0][0];
 
-// originForm :: Data -> String
-const originForm = data => data[0] + data[1];
+// originForm :: (Data, Number, Reject) -> String
+const originForm = (data, location, reject) => {
+  const form = data[0] + data[1];
+
+  if (form.startsWith('//')) return reject;
+
+  return form;
+};
 
 // originFormTail :: Data -> String
 const originFormTail = data => data[0].join('');
@@ -111,9 +128,6 @@ const absoluteForm = d => d[0] + d[1] + d[2].join('') + (d[3] || '');
 
 // scheme :: Data -> String
 const scheme = data => data.flat().join('');
-
-// httpVersion :: Data -> String
-const httpVersion = data => `${data[1].join('')}.${data[3].join('')}`;
 
 /**
  * Headers
@@ -206,6 +220,24 @@ const responseRef = data => `${data[0]} ${data[2]}`;
 // lineTail :: Data -> String
 const lineTail = data => data[0].join('');
 
+/**
+ * Comments
+ */
+
+// lineComment :: (Data, Number, Reject) -> String
+const lineComment = (data, location, reject) => {
+  if (data[1].includes('##')) return reject;
+
+  return data[1];
+};
+
+/**
+ * Environment variables
+ */
+
+// envVariable :: Data -> String
+const envVariable = data => data.flat().join('');
+
 module.exports = {
   // general postprocessors
   nth,
@@ -216,13 +248,14 @@ module.exports = {
   request,
   // Request line
   requestLine,
+  httpVersion,
+  // Request Target
   requestTarget,
   originForm,
   originFormTail,
   originFormTailEnvVar,
   absoluteForm,
   scheme,
-  httpVersion,
   // Headers
   headerField,
   fieldName,
@@ -239,4 +272,8 @@ module.exports = {
   responseRef,
   // Line Terminators
   lineTail,
+  // Comments
+  lineComment,
+  // Environment variables
+  envVariable,
 };

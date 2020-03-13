@@ -1,0 +1,53 @@
+[
+ [
+  {
+   "method": "GET",
+   "requestTarget": {
+    "value": "http://www.example.com",
+    "meta": {
+     "protocol": "http:",
+     "hostname": "www.example.com",
+     "port": "80",
+     "pathname": "/",
+     "search": ""
+    }
+   },
+   "httpVersion": "1.1",
+   "headers": [
+    {
+     "name": "Header1",
+     "value": "value1"
+    },
+    {
+     "name": "Header2",
+     "value": "value2"
+    }
+   ],
+   "body": [
+    "body"
+   ],
+   "responseHandler": " script ",
+   "responseRef": "<> file.json"
+  },
+  {
+   "method": "GET",
+   "requestTarget": {
+    "value": "http://www.example.com",
+    "meta": {
+     "protocol": "http:",
+     "hostname": "www.example.com",
+     "port": "80",
+     "pathname": "/",
+     "search": ""
+    }
+   },
+   "httpVersion": "1.1",
+   "headers": [],
+   "body": [
+    ""
+   ],
+   "responseHandler": null,
+   "responseRef": null
+  }
+ ]
+]
