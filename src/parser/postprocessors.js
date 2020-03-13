@@ -98,10 +98,19 @@ const requestLine = ([method, requestTarget, httpVersion]) => ({
 const requestTarget = data => data[0][0];
 
 // originForm :: Data -> String
-const originForm = data => data[0] + data[1].join('');
+const originForm = data => data[0] + data[1];
+
+// originFormTail :: Data -> String
+const originFormTail = data => data[0].join('');
+
+// originFormTailEnvVar :: Data -> String
+const originFormTailEnvVar = d => d[0].join('') + d[1].flat(2).join('');
 
 // absoluteForm :: Data -> String
-const absoluteForm = data => data[0] + data[1] + data[2].join('');
+const absoluteForm = d => d[0] + d[1] + d[2].join('') + (d[3] || '');
+
+// scheme :: Data -> String
+const scheme = data => data.flat().join('');
 
 // httpVersion :: Data -> String
 const httpVersion = data => `${data[1].join('')}.${data[3].join('')}`;
@@ -209,7 +218,10 @@ module.exports = {
   requestLine,
   requestTarget,
   originForm,
+  originFormTail,
+  originFormTailEnvVar,
   absoluteForm,
+  scheme,
   httpVersion,
   // Headers
   headerField,

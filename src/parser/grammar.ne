@@ -12,7 +12,10 @@ const {
   requestLine,
   requestTarget,
   originForm,
+  originFormTail,
+  originFormTailEnvVar,
   absoluteForm,
+  scheme,
   httpVersion,
   // Headers
   headerField,
@@ -70,12 +73,24 @@ HTTP_VERSION -> "HTTP/" DIGIT:+ "." DIGIT:+ {% httpVersion %}
 # Request target #
 ##################
 
-REQUEST_TARGET -> (ORIGIN_FORM | ABSOLUTE_FORM | ASTERISK_FORM) {% requestTarget %}
+REQUEST_TARGET -> (ORIGIN_FORM | ABSOLUTE_FORM | ASTERISK_FORM | ENV_VARIABLE) {% requestTarget %}
 
-ORIGIN_FORM -> "/" [\S]:+ {% originForm %}
-ABSOLUTE_FORM -> SCHEME "://" [\S]:+ {% absoluteForm %}
+
+ORIGIN_FORM -> "/" ORIGIN_FORM_TAIL {% originForm %}
+
+ORIGIN_FORM_TAIL -> null
+                  | [^{}\s]:+ {% originFormTail %}
+                  | [^{\s]:* (ENV_VARIABLE [^}\s]:*):+ {% originFormTailEnvVar %}
+
+ABSOLUTE_FORM -> SCHEME "://" [^/\s]:+ ORIGIN_FORM:? {% absoluteForm %}
+
 ASTERISK_FORM -> "*" {% id %}
-SCHEME -> ("http" | "https") {% id %}
+
+SCHEME -> "http" {% id %}
+        | "https" {% id %}
+        | ENV_VARIABLE {% id %}
+
+ENV_VARIABLE -> "{{" _ [\S]:+ _ "}}" {% d => d.flat().join('') %}
 
 
 ###########

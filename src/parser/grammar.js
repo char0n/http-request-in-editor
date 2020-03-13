@@ -17,7 +17,10 @@
     requestLine,
     requestTarget,
     originForm,
+    originFormTail,
+    originFormTailEnvVar,
     absoluteForm,
+    scheme,
     httpVersion,
     // Headers
     headerField,
@@ -604,23 +607,87 @@
       { name: 'REQUEST_TARGET$subexpression$1', symbols: ['ORIGIN_FORM'] },
       { name: 'REQUEST_TARGET$subexpression$1', symbols: ['ABSOLUTE_FORM'] },
       { name: 'REQUEST_TARGET$subexpression$1', symbols: ['ASTERISK_FORM'] },
+      { name: 'REQUEST_TARGET$subexpression$1', symbols: ['ENV_VARIABLE'] },
       {
         name: 'REQUEST_TARGET',
         symbols: ['REQUEST_TARGET$subexpression$1'],
         postprocess: requestTarget,
       },
-      { name: 'ORIGIN_FORM$ebnf$1', symbols: [/[\S]/] },
       {
-        name: 'ORIGIN_FORM$ebnf$1',
-        symbols: ['ORIGIN_FORM$ebnf$1', /[\S]/],
+        name: 'ORIGIN_FORM',
+        symbols: [{ literal: '/' }, 'ORIGIN_FORM_TAIL'],
+        postprocess: originForm,
+      },
+      { name: 'ORIGIN_FORM_TAIL', symbols: [] },
+      { name: 'ORIGIN_FORM_TAIL$ebnf$1', symbols: [/[^{}\s]/] },
+      {
+        name: 'ORIGIN_FORM_TAIL$ebnf$1',
+        symbols: ['ORIGIN_FORM_TAIL$ebnf$1', /[^{}\s]/],
         postprocess: function arrpush(d) {
           return d[0].concat([d[1]]);
         },
       },
       {
-        name: 'ORIGIN_FORM',
-        symbols: [{ literal: '/' }, 'ORIGIN_FORM$ebnf$1'],
-        postprocess: originForm,
+        name: 'ORIGIN_FORM_TAIL',
+        symbols: ['ORIGIN_FORM_TAIL$ebnf$1'],
+        postprocess: originFormTail,
+      },
+      { name: 'ORIGIN_FORM_TAIL$ebnf$2', symbols: [] },
+      {
+        name: 'ORIGIN_FORM_TAIL$ebnf$2',
+        symbols: ['ORIGIN_FORM_TAIL$ebnf$2', /[^{\s]/],
+        postprocess: function arrpush(d) {
+          return d[0].concat([d[1]]);
+        },
+      },
+      { name: 'ORIGIN_FORM_TAIL$ebnf$3$subexpression$1$ebnf$1', symbols: [] },
+      {
+        name: 'ORIGIN_FORM_TAIL$ebnf$3$subexpression$1$ebnf$1',
+        symbols: ['ORIGIN_FORM_TAIL$ebnf$3$subexpression$1$ebnf$1', /[^}\s]/],
+        postprocess: function arrpush(d) {
+          return d[0].concat([d[1]]);
+        },
+      },
+      {
+        name: 'ORIGIN_FORM_TAIL$ebnf$3$subexpression$1',
+        symbols: [
+          'ENV_VARIABLE',
+          'ORIGIN_FORM_TAIL$ebnf$3$subexpression$1$ebnf$1',
+        ],
+      },
+      {
+        name: 'ORIGIN_FORM_TAIL$ebnf$3',
+        symbols: ['ORIGIN_FORM_TAIL$ebnf$3$subexpression$1'],
+      },
+      { name: 'ORIGIN_FORM_TAIL$ebnf$3$subexpression$2$ebnf$1', symbols: [] },
+      {
+        name: 'ORIGIN_FORM_TAIL$ebnf$3$subexpression$2$ebnf$1',
+        symbols: ['ORIGIN_FORM_TAIL$ebnf$3$subexpression$2$ebnf$1', /[^}\s]/],
+        postprocess: function arrpush(d) {
+          return d[0].concat([d[1]]);
+        },
+      },
+      {
+        name: 'ORIGIN_FORM_TAIL$ebnf$3$subexpression$2',
+        symbols: [
+          'ENV_VARIABLE',
+          'ORIGIN_FORM_TAIL$ebnf$3$subexpression$2$ebnf$1',
+        ],
+      },
+      {
+        name: 'ORIGIN_FORM_TAIL$ebnf$3',
+        symbols: [
+          'ORIGIN_FORM_TAIL$ebnf$3',
+          'ORIGIN_FORM_TAIL$ebnf$3$subexpression$2',
+        ],
+        postprocess: function arrpush(d) {
+          return d[0].concat([d[1]]);
+        },
+      },
+      {
+        name: 'ORIGIN_FORM_TAIL',
+        symbols: ['ORIGIN_FORM_TAIL$ebnf$2', 'ORIGIN_FORM_TAIL$ebnf$3'],
+        postprocess: originFormTailEnvVar,
       },
       {
         name: 'ABSOLUTE_FORM$string$1',
@@ -629,22 +696,39 @@
           return d.join('');
         },
       },
-      { name: 'ABSOLUTE_FORM$ebnf$1', symbols: [/[\S]/] },
+      { name: 'ABSOLUTE_FORM$ebnf$1', symbols: [/[^/\s]/] },
       {
         name: 'ABSOLUTE_FORM$ebnf$1',
-        symbols: ['ABSOLUTE_FORM$ebnf$1', /[\S]/],
+        symbols: ['ABSOLUTE_FORM$ebnf$1', /[^/\s]/],
         postprocess: function arrpush(d) {
           return d[0].concat([d[1]]);
         },
       },
       {
+        name: 'ABSOLUTE_FORM$ebnf$2',
+        symbols: ['ORIGIN_FORM'],
+        postprocess: id,
+      },
+      {
+        name: 'ABSOLUTE_FORM$ebnf$2',
+        symbols: [],
+        postprocess: function(d) {
+          return null;
+        },
+      },
+      {
         name: 'ABSOLUTE_FORM',
-        symbols: ['SCHEME', 'ABSOLUTE_FORM$string$1', 'ABSOLUTE_FORM$ebnf$1'],
+        symbols: [
+          'SCHEME',
+          'ABSOLUTE_FORM$string$1',
+          'ABSOLUTE_FORM$ebnf$1',
+          'ABSOLUTE_FORM$ebnf$2',
+        ],
         postprocess: absoluteForm,
       },
       { name: 'ASTERISK_FORM', symbols: [{ literal: '*' }], postprocess: id },
       {
-        name: 'SCHEME$subexpression$1$string$1',
+        name: 'SCHEME$string$1',
         symbols: [
           { literal: 'h' },
           { literal: 't' },
@@ -655,12 +739,9 @@
           return d.join('');
         },
       },
+      { name: 'SCHEME', symbols: ['SCHEME$string$1'], postprocess: id },
       {
-        name: 'SCHEME$subexpression$1',
-        symbols: ['SCHEME$subexpression$1$string$1'],
-      },
-      {
-        name: 'SCHEME$subexpression$1$string$2',
+        name: 'SCHEME$string$2',
         symbols: [
           { literal: 'h' },
           { literal: 't' },
@@ -672,11 +753,41 @@
           return d.join('');
         },
       },
+      { name: 'SCHEME', symbols: ['SCHEME$string$2'], postprocess: id },
+      { name: 'SCHEME', symbols: ['ENV_VARIABLE'], postprocess: id },
       {
-        name: 'SCHEME$subexpression$1',
-        symbols: ['SCHEME$subexpression$1$string$2'],
+        name: 'ENV_VARIABLE$string$1',
+        symbols: [{ literal: '{' }, { literal: '{' }],
+        postprocess: function joiner(d) {
+          return d.join('');
+        },
       },
-      { name: 'SCHEME', symbols: ['SCHEME$subexpression$1'], postprocess: id },
+      { name: 'ENV_VARIABLE$ebnf$1', symbols: [/[\S]/] },
+      {
+        name: 'ENV_VARIABLE$ebnf$1',
+        symbols: ['ENV_VARIABLE$ebnf$1', /[\S]/],
+        postprocess: function arrpush(d) {
+          return d[0].concat([d[1]]);
+        },
+      },
+      {
+        name: 'ENV_VARIABLE$string$2',
+        symbols: [{ literal: '}' }, { literal: '}' }],
+        postprocess: function joiner(d) {
+          return d.join('');
+        },
+      },
+      {
+        name: 'ENV_VARIABLE',
+        symbols: [
+          'ENV_VARIABLE$string$1',
+          '_',
+          'ENV_VARIABLE$ebnf$1',
+          '_',
+          'ENV_VARIABLE$string$2',
+        ],
+        postprocess: d => d.flat().join(''),
+      },
       { name: 'HEADERS$ebnf$1', symbols: [] },
       {
         name: 'HEADERS$ebnf$1$subexpression$1',
