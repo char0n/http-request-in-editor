@@ -4,4 +4,5 @@
 /node_modules
 /npm-debug.log
 
+/http-request-in-editor-*.*.*.tgz
 /railroad.html

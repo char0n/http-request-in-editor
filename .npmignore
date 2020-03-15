@@ -6,6 +6,7 @@
 /npm-debug.log
 /scripts/**/*
 /test
+/.dependabot
 /.huskyrc
 /.lintstagedrc
 /.editorconfig
@@ -13,6 +14,7 @@
 /.eslintignore
 /.gitattributes
 /.gitignore
+/.mocharc.js
 /.npmignore
 /.npmrc
 /.commitlintrc.json
@@ -21,4 +23,5 @@
 /CODE_OF_CONDUCT.md
 /CONTRIBUTING.md
 /GOVERNANCE.md
-
+/http-request-in-editor-*.*.*.tgz
+/railroad.html
