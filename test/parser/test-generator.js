@@ -1,7 +1,7 @@
 'use strict';
 
 const path = require('path');
-const assert = require('assert');
+const { assert } = require('chai');
 const fs = require('fs');
 const glob = require('glob');
 const nearley = require('nearley');
@@ -32,7 +32,7 @@ describe('given http fixtures', function() {
         parser.feed(http);
 
         specify('should produce proper AST', function() {
-          assert.deepStrictEqual(parser.results, ast);
+          assert.deepEqual(parser.results, ast);
         });
       });
     });
