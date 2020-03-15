@@ -9,7 +9,7 @@ Parser can parse following syntax and creates [AST](https://en.wikipedia.org/wik
 that can be consumed and executed by various runtime environments. I'll provide a reference implementation
 of a reference runtime implementation as soon as the parser is finished.
 
-```http
+```http request
 ### request 1
 POST https://httpbin.org/post HTTP/1.1
 Authorization: token
@@ -35,9 +35,9 @@ Authorization: token3
 
 ## AST
 
-Parser is producing JSON serializable AST. Following HTTP Request in Editor fragment
+Parser is producing JSON serializable [AST]((https://en.wikipedia.org/wiki/Abstract_syntax_tree)). Following [HTTP Request in Editor](https://github.com/JetBrains/http-request-in-editor-spec/blob/master/spec.md) fragment
 
-```http
+```http request
 ### post request
 POST http://www.example.com HTTP/2.0
 # comment
@@ -51,7 +51,7 @@ message body
 ###
 ```
 
-produces following AST:
+will produce following AST:
 
 ```js
 [
