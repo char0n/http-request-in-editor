@@ -1,6 +1,11 @@
-POST http://example.com/api/get#q=hello+world
-# test
-# test
+### post request
+POST http://www.example.com HTTP/2.0
+# comment
 Authorization: token
+
+message body
+
+> {% script %}
+<> ./file.json
 
 ###

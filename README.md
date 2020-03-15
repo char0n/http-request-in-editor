@@ -33,6 +33,55 @@ Authorization: token3
 
 ```
 
+## AST
+
+Parser is producing JSON serializable AST. Following HTTP Request in Editor fragment
+
+```http
+### post request
+POST http://www.example.com HTTP/2.0
+# comment
+Authorization: token
+
+message body
+
+> {% script %}
+<> ./file.json
+
+###
+```
+
+produces following AST:
+
+```js
+[
+  [
+    {
+      method: 'POST',
+      requestTarget: {
+        value: 'http://www.example.com',
+        meta: {
+          protocol: 'http:',
+          hostname: 'www.example.com',
+          port: '80',
+          pathname: '/',
+          search: ''
+        }
+      },
+      httpVersion: '2.0',
+      headers: [ { name: 'Authorization', value: 'token' } ],
+      body: [ 'message body' ],
+      responseHandler: ' script ',
+      responseRef: '<> ./file.json'
+    }
+  ]
+]
+```
+
+AST should be self explanatory. The only detail worth mentioning is that request body will contain
+list of message body lines instead of one big multiline string. The reason is that [message-body](https://github.com/JetBrains/http-request-in-editor-spec/blob/master/spec.md#323-message-body)
+can contain `input-file-ref`(s) which needs to be replaced by file contents that they point to by runtime.
+
 ## Installation
 
 ```sh
