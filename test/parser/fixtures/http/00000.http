@@ -1,22 +1,6 @@
-// test
-### test
-
-//test
-
-GET http://www.example.com
-Header1: value1
-// test
-Header2: value2
-
-body
-
-> {% script %}
-<> file.json
-
-// test
-
-// test
-###
-GET http://www.example.com
+POST http://example.com/api/get#q=hello+world
+# test
+# test
+Authorization: token
 
 ###

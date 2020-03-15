@@ -368,21 +368,29 @@
         symbols: ['REQUEST_WITH_SEPARATOR$ebnf$1', 'REQUEST'],
         postprocess: nth(1),
       },
+      { name: 'REQUEST$ebnf$1', symbols: [] },
       {
         name: 'REQUEST$ebnf$1',
+        symbols: ['REQUEST$ebnf$1', 'LINE_COMMENT'],
+        postprocess: function arrpush(d) {
+          return d[0].concat([d[1]]);
+        },
+      },
+      {
+        name: 'REQUEST$ebnf$2',
         symbols: ['RESPONSE_HANDLER'],
         postprocess: id,
       },
       {
-        name: 'REQUEST$ebnf$1',
+        name: 'REQUEST$ebnf$2',
         symbols: [],
         postprocess: function(d) {
           return null;
         },
       },
-      { name: 'REQUEST$ebnf$2', symbols: ['RESPONSE_REF'], postprocess: id },
+      { name: 'REQUEST$ebnf$3', symbols: ['RESPONSE_REF'], postprocess: id },
       {
-        name: 'REQUEST$ebnf$2',
+        name: 'REQUEST$ebnf$3',
         symbols: [],
         postprocess: function(d) {
           return null;
@@ -393,11 +401,12 @@
         symbols: [
           'REQUEST_LINE',
           'NEW_LINE',
+          'REQUEST$ebnf$1',
           'HEADERS',
           'NEW_LINE',
           'MESSAGE_BODY',
-          'REQUEST$ebnf$1',
           'REQUEST$ebnf$2',
+          'REQUEST$ebnf$3',
         ],
         postprocess: request,
       },
