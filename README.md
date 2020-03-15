@@ -3,7 +3,7 @@
 This repo contains reference implementation of [HTTP Request in Editor Spec](https://github.com/JetBrains/http-request-in-editor-spec/blob/master/spec.md) parser.
 
 The [HTTP Request in Editor Spec](https://github.com/JetBrains/http-request-in-editor-spec/blob/master/spec.md) is using context-free grammar to present set of production rules.
-We're using [neaarly](https://nearley.js.org/) to declaratively map this grammar and generate a JavaScript parser from it.
+We're using [nearley](https://nearley.js.org/) to declaratively map this grammar and generate a JavaScript parser from it.
 
 Parser can parse following syntax and creates [AST](https://en.wikipedia.org/wiki/Abstract_syntax_tree)
 that can be consumed and executed by various runtime environments. I'll provide a reference implementation
@@ -56,7 +56,7 @@ const ast = parse(http);
 
 ## AST
 
-Parser is producing JSON serializable [AST]((https://en.wikipedia.org/wiki/Abstract_syntax_tree)). Following [HTTP Request in Editor](https://github.com/JetBrains/http-request-in-editor-spec/blob/master/spec.md) fragment
+Parser is producing JSON serializable [AST](https://en.wikipedia.org/wiki/Abstract_syntax_tree). Following [HTTP Request in Editor](https://github.com/JetBrains/http-request-in-editor-spec/blob/master/spec.md) fragment
 
 ```http request
 ### post request
