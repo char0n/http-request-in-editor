@@ -1,6 +1,8 @@
 'use strict';
 
 const requestTargetParser = require('request-target');
+const { flatten } = require('ramda');
+const { flattenDepth } = require('ramda-adjunct');
 
 // Type definitions:
 //     RequestTarget = String | {value: String, meta: {protocol: String, hostname: String, port: String, pathname: String, search: String}}
@@ -56,7 +58,7 @@ const stubNull = () => null;
  */
 
 // requestFile :: Data -> Request
-const requestFile = data => [data[2], data[3]].flat(2);
+const requestFile = data => flattenDepth(2, [data[2], data[3]]);
 
 /**
  * Request
@@ -122,13 +124,14 @@ const originForm = (data, location, reject) => {
 const originFormTail = data => data[0].join('');
 
 // originFormTailEnvVar :: Data -> String
-const originFormTailEnvVar = d => d[0].join('') + d[1].flat(2).join('');
+const originFormTailEnvVar = d =>
+  d[0].join('') + flattenDepth(2, d[1]).join('');
 
 // absoluteForm :: Data -> String
 const absoluteForm = d => d[0] + d[1] + d[2].join('') + (d[3] || '');
 
 // scheme :: Data -> String
-const scheme = data => data.flat().join('');
+const scheme = data => flatten(data).join('');
 
 /**
  * Headers
@@ -157,8 +160,7 @@ const fieldValue = (data, location, reject) => {
 
 // messages :: Data -> Body
 const messages = data =>
-  data[0]
-    .flat(4)
+  flattenDepth(4, data[0])
     .join('')
     .trim()
     .split('\n');
@@ -237,7 +239,7 @@ const lineComment = (data, location, reject) => {
  */
 
 // envVariable :: Data -> String
-const envVariable = data => data.flat().join('');
+const envVariable = data => flatten(data).join('');
 
 module.exports = {
   // general postprocessors
