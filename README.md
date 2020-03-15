@@ -33,6 +33,27 @@ Authorization: token3
 
 ```
 
+## Installation
+
+```sh
+ $ npm i http-request-in-editor
+```
+
+```js
+const { parse } = require('http-request-in-editor');
+
+
+const http = `
+POST https://httpbin.org/post
+
+###
+`;
+
+const ast = parse(http);
+// now process the AST with your favorite http library
+```
+
+
 ## AST
 
 Parser is producing JSON serializable [AST]((https://en.wikipedia.org/wiki/Abstract_syntax_tree)). Following [HTTP Request in Editor](https://github.com/JetBrains/http-request-in-editor-spec/blob/master/spec.md) fragment
@@ -82,13 +103,13 @@ AST should be self explanatory. The only detail worth mentioning is that request
 list of message body lines instead of one big multiline string. The reason is that [message-body](https://github.com/JetBrains/http-request-in-editor-spec/blob/master/spec.md#323-message-body)
 can contain `input-file-ref`(s) which needs to be replaced by file contents that they point to by runtime.
 
-## Installation
+## Development
+
+Fork the repo, clone in and install by
 
 ```sh
  $ npm i
 ```
-
-## Development
 
 Edit `src/parser/grammer.ne` and create a grammar that maps to HTTP Request in Editor Spec.
 
