@@ -1,3 +1,5 @@
+![](https://github.com/char0n/http-request-in-editor/workflows/Node.js%20CI/badge.svg)
+
 # HTTP Request in Editor Implementation
 
 This repo contains reference implementation of [HTTP Request in Editor Spec](https://github.com/JetBrains/http-request-in-editor-spec/blob/master/spec.md) parser.
