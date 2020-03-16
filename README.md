@@ -1,4 +1,4 @@
-![](https://github.com/char0n/http-request-in-editor/workflows/Node.js%20CI/badge.svg)
+[![Node CI](https://github.com/char0n/http-request-in-editor/workflows/Node.js%20CI/badge.svg)](https://github.com/char0n/http-request-in-editor/actions?query=workflow%3A%22Node.js+CI%22)
 
 # HTTP Request in Editor Implementation
 
