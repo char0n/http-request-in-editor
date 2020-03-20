@@ -767,10 +767,22 @@
           return d.join('');
         },
       },
-      { name: 'ENV_VARIABLE$ebnf$1', symbols: [/[\S]/] },
       {
         name: 'ENV_VARIABLE$ebnf$1',
-        symbols: ['ENV_VARIABLE$ebnf$1', /[\S]/],
+        symbols: [{ literal: '$' }],
+        postprocess: id,
+      },
+      {
+        name: 'ENV_VARIABLE$ebnf$1',
+        symbols: [],
+        postprocess: function(d) {
+          return null;
+        },
+      },
+      { name: 'ENV_VARIABLE$ebnf$2', symbols: [/[a-zA-Z0-9_-]/] },
+      {
+        name: 'ENV_VARIABLE$ebnf$2',
+        symbols: ['ENV_VARIABLE$ebnf$2', /[a-zA-Z0-9_-]/],
         postprocess: function arrpush(d) {
           return d[0].concat([d[1]]);
         },
@@ -788,6 +800,7 @@
           'ENV_VARIABLE$string$1',
           '_',
           'ENV_VARIABLE$ebnf$1',
+          'ENV_VARIABLE$ebnf$2',
           '_',
           'ENV_VARIABLE$string$2',
         ],

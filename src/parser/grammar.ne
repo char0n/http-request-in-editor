@@ -94,7 +94,7 @@ SCHEME -> "http" {% id %}
         | "https" {% id %}
         | ENV_VARIABLE {% id %}
 
-ENV_VARIABLE -> "{{" _ [\S]:+ _ "}}" {% envVariable %}
+ENV_VARIABLE -> "{{" _ "$":? [a-zA-Z0-9_-]:+ _ "}}" {% envVariable %}
 
 
 ###########
