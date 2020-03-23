@@ -8,14 +8,14 @@
 with very interesting concept called [HTTP Request in Editor Spec](https://github.com/JetBrains/http-request-in-editor-spec/blob/master/spec.md).
 They implemented this spec into their [IDEs](https://www.jetbrains.com/help/idea/http-client-in-product-code-editor.html).
 You are able to create files with `.http` extensions with nice syntax highlighting and run HTTP requests directly in your editor.
-Eventually you can create set of these `.http` files, check them in as part of your codebase and
+Eventually you can create collection of these `.http` files, check them in as part of your codebase and
 share them with the rest of your team. This is really great...but...
+
+<p align="center"><img src="https://resources.jetbrains.com/help/img/idea/2019.3/basic_request.png" /></p>
 
 There is currently no [CLI](https://en.wikipedia.org/wiki/Command-line_interface) runner for `.http` files. From the
 moment we checked our `.http` files inside our project we should test if those file reflect reality.
 This project provides tool for running `.http` files on your [CI](https://en.wikipedia.org/wiki/Continuous_integration).
-
-<p align="center"><img src="https://resources.jetbrains.com/help/img/idea/2019.3/basic_request.png" /></p>
 
 **Warning:** Currently we have only implemented the parser which creates documented AST. We're working hard on implementation
 of runner compatible with JetBrains one. Stay tuned for the runner!
