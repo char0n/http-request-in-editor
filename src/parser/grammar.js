@@ -1,6 +1,6 @@
 // Generated automatically by nearley, version 2.19.1
 // http://github.com/Hardmath123/nearley
-(function() {
+(function () {
   function id(x) {
     return x[0];
   }
@@ -58,7 +58,7 @@
       {
         name: 'unsigned_int',
         symbols: ['unsigned_int$ebnf$1'],
-        postprocess: function(d) {
+        postprocess: function (d) {
           return parseInt(d[0].join(''));
         },
       },
@@ -72,7 +72,7 @@
       {
         name: 'int$ebnf$1',
         symbols: [],
-        postprocess: function(d) {
+        postprocess: function (d) {
           return null;
         },
       },
@@ -87,7 +87,7 @@
       {
         name: 'int',
         symbols: ['int$ebnf$1', 'int$ebnf$2'],
-        postprocess: function(d) {
+        postprocess: function (d) {
           if (d[0]) {
             return parseInt(d[0][0] + d[1].join(''));
           } else {
@@ -129,14 +129,14 @@
       {
         name: 'unsigned_decimal$ebnf$2',
         symbols: [],
-        postprocess: function(d) {
+        postprocess: function (d) {
           return null;
         },
       },
       {
         name: 'unsigned_decimal',
         symbols: ['unsigned_decimal$ebnf$1', 'unsigned_decimal$ebnf$2'],
-        postprocess: function(d) {
+        postprocess: function (d) {
           return parseFloat(
             d[0].join('') + (d[1] ? '.' + d[1][1].join('') : '')
           );
@@ -146,7 +146,7 @@
       {
         name: 'decimal$ebnf$1',
         symbols: [],
-        postprocess: function(d) {
+        postprocess: function (d) {
           return null;
         },
       },
@@ -178,14 +178,14 @@
       {
         name: 'decimal$ebnf$3',
         symbols: [],
-        postprocess: function(d) {
+        postprocess: function (d) {
           return null;
         },
       },
       {
         name: 'decimal',
         symbols: ['decimal$ebnf$1', 'decimal$ebnf$2', 'decimal$ebnf$3'],
-        postprocess: function(d) {
+        postprocess: function (d) {
           return parseFloat(
             (d[0] || '') + d[1].join('') + (d[2] ? '.' + d[2][1].join('') : '')
           );
@@ -194,7 +194,7 @@
       {
         name: 'percentage',
         symbols: ['decimal', { literal: '%' }],
-        postprocess: function(d) {
+        postprocess: function (d) {
           return d[0] / 100;
         },
       },
@@ -206,7 +206,7 @@
       {
         name: 'jsonfloat$ebnf$1',
         symbols: [],
-        postprocess: function(d) {
+        postprocess: function (d) {
           return null;
         },
       },
@@ -238,7 +238,7 @@
       {
         name: 'jsonfloat$ebnf$3',
         symbols: [],
-        postprocess: function(d) {
+        postprocess: function (d) {
           return null;
         },
       },
@@ -250,7 +250,7 @@
       {
         name: 'jsonfloat$ebnf$4$subexpression$1$ebnf$1',
         symbols: [],
-        postprocess: function(d) {
+        postprocess: function (d) {
           return null;
         },
       },
@@ -278,7 +278,7 @@
       {
         name: 'jsonfloat$ebnf$4',
         symbols: [],
-        postprocess: function(d) {
+        postprocess: function (d) {
           return null;
         },
       },
@@ -290,7 +290,7 @@
           'jsonfloat$ebnf$3',
           'jsonfloat$ebnf$4',
         ],
-        postprocess: function(d) {
+        postprocess: function (d) {
           return parseFloat(
             (d[0] || '') +
               d[1].join('') +
@@ -384,7 +384,7 @@
       {
         name: 'REQUEST$ebnf$2',
         symbols: [],
-        postprocess: function(d) {
+        postprocess: function (d) {
           return null;
         },
       },
@@ -392,7 +392,7 @@
       {
         name: 'REQUEST$ebnf$3',
         symbols: [],
-        postprocess: function(d) {
+        postprocess: function (d) {
           return null;
         },
       },
@@ -423,7 +423,7 @@
       {
         name: 'REQUEST_LINE$ebnf$1',
         symbols: [],
-        postprocess: function(d) {
+        postprocess: function (d) {
           return null;
         },
       },
@@ -440,7 +440,7 @@
       {
         name: 'REQUEST_LINE$ebnf$2',
         symbols: [],
-        postprocess: function(d) {
+        postprocess: function (d) {
           return null;
         },
       },
@@ -717,7 +717,7 @@
       {
         name: 'ABSOLUTE_FORM$ebnf$2',
         symbols: [],
-        postprocess: function(d) {
+        postprocess: function (d) {
           return null;
         },
       },
@@ -775,7 +775,7 @@
       {
         name: 'ENV_VARIABLE$ebnf$1',
         symbols: [],
-        postprocess: function(d) {
+        postprocess: function (d) {
           return null;
         },
       },
@@ -854,7 +854,7 @@
       {
         name: 'FIELD_VALUE',
         symbols: ['NEW_LINE_WITH_INDENT', 'FIELD_VALUE'],
-        postprocess: d => d[1][0],
+        postprocess: (d) => d[1][0],
       },
       { name: 'MESSAGE_BODY', symbols: ['MESSAGES'], postprocess: id },
       { name: 'MESSAGES$ebnf$1', symbols: [] },
