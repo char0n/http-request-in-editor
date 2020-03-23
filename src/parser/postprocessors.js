@@ -19,7 +19,7 @@ const { flattenDepth } = require('ramda-adjunct');
  */
 
 // stripRequestTargetFragment :: String -> String
-const stripRequestTargetFragment = requestTarget => {
+const stripRequestTargetFragment = (requestTarget) => {
   try {
     const url = new URL(requestTarget);
     url.hash = '';
@@ -48,7 +48,7 @@ const parseRequestTarget = (method, headers, url) => {
  */
 
 // nth :: Number -> [a] -> a | Undefined
-const nth = index => list => list[index];
+const nth = (index) => (list) => list[index];
 
 // stubNull :: () -> Null
 const stubNull = () => null;
@@ -58,7 +58,7 @@ const stubNull = () => null;
  */
 
 // requestFile :: Data -> Request
-const requestFile = data => flattenDepth(2, [data[2], data[3]]);
+const requestFile = (data) => flattenDepth(2, [data[2], data[3]]);
 
 /**
  * Request
@@ -102,14 +102,14 @@ const requestLine = ([method, requestTarget, httpVersion]) => ({
 });
 
 // httpVersion :: Data -> String
-const httpVersion = data => `${data[1].join('')}.${data[3].join('')}`;
+const httpVersion = (data) => `${data[1].join('')}.${data[3].join('')}`;
 
 /**
  * Request target
  */
 
 // requestTarget :: Data -> String
-const requestTarget = data => data[0][0];
+const requestTarget = (data) => data[0][0];
 
 // originForm :: (Data, Number, Reject) -> String
 const originForm = (data, location, reject) => {
@@ -121,27 +121,27 @@ const originForm = (data, location, reject) => {
 };
 
 // originFormTail :: Data -> String
-const originFormTail = data => data[0].join('');
+const originFormTail = (data) => data[0].join('');
 
 // originFormTailEnvVar :: Data -> String
-const originFormTailEnvVar = d =>
+const originFormTailEnvVar = (d) =>
   d[0].join('') + flattenDepth(2, d[1]).join('');
 
 // absoluteForm :: Data -> String
-const absoluteForm = d => d[0] + d[1] + d[2].join('') + (d[3] || '');
+const absoluteForm = (d) => d[0] + d[1] + d[2].join('') + (d[3] || '');
 
 // scheme :: Data -> String
-const scheme = data => flatten(data).join('');
+const scheme = (data) => flatten(data).join('');
 
 /**
  * Headers
  */
 
 // headerField :: Data -> HeaderField
-const headerField = data => ({ name: data[0], value: data[3] });
+const headerField = (data) => ({ name: data[0], value: data[3] });
 
 // fieldName :: Data -> String
-const fieldName = data => data[0].join('');
+const fieldName = (data) => data[0].join('');
 
 // fieldValue :: (Data, Number, Reject) -> String | Reject
 const fieldValue = (data, location, reject) => {
@@ -159,11 +159,7 @@ const fieldValue = (data, location, reject) => {
  */
 
 // messages :: Data -> Body
-const messages = data =>
-  flattenDepth(4, data[0])
-    .join('')
-    .trim()
-    .split('\n');
+const messages = (data) => flattenDepth(4, data[0]).join('').trim().split('\n');
 
 // messageLine :: (Data, Number, Reject) -> String | Reject
 const messageLine = (data, location, reject) => {
@@ -182,10 +178,10 @@ const messageLine = (data, location, reject) => {
 };
 
 // inputFileRef :: Data -> String
-const inputFileRef = data => `${data[0]} ${data[2]}`;
+const inputFileRef = (data) => `${data[0]} ${data[2]}`;
 
 // filePath
-const filePath = data => data[0].join('');
+const filePath = (data) => data[0].join('');
 
 /**
  * Response handler
@@ -214,14 +210,14 @@ const handlerScript = (data, location, reject) => {
  */
 
 // responseRef :: Data -> String
-const responseRef = data => `${data[0]} ${data[2]}`;
+const responseRef = (data) => `${data[0]} ${data[2]}`;
 
 /**
  * Line Terminators
  */
 
 // lineTail :: Data -> String
-const lineTail = data => data[0].join('');
+const lineTail = (data) => data[0].join('');
 
 /**
  * Comments
@@ -239,7 +235,7 @@ const lineComment = (data, location, reject) => {
  */
 
 // envVariable :: Data -> String
-const envVariable = data => flatten(data).join('');
+const envVariable = (data) => flatten(data).join('');
 
 module.exports = {
   // general postprocessors

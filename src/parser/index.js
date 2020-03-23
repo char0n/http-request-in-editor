@@ -10,7 +10,7 @@ const compiledGrammar = nearley.Grammar.fromCompiled(grammar);
 const createParser = () => new nearley.Parser(compiledGrammar);
 
 // parse :: String -> Array
-const parse = http => {
+const parse = (http) => {
   const parser = createParser();
   parser.feed(http);
   return parser.results;

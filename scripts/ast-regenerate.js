@@ -26,7 +26,7 @@ const astFixturePath = path.join(
 const httpFilesPattern = `${httpFixturePath}${path.sep}*.http`;
 const astFilesPattern = `${astFixturePath}${path.sep}*.json`;
 
-const generateAST = file => {
+const generateAST = (file) => {
   const fileBasename = path.basename(file, '.http');
   const fileDirname = path.dirname(file);
   const astFile = path.join(fileDirname, '..', 'ast', `${fileBasename}.json`);
@@ -38,9 +38,9 @@ const generateAST = file => {
 };
 
 // clean old AST
-glob.sync(astFilesPattern, {}).forEach(file => fs.unlinkSync(file));
+glob.sync(astFilesPattern, {}).forEach((file) => fs.unlinkSync(file));
 
 // regenerate AST
 glob(httpFilesPattern, {}, (error, files) => {
-  files.filter(file => !file.endsWith('00000.http')).forEach(generateAST);
+  files.filter((file) => !file.endsWith('00000.http')).forEach(generateAST);
 });
