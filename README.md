@@ -20,6 +20,8 @@ This project provides tool for running `.http` files on your [CI](https://en.wik
 **Warning:** Currently we have only implemented the parser which creates documented AST. We're working hard on implementation
 of runner compatible with JetBrains one. Stay tuned for the runner!
 
+<hr />
+
 This repo contains reference implementation of [HTTP Request in Editor Spec](https://github.com/JetBrains/http-request-in-editor-spec/blob/master/spec.md) parser.
 
 The [HTTP Request in Editor Spec](https://github.com/JetBrains/http-request-in-editor-spec/blob/master/spec.md) is using context-free grammar to present set of production rules.
