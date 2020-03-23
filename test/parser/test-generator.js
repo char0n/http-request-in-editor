@@ -12,12 +12,12 @@ const httpFixturePath = path.join(__dirname, 'fixtures', 'http');
 const httpFilesPattern = `${httpFixturePath}${path.sep}*.http`;
 
 // generate tests dynamically
-describe('given http fixtures', function() {
+describe('given http fixtures', function () {
   glob
     .sync(httpFilesPattern, {})
-    .filter(httpFile => !httpFile.endsWith('00000.http'))
-    .forEach(httpFile => {
-      context(path.basename(httpFile), function() {
+    .filter((httpFile) => !httpFile.endsWith('00000.http'))
+    .forEach((httpFile) => {
+      context(path.basename(httpFile), function () {
         const astFile = path.join(
           path.dirname(httpFile),
           '..',
@@ -31,7 +31,7 @@ describe('given http fixtures', function() {
         );
         parser.feed(http);
 
-        specify('should produce proper AST', function() {
+        specify('should produce proper AST', function () {
           assert.deepEqual(parser.results, ast);
         });
       });
