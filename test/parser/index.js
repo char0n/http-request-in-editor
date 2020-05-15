@@ -22,8 +22,8 @@ describe('parser', function () {
 
   context('parse', function () {
     context('given http fragment', function () {
-      const http = helpers.readHttp('00001');
-      const expectedAst = helpers.readAst('00001');
+      const http = helpers.readHttp('requests-file/00001');
+      const expectedAst = helpers.readAst('requests-file/00001');
 
       specify('should parse and return AST', function () {
         const actualAst = parserModule.parse(http);

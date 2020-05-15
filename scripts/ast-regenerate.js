@@ -7,15 +7,17 @@ const nearley = require('nearley');
 
 const grammar = require('../src/parser/grammar');
 
-const httpFixturePath = path.join(
+const httpFilesPattern = path.join(
   __dirname,
   '..',
   'test',
   'parser',
   'fixtures',
-  'http'
+  'http',
+  '**',
+  '*.http'
 );
-const astFixturePath = path.join(
+const astFilesPath = path.join(
   __dirname,
   '..',
   'test',
@@ -23,24 +25,26 @@ const astFixturePath = path.join(
   'fixtures',
   'ast'
 );
-const httpFilesPattern = `${httpFixturePath}${path.sep}*.http`;
-const astFilesPattern = `${astFixturePath}${path.sep}*.json`;
 
 const generateAST = (file) => {
   const fileBasename = path.basename(file, '.http');
-  const fileDirname = path.dirname(file);
-  const astFile = path.join(fileDirname, '..', 'ast', `${fileBasename}.json`);
+  const fileDirname = path
+    .dirname(file)
+    .replace('/test/parser/fixtures/http', '/test/parser/fixtures/ast');
+  const astFile = path.join(fileDirname, `${fileBasename}.json`);
   const http = fs.readFileSync(file).toString('utf8');
   const parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
 
   parser.feed(http);
+  fs.mkdirSync(fileDirname, { recursive: true });
   fs.writeFileSync(astFile, JSON.stringify(parser.results, null, 1));
 };
 
 // clean old AST
-glob.sync(astFilesPattern, {}).forEach((file) => fs.unlinkSync(file));
+fs.rmdirSync(astFilesPath, { recursive: true });
 
 // regenerate AST
-glob(httpFilesPattern, {}, (error, files) => {
-  files.filter((file) => !file.endsWith('00000.http')).forEach(generateAST);
-});
+glob
+  .sync(httpFilesPattern, {})
+  .filter((file) => !file.endsWith('00000.http'))
+  .forEach(generateAST);
