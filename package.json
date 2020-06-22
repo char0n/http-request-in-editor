@@ -46,7 +46,7 @@
   },
   "devDependencies": {
     "@commitlint/cli": "^9.0.1",
-    "@commitlint/config-conventional": "^8.3.4",
+    "@commitlint/config-conventional": "^9.0.1",
     "chai": "=4.2.0",
     "eslint": "=7.2.0",
     "eslint-config-airbnb-base": "=14.2.0",
