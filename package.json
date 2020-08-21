@@ -39,7 +39,7 @@
   "homepage": "https://github.com/char0n/http-request-in-editor-impl#readme",
   "readme": "README.md",
   "dependencies": {
-    "nearley": "=2.19.5",
+    "nearley": "=2.19.6",
     "ramda": "=0.27.0",
     "ramda-adjunct": "=2.27.0",
     "request-target": "=1.0.2"
