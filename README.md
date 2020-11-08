@@ -97,7 +97,7 @@ message body
 
 will produce following CST:
 
-```js
+```
 (requests-file
   (request
     (requests-line
