@@ -1,20 +1,20 @@
 'use strict';
 
 const { assert } = require('chai');
+const dedent = require('dedent');
 const nearley = require('nearley');
 
-const helpers = require('../helpers');
-const parserModule = require('../../src/parser');
+const { parse, createParser } = require('../../src/parser');
 
 describe('parser', function () {
   it('should expose proper public API', function () {
-    assert.isFunction(parserModule.createParser);
-    assert.isFunction(parserModule.parse);
+    assert.isFunction(createParser);
+    assert.isFunction(parse);
   });
 
   context('createParser', function () {
     specify('should return parser instance', function () {
-      const parser = parserModule.createParser();
+      const parser = createParser();
 
       assert.instanceOf(parser, nearley.Parser);
     });
@@ -22,13 +22,26 @@ describe('parser', function () {
 
   context('parse', function () {
     context('given http fragment', function () {
-      const http = helpers.readHttp('requests-file/00001');
-      const expectedAst = helpers.readAst('requests-file/00001');
+      const http = dedent`
+        GET http://www.example.com
+
+        ###
+      `;
 
       specify('should parse and return AST', function () {
-        const actualAst = parserModule.parse(http);
+        const actualAst = parse(http);
 
-        assert.deepEqual(actualAst, expectedAst);
+        assert.isArray(actualAst);
+      });
+    });
+
+    context('given invalid http fragment', function () {
+      const http = 'invalid http content';
+
+      specify('should throw Error', function () {
+        const errorThunk = () => parse(http);
+
+        assert.throws(errorThunk, Error);
       });
     });
   });

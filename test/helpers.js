@@ -1,25 +1,35 @@
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
+const stampit = require('stampit');
+const { always } = require('ramda');
 
-const readHttp = (file) =>
-  fs
-    .readFileSync(
-      path.join(__dirname, 'parser', 'fixtures', 'http', `${file}.http`)
-    )
-    .toString('utf8');
+const Visitor = stampit({
+  props: {
+    nestingLevel: 0,
+    result: '',
+  },
+  methods: {
+    enter(node) {
+      const indent = '  '.repeat(this.nestingLevel);
+      this.result += this.nestingLevel > 0 ? '\n' : '';
+      this.result += `${indent}(${node.type}`;
+      this.nestingLevel += 1;
+    },
+    leave() {
+      this.nestingLevel -= 1;
+      this.result += ')';
+    },
+  },
+});
 
-const readAst = (file) =>
-  JSON.parse(
-    fs
-      .readFileSync(
-        path.join(__dirname, 'parser', 'fixtures', 'ast', `${file}.json`)
-      )
-      .toString('utf8')
-  );
+const keyMap = new Proxy(
+  {},
+  {
+    get: always(['children']),
+  }
+);
 
 module.exports = {
-  readAst,
-  readHttp,
+  Visitor,
+  keyMap,
 };

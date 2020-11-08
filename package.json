@@ -13,9 +13,10 @@
     "test": "npm run test:parser",
     "test:parser": "npm run compile && mocha",
     "test:parser:00000": "npm run compile && cat ./test/parser/fixtures/http/00000.http | nearley-test ./src/parser/grammar.js",
-    "fixtures:ast:regenerate": "npm run compile && node ./scripts/ast-regenerate.js",
+    "test:parser:00000:rep": "npm run compile && node ./scripts/00000-rep.js",
     "lint": "eslint ./",
     "lint:fix": "eslint ./ --fix",
+    "corpus:regenerate": "node ./scripts/corpus-regenerate.js",
     "railroad": "nearley-railroad ./src/parser/grammar.ne > railroad.html",
     "unparse": "nearley-unparse ./src/parser/grammar.js"
   },
@@ -25,7 +26,10 @@
   },
   "keywords": [
     "parser",
-    "RFC7230"
+    "RFC7230",
+    "http",
+    "request",
+    "editor"
   ],
   "author": {
     "name": "Vladimir Gorej",
@@ -42,12 +46,14 @@
     "nearley": "=2.19.7",
     "ramda": "=0.27.1",
     "ramda-adjunct": "=2.28.0",
-    "request-target": "=1.0.2"
+    "request-target": "=1.0.2",
+    "stampit": "=4.3.1"
   },
   "devDependencies": {
-    "@commitlint/cli": "^11.0.0",
-    "@commitlint/config-conventional": "^11.0.0",
+    "@commitlint/cli": "=11.0.0",
+    "@commitlint/config-conventional": "=11.0.0",
     "chai": "=4.2.0",
+    "dedent": "=0.7.0",
     "eslint": "=7.11.0",
     "eslint-config-airbnb-base": "=14.2.0",
     "eslint-config-prettier": "=6.13.0",
@@ -55,9 +61,9 @@
     "eslint-plugin-mocha": "=8.0.0",
     "eslint-plugin-prettier": "=3.1.4",
     "glob": "=7.1.6",
-    "husky": "^4.2.3",
-    "lint-staged": "^10.0.8",
+    "husky": "=4.2.3",
     "mocha": "=8.2.0",
-    "prettier": "=2.1.2"
+    "prettier": "=2.1.2",
+    "lint-staged": "=10.2.10"
   }
 }

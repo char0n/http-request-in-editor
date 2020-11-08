@@ -1,169 +1,340 @@
 'use strict';
 
-const requestTargetParser = require('request-target');
-const { flatten } = require('ramda');
-const { flattenDepth } = require('ramda-adjunct');
+const { flatten, nth, join, pipe } = require('ramda');
+const { flattenDepth, stubNull } = require('ramda-adjunct');
+
+const cst = require('./cst');
+const {
+  isHeaders,
+  isMessageBody,
+  isResponseHandler,
+  isResponseRef,
+  isHttpVersion,
+  isMethod,
+} = require('./cst/predicates');
 
 // Type definitions:
-//     RequestTarget = String | {value: String, meta: {protocol: String, hostname: String, port: String, pathname: String, search: String}}
-//     Headers = [HeaderField]
-//     HeaderField = {name: String, value: String}
-//     Request = {method: String, requestTarget: RequestTarget, httpVersion: String, headers, body}
-//     RequestLine = {method: String, requestTarget: RequestTarget | String, httpVersion: String}
 //     Data = [*]
+//     Location = Number
 //     Reject = Object
-//     Body = [String]
 
 /**
  * Helpers
  */
 
-// stripRequestTargetFragment :: String -> String
-const stripRequestTargetFragment = (requestTarget) => {
-  try {
-    const url = new URL(requestTarget);
-    url.hash = '';
-    return url.toString();
-  } catch (e) {
-    return requestTarget;
-  }
-};
+// stringify :: Array -> String
+const stringify = join('');
 
-// parseRequestTarget :: (String, Headers, Url) -> RequestTarget
-const parseRequestTarget = (method, headers, url) => {
-  const nheaders = headers.reduce((acc, header) => {
-    acc[header.name.toLowerCase()] = header.value;
-    return acc;
-  }, {});
-
-  return requestTargetParser({
-    method,
-    headers: nheaders,
-    url: stripRequestTargetFragment(url),
-  });
-};
-
-/**
- * General postprocessors
- */
-
-// nth :: Number -> [a] -> a | Undefined
-const nth = (index) => (list) => list[index];
-
-// stubNull :: () -> Null
-const stubNull = () => null;
+// stringifyId :: Array -> string
+const stringifyId = pipe(nth(0), stringify);
 
 /**
  * Request file
  */
 
-// requestFile :: Data -> Request
-const requestFile = (data) => flattenDepth(2, [data[2], data[3]]);
+// requestsFile :: (Data, Location) -> Request
+const requestsFile = (data, location) => {
+  const requests = flattenDepth(2, [data[2], data[3]]);
+
+  return cst.RequestsFile({
+    location,
+    children: requests,
+  });
+};
 
 /**
  * Request
  */
 
-// request :: (RequestLine, Headers, [String]) -> Request
-const request = ([
-  requestLine,
-  ,
-  ,
-  headers,
-  ,
-  body,
-  responseHandler,
-  responseRef,
-]) => {
-  const { method, requestTarget } = requestLine;
+// request :: ([RequestLine,,, Headers,, ResponseHandler, ResponseRef], Location) -> Request
+const request = (
+  [
+    requestLineNode,
+    ,
+    ,
+    headersNode,
+    ,
+    messageBodyNode,
+    responseHandlerNode,
+    responseRefNode,
+  ],
+  location
+) => {
+  const children = [requestLineNode];
 
-  return {
-    ...requestLine,
-    requestTarget: {
-      value: requestTarget,
-      meta: parseRequestTarget(method, headers, requestTarget),
-    },
-    headers,
-    body,
-    responseHandler,
-    responseRef,
-  };
+  if (isHeaders(headersNode) && headersNode.children.length > 0) {
+    children.push(headersNode);
+  }
+  if (isMessageBody(messageBodyNode) && messageBodyNode.children.length > 0) {
+    children.push(messageBodyNode);
+  }
+  if (
+    isResponseHandler(responseHandlerNode) &&
+    responseHandlerNode.children.length > 0
+  ) {
+    children.push(responseHandlerNode);
+  }
+  if (isResponseRef(responseRefNode) && responseRefNode.children.length > 0) {
+    children.push(responseRefNode);
+  }
+
+  return cst.Request({ location, children });
 };
 
 /**
  * Request line
  */
 
-// requestLine :: (String, String, String) -> RequestLine
-const requestLine = ([method, requestTarget, httpVersion]) => ({
-  method: method || 'GET',
-  requestTarget,
-  httpVersion: httpVersion || '1.1',
-});
+// requestLine :: ([Method, RequestTarget, HttpVersion]) -> RequestLine
+const requestLine = (
+  [methodNode, requestTargetNode, httpVersionNode],
+  location
+) => {
+  const children = [];
 
-// httpVersion :: Data -> String
-const httpVersion = (data) => `${data[1].join('')}.${data[3].join('')}`;
+  if (isMethod(methodNode)) {
+    children.push(methodNode);
+  }
+  children.push(requestTargetNode);
+  if (isHttpVersion(httpVersionNode)) {
+    children.push(httpVersionNode);
+  }
+
+  return cst.RequestLine({
+    location,
+    children,
+  });
+};
+
+// method :: (Data, Location) -> Method
+const method = ([httpVerb], location) => {
+  return cst.Method({ location, value: httpVerb });
+};
+
+// httpVersion :: (Data, Location) -> HttpVersion
+const httpVersion = (data, location) => {
+  return cst.HttpVersion({
+    location,
+    value: `${stringify(data[1])}.${stringify(data[3])}`,
+  });
+};
 
 /**
  * Request target
  */
 
-// requestTarget :: Data -> String
-const requestTarget = (data) => data[0][0];
-
-// originForm :: (Data, Number, Reject) -> String
-const originForm = (data, location, reject) => {
-  const form = data[0] + data[1];
-
-  if (form.startsWith('//')) return reject;
-
-  return form;
+// requestTarget :: (Data, Location) -> RequestTarget
+const requestTarget = (data, location) => {
+  return cst.RequestTarget({ location, children: [data[0]] });
 };
 
-// originFormTail :: Data -> String
-const originFormTail = (data) => data[0].join('');
+// originForm :: (Data, Location) -> OriginForm
+const originForm = (
+  [absolutePathNode, queryMatch, fragmentMatch],
+  location
+) => {
+  const children = [absolutePathNode];
 
-// originFormTailEnvVar :: Data -> String
-const originFormTailEnvVar = (d) =>
-  d[0].join('') + flattenDepth(2, d[1]).join('');
+  if (queryMatch !== null) {
+    children.push(cst.Literal({ location, value: queryMatch[0] }));
+    children.push(queryMatch[1]);
+  }
+  if (fragmentMatch !== null) {
+    children.push(cst.Literal({ location, value: fragmentMatch[0] }));
+    children.push(fragmentMatch[1]);
+  }
 
-// absoluteForm :: Data -> String
-const absoluteForm = (d) => d[0] + d[1] + d[2].join('') + (d[3] || '');
+  return cst.OriginForm({
+    location,
+    children,
+  });
+};
 
-// scheme :: Data -> String
-const scheme = (data) => flatten(data).join('');
+// absoluteForm :: (Data, Location) -> AbsoluteForm
+const absoluteForm = (
+  [schemeMatch, hierPartNode, queryMatch, fragmentMatch],
+  location
+) => {
+  const children = [];
+
+  if (schemeMatch !== null) {
+    children.push(schemeMatch[0]);
+    children.push(cst.Literal({ location, value: schemeMatch[1] }));
+  }
+  children.push(hierPartNode);
+  if (queryMatch !== null) {
+    children.push(cst.Literal({ location, value: queryMatch[0] }));
+    children.push(queryMatch[1]);
+  }
+  if (fragmentMatch !== null) {
+    children.push(cst.Literal({ location, value: fragmentMatch[0] }));
+    children.push(fragmentMatch[1]);
+  }
+
+  return cst.AbsoluteForm({
+    location,
+    children,
+  });
+};
+
+// asteriskForm :: (Data, Location) -> AsteriskForm
+const asteriskForm = (data, location) => {
+  return cst.AsteriskForm({ location, value: data[0] });
+};
+
+// scheme :: (Data, Location) -> Scheme
+const scheme = (data, location) => {
+  return cst.Scheme({ location, value: stringify(flatten(data)) });
+};
+
+// hierPart :: (Data, Location) -> HierPart
+const hierPart = ([authorityNode, absolutePathNode], location) => {
+  return cst.HierPart({
+    location,
+    children: [authorityNode, absolutePathNode],
+  });
+};
+
+/**
+ * Authority.
+ */
+
+// authority :: (Data, Location) -> Authority
+const authority = (data, location) => {
+  const [hostNode] = data;
+  const children = [hostNode];
+
+  // optional port
+  if (Array.isArray(data[1])) {
+    children.push(cst.Literal({ location, value: data[1][0] }));
+    children.push(data[1][1]);
+  }
+
+  return cst.Authority({ location, children });
+};
+
+// port :: (Data, Location) -> Port
+const port = (data, location) => {
+  return cst.Port({ location, value: stringifyId(data) });
+};
+
+// host :: (Data, Location) -> Host
+const host = (data, location) => {
+  const children = [];
+
+  if (data[0].length === 3) {
+    // ipv6 with brackets
+    children.push(cst.Literal({ location, value: data[0][0] }));
+    children.push(data[0][1]);
+    children.push(cst.Literal({ location, value: data[0][2] }));
+  } else {
+    // ipv4 or reg name
+    children.push(data[0][0]);
+  }
+
+  return cst.Host({ location, children });
+};
+
+// ipv6Address :: (Data, Location) -> Ipv6Address
+const ipv6Address = (data, location) => {
+  return cst.Ipv6Address({ location, value: stringifyId(data) });
+};
+
+// ipv4-or-reg-name :: (Data, Location) -> Ipv4OrRegName
+const ipv4OrRegName = (data, location) => {
+  return cst.Ipv4OrRegName({ location, value: stringifyId(data) });
+};
+
+/**
+ * Resource path.
+ */
+
+// absolutePath :: (Data, Location) -> AbsolutePath
+const absolutePath = (data, location) => {
+  return cst.AbsolutePath({
+    location,
+    children: flatten(data),
+  });
+};
+
+// pathSeparator :: (Data, Location) -> PathSeparator
+const pathSeparator = (data, location) => {
+  return cst.PathSeparator({ location, value: data[0] });
+};
+
+// segment :: (Data, Location) -> Segment
+const segment = (data, location) => {
+  return cst.Segment({ location, value: stringifyId(data) });
+};
+
+/**
+ * Query and Fragment
+ */
+
+// query :: (Data, Location) -> Query
+const query = (data, location) => {
+  return cst.Query({ location, value: stringifyId(data) });
+};
+
+// fragment :: (Data, Location) -> Fragment
+const fragment = (data, location) => {
+  return cst.Fragment({ location, value: stringifyId(data) });
+};
 
 /**
  * Headers
  */
 
-// headerField :: Data -> HeaderField
-const headerField = (data) => ({ name: data[0], value: data[3] });
+// headers :: (Data, Location) -> Headers
+const headers = (data, location) => {
+  return cst.Headers({ location, children: [...data[0]] });
+};
 
-// fieldName :: Data -> String
-const fieldName = (data) => data[0].join('');
+// headerField :: (Data, Location) -> HeaderField
+const headerField = (data, location) => {
+  return cst.HeaderField({ location, children: [data[0], data[3]] });
+};
 
-// fieldValue :: (Data, Number, Reject) -> String | Reject
+// fieldName :: (Data, Location) -> FieldName
+const fieldName = (data, location) => {
+  return cst.FieldName({ location, value: stringifyId(data) });
+};
+
+// fieldValue :: (Data, Location, Reject) -> FieldValue | Reject
 const fieldValue = (data, location, reject) => {
-  const lineTail = data[0].join('');
+  const lineTail = stringifyId(data);
 
   if (lineTail.startsWith(' ') || lineTail.endsWith(' ')) {
     return reject;
   }
 
-  return lineTail;
+  return cst.FieldValue({ location, value: lineTail });
 };
 
 /**
  * Message body
  */
 
-// messages :: Data -> Body
-const messages = (data) => flattenDepth(4, data[0]).join('').trim().split('\n');
+// messageBody :: (Data, Location) -> MessageBody
+const messageBody = (data, location) => {
+  const children = [];
+  const messages = data[0];
 
-// messageLine :: (Data, Number, Reject) -> String | Reject
+  if (messages.children.length > 0) {
+    children.push(messages);
+  }
+
+  return cst.MessageBody({ location, children });
+};
+
+// messages :: (Data, Location) -> Messages
+const messages = (data, location) => {
+  return cst.Messages({ location, children: [...data[0]] });
+};
+
+// messageLine :: (Data, Location, Reject) -> MessageLine | Reject
 const messageLine = (data, location, reject) => {
-  const lineTail = data[0].join('');
+  const lineTail = stringifyId(data);
 
   if (
     lineTail.includes('<') ||
@@ -174,50 +345,61 @@ const messageLine = (data, location, reject) => {
     return reject;
   }
 
-  return lineTail;
+  return cst.MessageLine({ location, value: lineTail });
 };
 
-// inputFileRef :: Data -> String
-const inputFileRef = (data) => `${data[0]} ${data[2]}`;
+// inputFileRef :: (Data, Location) -> InputFileRef
+const inputFileRef = (data, location) => {
+  return cst.InputFileRef({ location, children: [data[2]] });
+};
 
-// filePath
-const filePath = (data) => data[0].join('');
+// filePath :: (Data, Location) -> FilePath
+const filePath = (data, location) => {
+  return cst.FilePath({ location, value: stringifyId(data) });
+};
 
 /**
  * Response handler
  */
 
-// responseHandlerFilePath :: (Data, Number, Reject) -> String
-const responseHandlerFilePath = (data, location, reject) => {
-  const lineTail = data[2];
-
-  if (lineTail.startsWith('{%')) return reject;
-
-  return lineTail;
+// responseHandler :: (Data, Location) -> ResponseHandler
+const responseHandler = (data, location) => {
+  return cst.ResponseHandler({ location, children: [data[0]] });
 };
 
-// handlerScript :: (Data, Number, Reject) -> String
+// responseHandlerFilePath :: (Data, Number, Reject) -> String
+const responseHandlerFilePath = (data, location, reject) => {
+  const filePathNode = data[2];
+
+  if (filePathNode.value.startsWith('{%')) return reject;
+
+  return filePathNode;
+};
+
+// handlerScript :: (Data, Number, Reject) -> HandlerScript
 const handlerScript = (data, location, reject) => {
-  const script = data[1].join('');
+  const script = stringify(data[1]);
 
   if (script.includes('%}') || script.includes('###')) return reject;
 
-  return script;
+  return cst.HandlerScript({ location, value: script });
 };
 
 /**
  * Response reference
  */
 
-// responseRef :: Data -> String
-const responseRef = (data) => `${data[0]} ${data[2]}`;
+// responseRef :: (Data, Location) -> ResponseRef
+const responseRef = (data, location) => {
+  return cst.ResponseRef({ location, children: [data[2]] });
+};
 
 /**
  * Line Terminators
  */
 
 // lineTail :: Data -> String
-const lineTail = (data) => data[0].join('');
+const lineTail = (data) => stringifyId(data);
 
 /**
  * Comments
@@ -234,37 +416,57 @@ const lineComment = (data, location, reject) => {
  * Environment variables
  */
 
-// envVariable :: Data -> String
-const envVariable = (data) => flatten(data).join('');
+// envVariable :: (Data, Location) -> EnvVariable
+const envVariable = (data, location) => {
+  return cst.EnvVariable({ location, value: stringify(flatten(data)) });
+};
 
 module.exports = {
   // general postprocessors
   nth,
   stubNull,
+  stringifyId,
   // Request file
-  requestFile,
+  requestsFile,
   // Request
   request,
   // Request line
   requestLine,
+  method,
   httpVersion,
   // Request Target
   requestTarget,
   originForm,
-  originFormTail,
-  originFormTailEnvVar,
   absoluteForm,
+  asteriskForm,
   scheme,
+  hierPart,
+  // Authority
+  authority,
+  port,
+  host,
+  ipv6Address,
+  ipv4OrRegName,
+  // Resource path
+  absolutePath,
+  pathSeparator,
+  segment,
+  // Query and Fragment
+  query,
+  fragment,
   // Headers
+  headers,
   headerField,
   fieldName,
   fieldValue,
   // Message body
+  messageBody,
   messages,
   messageLine,
   inputFileRef,
   filePath,
   // Response handler
+  responseHandler,
   responseHandlerFilePath,
   handlerScript,
   // Response reference
