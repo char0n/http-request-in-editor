@@ -157,7 +157,7 @@ Generate random strings that satisfy the grammar defined in`src/parser/grammar.n
  $ npm run unparse
 ```
 
-Regenerates [Corpus file]([CST Types](https://github.com/char0n/http-request-in-editor/tree/master/test/corpus/corpus.txt). Replaces CST representation with the new one.
+Regenerates [Corpus file](https://github.com/char0n/http-request-in-editor/tree/master/test/corpus/corpus.txt). Replaces CST representation with the new one.
 ```sh
  $ npm run corpus:regenerate
 ```
