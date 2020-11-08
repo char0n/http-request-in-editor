@@ -3,10 +3,6 @@
   "version": "0.1.0",
   "description": "Parser for Http Request in Editor Specification",
   "main": "./src/index.js",
-  "engine": {
-    "node": "13.3.0",
-    "npm": "6.14.2"
-  },
   "type": "commonjs",
   "scripts": {
     "compile": "nearleyc ./src/parser/grammar.ne --out ./src/parser/grammar.js",
