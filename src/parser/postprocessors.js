@@ -29,7 +29,7 @@ const stringify = join('');
 const stringifyId = pipe(nth(0), stringify);
 
 /**
- * Request file
+ * Requests file
  */
 
 // requestsFile :: (Data, Location) -> Request
@@ -196,7 +196,7 @@ const hierPart = ([authorityNode, absolutePathNode], location) => {
 };
 
 /**
- * Authority.
+ * Authority
  */
 
 // authority :: (Data, Location) -> Authority
@@ -246,7 +246,7 @@ const ipv4OrRegName = (data, location) => {
 };
 
 /**
- * Resource path.
+ * Resource path
  */
 
 // absolutePath :: (Data, Location) -> AbsolutePath
