@@ -1,0 +1,442 @@
+================================================================================
+requests-file: Multiple body-less requests
+================================================================================
+###
+POST http://www.example.com
+Header: test
+
+###
+POST http://www.example.com
+Header: test
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))))))
+    (headers
+      (header-field
+        (field-name)
+        (field-value))))
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))))))
+    (headers
+      (header-field
+        (field-name)
+        (field-value)))))
+
+================================================================================
+requests-file: Multiple requests
+================================================================================
+###
+GET http://www.example.com
+
+MESSAGE BODY
+
+<> ./file.json
+
+###
+GET http://www.example.com
+
+MESSAGE BODY
+
+
+
+<> ./file.json
+
+
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))))))
+    (message-body
+      (messages
+        (message-line)
+        (message-line)))
+    (response-ref
+      (file-path)))
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))))))
+    (message-body
+      (messages
+        (message-line)
+        (message-line)
+        (message-line)
+        (message-line)))
+    (response-ref
+      (file-path))))
+
+================================================================================
+requests-file: Multiple requests with comments
+================================================================================
+# test
+### test
+
+#test
+
+GET http://www.example.com
+Header1: value1
+# test
+Header2: value2
+
+body
+
+> {% script %}
+<> file.json
+
+# test
+
+# test
+###
+GET http://www.example.com
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (request-target
+        (absolute-form
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))))))
+    (message-body
+      (messages
+        (message-line)
+        (message-line)
+        (message-line)
+        (message-line)
+        (message-line)
+        (message-line)
+        (message-line)
+        (message-line)
+        (message-line)))
+    (response-handler
+      (handler-script))
+    (response-ref
+      (file-path)))
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))))))))
+
+================================================================================
+requests-file: Multiple requests with multiple comment types
+================================================================================
+// test
+### test
+
+//test
+
+GET http://www.example.com
+Header1: value1
+// test
+Header2: value2
+
+body
+
+> {% script %}
+<> file.json
+
+// test
+
+// test
+###
+GET http://www.example.com
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (request-target
+        (origin-form
+          (absolute-path
+            (path-separator)
+            (segment)
+            (path-separator)
+            (segment)))))
+    (message-body
+      (messages
+        (message-line)
+        (message-line)
+        (message-line)
+        (message-line)
+        (message-line)
+        (message-line)
+        (message-line)))
+    (response-handler
+      (handler-script))
+    (response-ref
+      (file-path)))
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))))))))
+
+================================================================================
+request: Simple request
+================================================================================
+POST https://httpbin.org/post
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))
+            (absolute-path
+              (path-separator)
+              (segment))))))))
+
+================================================================================
+request: Simple request with comment
+================================================================================
+### test
+POST https://httpbin.org/post
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (request-target
+        (absolute-form
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))))))
+    (headers
+      (header-field
+        (field-name)
+        (field-value)))))
+
+================================================================================
+request: Simple request with comment and http-version
+================================================================================
+### test
+POST https://httpbin.org/post HTTP/1.1
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (request-target
+        (absolute-form
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))))))
+    (headers
+      (header-field
+        (field-name)
+        (field-value)))))
+
+================================================================================
+request: Simple request with http-version
+================================================================================
+POST https://httpbin.org/post HTTP/1.1
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))
+            (absolute-path
+              (path-separator)
+              (segment)))))
+      (http-version))))
+
+================================================================================
+request: Simple request with 2.0 http-version
+================================================================================
+### test
+POST https://httpbin.org/post HTTP/2.0
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (request-target
+        (absolute-form
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))))))
+    (headers
+      (header-field
+        (field-name)
+        (field-value)))))
+
+================================================================================
+request: Simple request starting with new line
+================================================================================
+
+POST https://httpbin.org/post HTTP/2.0
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))
+            (absolute-path
+              (path-separator)
+              (segment)))))
+      (http-version))))
+
+================================================================================
+request: Simple request starting with two new lines
+================================================================================
+
+
+POST https://httpbin.org/post HTTP/2.0
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))
+            (absolute-path
+              (path-separator)
+              (segment)))))
+      (http-version))))
+
+================================================================================
+request: Simple request starting with comment and two new lines
+================================================================================
+### test
+
+
+POST https://httpbin.org/post HTTP/1.1
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (request-target
+        (absolute-form
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))))))
+    (message-body
+      (messages
+        (message-line)
+        (message-line)
+        (message-line)))))
+

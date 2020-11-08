@@ -4,30 +4,48 @@ const {
  // general postprocessors
   nth,
   stubNull,
+  stringifyId,
   // Request file
-  requestFile,
+  requestsFile,
   // Request
   request,
   // Request line
   requestLine,
+  method,
   httpVersion,
   // Request Target
   requestTarget,
   originForm,
-  originFormTail,
-  originFormTailEnvVar,
   absoluteForm,
+  asteriskForm,
   scheme,
+  hierPart,
+  // Authority
+  authority,
+  port,
+  host,
+  ipv6Address,
+  ipv4OrRegName,
+  // Resource path
+  absolutePath,
+  pathSeparator,
+  segment,
+  // Query and Fragment
+  query,
+  fragment,
   // Headers
+  headers,
   headerField,
   fieldName,
   fieldValue,
   // Message body
+  messageBody,
   messages,
   messageLine,
   inputFileRef,
   filePath,
   // Response handler
+  responseHandler,
   responseHandlerFilePath,
   handlerScript,
   // Response reference
@@ -45,7 +63,7 @@ const {
 # Requests file #
 #################
 
-REQUESTS_FILE -> WHIT? (REQUEST_SEPARATOR):* REQUEST (REQUEST_WITH_SEPARATOR):* (REQUEST_SEPARATOR):* {% requestFile %}
+REQUESTS_FILE -> WHIT? (REQUEST_SEPARATOR):* REQUEST (REQUEST_WITH_SEPARATOR):* (REQUEST_SEPARATOR):* {% requestsFile %}
 REQUEST_WITH_SEPARATOR -> REQUEST_SEPARATOR:+ REQUEST {% nth(1) %}
 
 ###########
@@ -58,7 +76,7 @@ REQUEST -> REQUEST_LINE NEW_LINE LINE_COMMENT:* HEADERS NEW_LINE MESSAGE_BODY RE
 # Request line #
 ################
 
-REQUEST_LINE -> (METHOD __ {% id %}):? REQUEST_TARGET (__ HTTP_VERSION {% nth(1) %}):? {% requestLine %}
+REQUEST_LINE -> (METHOD __ {% method %}):? REQUEST_TARGET (__ HTTP_VERSION {% nth(1) %}):? {% requestLine %}
 
 
 METHOD -> "GET" {% id %}
@@ -77,42 +95,71 @@ HTTP_VERSION -> "HTTP/" DIGIT:+ "." DIGIT:+ {% httpVersion %}
 # Request target #
 ##################
 
-REQUEST_TARGET -> (ORIGIN_FORM | ABSOLUTE_FORM | ASTERISK_FORM | ENV_VARIABLE) {% requestTarget %}
+REQUEST_TARGET -> (ORIGIN_FORM | ABSOLUTE_FORM | ASTERISK_FORM) {% requestTarget %}
 
 
-ORIGIN_FORM -> "/" ORIGIN_FORM_TAIL {% originForm %}
+ORIGIN_FORM -> ABSOLUTE_PATH ("?" QUERY):? ("#" FRAGMENT):? {% originForm %}
 
-ORIGIN_FORM_TAIL -> null
-                  | [^{}\s]:+ {% originFormTail %}
-                  | [^{\s]:* (ENV_VARIABLE [^}\s]:*):+ {% originFormTailEnvVar %}
 
-ABSOLUTE_FORM -> SCHEME "://" [^/\s]:+ ORIGIN_FORM:? {% absoluteForm %}
+ABSOLUTE_FORM -> (SCHEME "://"):? HIER_PART ("?" QUERY):? ("#" FRAGMENT):? {% absoluteForm %}
 
-ASTERISK_FORM -> "*" {% id %}
+SCHEME -> "http" {% scheme %}
+        | "https" {% scheme %}
 
-SCHEME -> "http" {% id %}
-        | "https" {% id %}
-        | ENV_VARIABLE {% id %}
+HIER_PART -> AUTHORITY ABSOLUTE_PATH:? {% hierPart %}
 
-ENV_VARIABLE -> "{{" _ "$":? [a-zA-Z0-9_-]:+ _ "}}" {% envVariable %}
 
+ASTERISK_FORM -> "*" {% asteriskForm %}
+
+#############
+# Authority #
+#############
+
+AUTHORITY -> HOST (":" PORT):? {% authority %}
+
+PORT -> DIGIT:+ {% port %}
+
+HOST -> ("[" IPV6_ADDRESS "]" | IPV4_OR_REG_NAME) {% host %}
+
+IPV6_ADDRESS -> [^\r\n\/\] ]:+ {% ipv6Address %}
+
+IPV4_OR_REG_NAME -> [^\r\n\/\:\?# ]:+ {% ipv4OrRegName %}
+
+#################
+# Resource path #
+#################
+
+ABSOLUTE_PATH -> (PATH_SEPARATOR SEGMENT):+ {% absolutePath %}
+
+PATH_SEPARATOR -> ("/" {% id %} | NEW_LINE_WITH_INDENT {% () => '\n' %}) {% pathSeparator %}
+
+SEGMENT -> [^\r\n/?# ]:* {% segment %}
+
+
+######################
+# Query and Fragment #
+######################
+
+QUERY -> [^\r\n#]:* {% query %}
+
+FRAGMENT -> [^\r\n\?]:* {% fragment %}
 
 ###########
 # Headers #
 ###########
 
-HEADERS -> (HEADER_FIELD NEW_LINE WHIT? {% id %}):* {% id %}
+HEADERS -> (HEADER_FIELD NEW_LINE WHIT? {% id %}):* {% headers %}
 HEADER_FIELD -> FIELD_NAME ":" _ FIELD_VALUE _ {% headerField %}
 FIELD_NAME -> [^\r\n\:]:+ {% fieldName %}
 FIELD_VALUE -> INPUT_CHARACTER:* {% fieldValue %}
-             | NEW_LINE_WITH_INDENT FIELD_VALUE {% d => d[1][0] %}
+             | NEW_LINE_WITH_INDENT FIELD_VALUE {% nth(1) %}
 
 ################
 # Message body #
 ################
 
-MESSAGE_BODY -> MESSAGES {% id %}
-MESSAGES -> (MESSAGE_LINE NEW_LINE):* {% messages %}
+MESSAGE_BODY -> MESSAGES {% messageBody %}
+MESSAGES -> (MESSAGE_LINE NEW_LINE {% id %}):* {% messages %}
 MESSAGE_LINE -> INPUT_CHARACTER:* {% messageLine %}
               | INPUT_FILE_REF {% id %}
 
@@ -124,8 +171,10 @@ FILE_PATH -> INPUT_CHARACTER:+ {% filePath %}
 # Response handler #
 ####################
 
-RESPONSE_HANDLER -> ">" __ HANDLER_SCRIPT NEW_LINE:+ {% nth(2) %}
-                  | ">" __ FILE_PATH NEW_LINE:+ {% responseHandlerFilePath %}
+RESPONSE_HANDLER -> (
+                      ">" __ HANDLER_SCRIPT NEW_LINE:+ {% nth(2) %}
+                      | ">" __ FILE_PATH NEW_LINE:+ {% responseHandlerFilePath %}
+                    ) {% responseHandler %}
 
 HANDLER_SCRIPT -> "{%" [\S\s]:+ "%}" {% handlerScript %}
 
@@ -204,3 +253,9 @@ LINE_COMMENT -> "#" LINE_TAIL {% lineComment %}
 
 REQUEST_SEPARATOR -> "###" WHIT? {% stubNull %}
                    | "### " LINE_TAIL WHIT? {% stubNull %}
+
+########################
+# Environment variable #
+########################
+
+ENV_VARIABLE -> "{{" _ "$":? IDENTIFIER _ "}}" {% envVariable %}

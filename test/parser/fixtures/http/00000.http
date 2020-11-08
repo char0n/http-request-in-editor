@@ -1,4 +1,11 @@
-POST http://www.example.com/{{ $variable1Z-23_ }} HTTP/2.0
-Header: {{ value }}
+### post request
+POST http://www.example.com HTTP/2.0
+# comment
+Authorization: token
+
+message body
+
+> {% script %}
+<> ./file.json
 
 ###

@@ -9,30 +9,48 @@
     // general postprocessors
     nth,
     stubNull,
+    stringifyId,
     // Request file
-    requestFile,
+    requestsFile,
     // Request
     request,
     // Request line
     requestLine,
+    method,
     httpVersion,
     // Request Target
     requestTarget,
     originForm,
-    originFormTail,
-    originFormTailEnvVar,
     absoluteForm,
+    asteriskForm,
     scheme,
+    hierPart,
+    // Authority
+    authority,
+    port,
+    host,
+    ipv6Address,
+    ipv4OrRegName,
+    // Resource path
+    absolutePath,
+    pathSeparator,
+    segment,
+    // Query and Fragment
+    query,
+    fragment,
     // Headers
+    headers,
     headerField,
     fieldName,
     fieldValue,
     // Message body
+    messageBody,
     messages,
     messageLine,
     inputFileRef,
     filePath,
     // Response handler
+    responseHandler,
     responseHandlerFilePath,
     handlerScript,
     // Response reference
@@ -353,7 +371,7 @@
           'REQUESTS_FILE$ebnf$2',
           'REQUESTS_FILE$ebnf$3',
         ],
-        postprocess: requestFile,
+        postprocess: requestsFile,
       },
       { name: 'REQUEST_WITH_SEPARATOR$ebnf$1', symbols: ['REQUEST_SEPARATOR'] },
       {
@@ -413,7 +431,7 @@
       {
         name: 'REQUEST_LINE$ebnf$1$subexpression$1',
         symbols: ['METHOD', '__'],
-        postprocess: id,
+        postprocess: method,
       },
       {
         name: 'REQUEST_LINE$ebnf$1',
@@ -612,106 +630,78 @@
       { name: 'REQUEST_TARGET$subexpression$1', symbols: ['ORIGIN_FORM'] },
       { name: 'REQUEST_TARGET$subexpression$1', symbols: ['ABSOLUTE_FORM'] },
       { name: 'REQUEST_TARGET$subexpression$1', symbols: ['ASTERISK_FORM'] },
-      { name: 'REQUEST_TARGET$subexpression$1', symbols: ['ENV_VARIABLE'] },
       {
         name: 'REQUEST_TARGET',
         symbols: ['REQUEST_TARGET$subexpression$1'],
         postprocess: requestTarget,
       },
       {
+        name: 'ORIGIN_FORM$ebnf$1$subexpression$1',
+        symbols: [{ literal: '?' }, 'QUERY'],
+      },
+      {
+        name: 'ORIGIN_FORM$ebnf$1',
+        symbols: ['ORIGIN_FORM$ebnf$1$subexpression$1'],
+        postprocess: id,
+      },
+      {
+        name: 'ORIGIN_FORM$ebnf$1',
+        symbols: [],
+        postprocess: function (d) {
+          return null;
+        },
+      },
+      {
+        name: 'ORIGIN_FORM$ebnf$2$subexpression$1',
+        symbols: [{ literal: '#' }, 'FRAGMENT'],
+      },
+      {
+        name: 'ORIGIN_FORM$ebnf$2',
+        symbols: ['ORIGIN_FORM$ebnf$2$subexpression$1'],
+        postprocess: id,
+      },
+      {
+        name: 'ORIGIN_FORM$ebnf$2',
+        symbols: [],
+        postprocess: function (d) {
+          return null;
+        },
+      },
+      {
         name: 'ORIGIN_FORM',
-        symbols: [{ literal: '/' }, 'ORIGIN_FORM_TAIL'],
+        symbols: ['ABSOLUTE_PATH', 'ORIGIN_FORM$ebnf$1', 'ORIGIN_FORM$ebnf$2'],
         postprocess: originForm,
       },
-      { name: 'ORIGIN_FORM_TAIL', symbols: [] },
-      { name: 'ORIGIN_FORM_TAIL$ebnf$1', symbols: [/[^{}\s]/] },
       {
-        name: 'ORIGIN_FORM_TAIL$ebnf$1',
-        symbols: ['ORIGIN_FORM_TAIL$ebnf$1', /[^{}\s]/],
-        postprocess: function arrpush(d) {
-          return d[0].concat([d[1]]);
-        },
-      },
-      {
-        name: 'ORIGIN_FORM_TAIL',
-        symbols: ['ORIGIN_FORM_TAIL$ebnf$1'],
-        postprocess: originFormTail,
-      },
-      { name: 'ORIGIN_FORM_TAIL$ebnf$2', symbols: [] },
-      {
-        name: 'ORIGIN_FORM_TAIL$ebnf$2',
-        symbols: ['ORIGIN_FORM_TAIL$ebnf$2', /[^{\s]/],
-        postprocess: function arrpush(d) {
-          return d[0].concat([d[1]]);
-        },
-      },
-      { name: 'ORIGIN_FORM_TAIL$ebnf$3$subexpression$1$ebnf$1', symbols: [] },
-      {
-        name: 'ORIGIN_FORM_TAIL$ebnf$3$subexpression$1$ebnf$1',
-        symbols: ['ORIGIN_FORM_TAIL$ebnf$3$subexpression$1$ebnf$1', /[^}\s]/],
-        postprocess: function arrpush(d) {
-          return d[0].concat([d[1]]);
-        },
-      },
-      {
-        name: 'ORIGIN_FORM_TAIL$ebnf$3$subexpression$1',
-        symbols: [
-          'ENV_VARIABLE',
-          'ORIGIN_FORM_TAIL$ebnf$3$subexpression$1$ebnf$1',
-        ],
-      },
-      {
-        name: 'ORIGIN_FORM_TAIL$ebnf$3',
-        symbols: ['ORIGIN_FORM_TAIL$ebnf$3$subexpression$1'],
-      },
-      { name: 'ORIGIN_FORM_TAIL$ebnf$3$subexpression$2$ebnf$1', symbols: [] },
-      {
-        name: 'ORIGIN_FORM_TAIL$ebnf$3$subexpression$2$ebnf$1',
-        symbols: ['ORIGIN_FORM_TAIL$ebnf$3$subexpression$2$ebnf$1', /[^}\s]/],
-        postprocess: function arrpush(d) {
-          return d[0].concat([d[1]]);
-        },
-      },
-      {
-        name: 'ORIGIN_FORM_TAIL$ebnf$3$subexpression$2',
-        symbols: [
-          'ENV_VARIABLE',
-          'ORIGIN_FORM_TAIL$ebnf$3$subexpression$2$ebnf$1',
-        ],
-      },
-      {
-        name: 'ORIGIN_FORM_TAIL$ebnf$3',
-        symbols: [
-          'ORIGIN_FORM_TAIL$ebnf$3',
-          'ORIGIN_FORM_TAIL$ebnf$3$subexpression$2',
-        ],
-        postprocess: function arrpush(d) {
-          return d[0].concat([d[1]]);
-        },
-      },
-      {
-        name: 'ORIGIN_FORM_TAIL',
-        symbols: ['ORIGIN_FORM_TAIL$ebnf$2', 'ORIGIN_FORM_TAIL$ebnf$3'],
-        postprocess: originFormTailEnvVar,
-      },
-      {
-        name: 'ABSOLUTE_FORM$string$1',
+        name: 'ABSOLUTE_FORM$ebnf$1$subexpression$1$string$1',
         symbols: [{ literal: ':' }, { literal: '/' }, { literal: '/' }],
         postprocess: function joiner(d) {
           return d.join('');
         },
       },
-      { name: 'ABSOLUTE_FORM$ebnf$1', symbols: [/[^/\s]/] },
+      {
+        name: 'ABSOLUTE_FORM$ebnf$1$subexpression$1',
+        symbols: ['SCHEME', 'ABSOLUTE_FORM$ebnf$1$subexpression$1$string$1'],
+      },
       {
         name: 'ABSOLUTE_FORM$ebnf$1',
-        symbols: ['ABSOLUTE_FORM$ebnf$1', /[^/\s]/],
-        postprocess: function arrpush(d) {
-          return d[0].concat([d[1]]);
+        symbols: ['ABSOLUTE_FORM$ebnf$1$subexpression$1'],
+        postprocess: id,
+      },
+      {
+        name: 'ABSOLUTE_FORM$ebnf$1',
+        symbols: [],
+        postprocess: function (d) {
+          return null;
         },
       },
       {
+        name: 'ABSOLUTE_FORM$ebnf$2$subexpression$1',
+        symbols: [{ literal: '?' }, 'QUERY'],
+      },
+      {
         name: 'ABSOLUTE_FORM$ebnf$2',
-        symbols: ['ORIGIN_FORM'],
+        symbols: ['ABSOLUTE_FORM$ebnf$2$subexpression$1'],
         postprocess: id,
       },
       {
@@ -722,16 +712,31 @@
         },
       },
       {
+        name: 'ABSOLUTE_FORM$ebnf$3$subexpression$1',
+        symbols: [{ literal: '#' }, 'FRAGMENT'],
+      },
+      {
+        name: 'ABSOLUTE_FORM$ebnf$3',
+        symbols: ['ABSOLUTE_FORM$ebnf$3$subexpression$1'],
+        postprocess: id,
+      },
+      {
+        name: 'ABSOLUTE_FORM$ebnf$3',
+        symbols: [],
+        postprocess: function (d) {
+          return null;
+        },
+      },
+      {
         name: 'ABSOLUTE_FORM',
         symbols: [
-          'SCHEME',
-          'ABSOLUTE_FORM$string$1',
           'ABSOLUTE_FORM$ebnf$1',
+          'HIER_PART',
           'ABSOLUTE_FORM$ebnf$2',
+          'ABSOLUTE_FORM$ebnf$3',
         ],
         postprocess: absoluteForm,
       },
-      { name: 'ASTERISK_FORM', symbols: [{ literal: '*' }], postprocess: id },
       {
         name: 'SCHEME$string$1',
         symbols: [
@@ -744,7 +749,7 @@
           return d.join('');
         },
       },
-      { name: 'SCHEME', symbols: ['SCHEME$string$1'], postprocess: id },
+      { name: 'SCHEME', symbols: ['SCHEME$string$1'], postprocess: scheme },
       {
         name: 'SCHEME$string$2',
         symbols: [
@@ -758,54 +763,156 @@
           return d.join('');
         },
       },
-      { name: 'SCHEME', symbols: ['SCHEME$string$2'], postprocess: id },
-      { name: 'SCHEME', symbols: ['ENV_VARIABLE'], postprocess: id },
+      { name: 'SCHEME', symbols: ['SCHEME$string$2'], postprocess: scheme },
+      { name: 'HIER_PART$ebnf$1', symbols: ['ABSOLUTE_PATH'], postprocess: id },
       {
-        name: 'ENV_VARIABLE$string$1',
-        symbols: [{ literal: '{' }, { literal: '{' }],
-        postprocess: function joiner(d) {
-          return d.join('');
-        },
-      },
-      {
-        name: 'ENV_VARIABLE$ebnf$1',
-        symbols: [{ literal: '$' }],
-        postprocess: id,
-      },
-      {
-        name: 'ENV_VARIABLE$ebnf$1',
+        name: 'HIER_PART$ebnf$1',
         symbols: [],
         postprocess: function (d) {
           return null;
         },
       },
-      { name: 'ENV_VARIABLE$ebnf$2', symbols: [/[a-zA-Z0-9_-]/] },
       {
-        name: 'ENV_VARIABLE$ebnf$2',
-        symbols: ['ENV_VARIABLE$ebnf$2', /[a-zA-Z0-9_-]/],
+        name: 'HIER_PART',
+        symbols: ['AUTHORITY', 'HIER_PART$ebnf$1'],
+        postprocess: hierPart,
+      },
+      {
+        name: 'ASTERISK_FORM',
+        symbols: [{ literal: '*' }],
+        postprocess: asteriskForm,
+      },
+      {
+        name: 'AUTHORITY$ebnf$1$subexpression$1',
+        symbols: [{ literal: ':' }, 'PORT'],
+      },
+      {
+        name: 'AUTHORITY$ebnf$1',
+        symbols: ['AUTHORITY$ebnf$1$subexpression$1'],
+        postprocess: id,
+      },
+      {
+        name: 'AUTHORITY$ebnf$1',
+        symbols: [],
+        postprocess: function (d) {
+          return null;
+        },
+      },
+      {
+        name: 'AUTHORITY',
+        symbols: ['HOST', 'AUTHORITY$ebnf$1'],
+        postprocess: authority,
+      },
+      { name: 'PORT$ebnf$1', symbols: ['DIGIT'] },
+      {
+        name: 'PORT$ebnf$1',
+        symbols: ['PORT$ebnf$1', 'DIGIT'],
+        postprocess: function arrpush(d) {
+          return d[0].concat([d[1]]);
+        },
+      },
+      { name: 'PORT', symbols: ['PORT$ebnf$1'], postprocess: port },
+      {
+        name: 'HOST$subexpression$1',
+        symbols: [{ literal: '[' }, 'IPV6_ADDRESS', { literal: ']' }],
+      },
+      { name: 'HOST$subexpression$1', symbols: ['IPV4_OR_REG_NAME'] },
+      { name: 'HOST', symbols: ['HOST$subexpression$1'], postprocess: host },
+      { name: 'IPV6_ADDRESS$ebnf$1', symbols: [/[^\r\n\/\] ]/] },
+      {
+        name: 'IPV6_ADDRESS$ebnf$1',
+        symbols: ['IPV6_ADDRESS$ebnf$1', /[^\r\n\/\] ]/],
         postprocess: function arrpush(d) {
           return d[0].concat([d[1]]);
         },
       },
       {
-        name: 'ENV_VARIABLE$string$2',
-        symbols: [{ literal: '}' }, { literal: '}' }],
-        postprocess: function joiner(d) {
-          return d.join('');
+        name: 'IPV6_ADDRESS',
+        symbols: ['IPV6_ADDRESS$ebnf$1'],
+        postprocess: ipv6Address,
+      },
+      { name: 'IPV4_OR_REG_NAME$ebnf$1', symbols: [/[^\r\n\/\:\?# ]/] },
+      {
+        name: 'IPV4_OR_REG_NAME$ebnf$1',
+        symbols: ['IPV4_OR_REG_NAME$ebnf$1', /[^\r\n\/\:\?# ]/],
+        postprocess: function arrpush(d) {
+          return d[0].concat([d[1]]);
         },
       },
       {
-        name: 'ENV_VARIABLE',
-        symbols: [
-          'ENV_VARIABLE$string$1',
-          '_',
-          'ENV_VARIABLE$ebnf$1',
-          'ENV_VARIABLE$ebnf$2',
-          '_',
-          'ENV_VARIABLE$string$2',
-        ],
-        postprocess: envVariable,
+        name: 'IPV4_OR_REG_NAME',
+        symbols: ['IPV4_OR_REG_NAME$ebnf$1'],
+        postprocess: ipv4OrRegName,
       },
+      {
+        name: 'ABSOLUTE_PATH$ebnf$1$subexpression$1',
+        symbols: ['PATH_SEPARATOR', 'SEGMENT'],
+      },
+      {
+        name: 'ABSOLUTE_PATH$ebnf$1',
+        symbols: ['ABSOLUTE_PATH$ebnf$1$subexpression$1'],
+      },
+      {
+        name: 'ABSOLUTE_PATH$ebnf$1$subexpression$2',
+        symbols: ['PATH_SEPARATOR', 'SEGMENT'],
+      },
+      {
+        name: 'ABSOLUTE_PATH$ebnf$1',
+        symbols: [
+          'ABSOLUTE_PATH$ebnf$1',
+          'ABSOLUTE_PATH$ebnf$1$subexpression$2',
+        ],
+        postprocess: function arrpush(d) {
+          return d[0].concat([d[1]]);
+        },
+      },
+      {
+        name: 'ABSOLUTE_PATH',
+        symbols: ['ABSOLUTE_PATH$ebnf$1'],
+        postprocess: absolutePath,
+      },
+      {
+        name: 'PATH_SEPARATOR$subexpression$1',
+        symbols: [{ literal: '/' }],
+        postprocess: id,
+      },
+      {
+        name: 'PATH_SEPARATOR$subexpression$1',
+        symbols: ['NEW_LINE_WITH_INDENT'],
+        postprocess: () => '\n',
+      },
+      {
+        name: 'PATH_SEPARATOR',
+        symbols: ['PATH_SEPARATOR$subexpression$1'],
+        postprocess: pathSeparator,
+      },
+      { name: 'SEGMENT$ebnf$1', symbols: [] },
+      {
+        name: 'SEGMENT$ebnf$1',
+        symbols: ['SEGMENT$ebnf$1', /[^\r\n/?# ]/],
+        postprocess: function arrpush(d) {
+          return d[0].concat([d[1]]);
+        },
+      },
+      { name: 'SEGMENT', symbols: ['SEGMENT$ebnf$1'], postprocess: segment },
+      { name: 'QUERY$ebnf$1', symbols: [] },
+      {
+        name: 'QUERY$ebnf$1',
+        symbols: ['QUERY$ebnf$1', /[^\r\n#]/],
+        postprocess: function arrpush(d) {
+          return d[0].concat([d[1]]);
+        },
+      },
+      { name: 'QUERY', symbols: ['QUERY$ebnf$1'], postprocess: query },
+      { name: 'FRAGMENT$ebnf$1', symbols: [] },
+      {
+        name: 'FRAGMENT$ebnf$1',
+        symbols: ['FRAGMENT$ebnf$1', /[^\r\n\?]/],
+        postprocess: function arrpush(d) {
+          return d[0].concat([d[1]]);
+        },
+      },
+      { name: 'FRAGMENT', symbols: ['FRAGMENT$ebnf$1'], postprocess: fragment },
       { name: 'HEADERS$ebnf$1', symbols: [] },
       {
         name: 'HEADERS$ebnf$1$subexpression$1',
@@ -819,7 +926,7 @@
           return d[0].concat([d[1]]);
         },
       },
-      { name: 'HEADERS', symbols: ['HEADERS$ebnf$1'], postprocess: id },
+      { name: 'HEADERS', symbols: ['HEADERS$ebnf$1'], postprocess: headers },
       {
         name: 'HEADER_FIELD',
         symbols: ['FIELD_NAME', { literal: ':' }, '_', 'FIELD_VALUE', '_'],
@@ -854,13 +961,14 @@
       {
         name: 'FIELD_VALUE',
         symbols: ['NEW_LINE_WITH_INDENT', 'FIELD_VALUE'],
-        postprocess: (d) => d[1][0],
+        postprocess: nth(1),
       },
-      { name: 'MESSAGE_BODY', symbols: ['MESSAGES'], postprocess: id },
+      { name: 'MESSAGE_BODY', symbols: ['MESSAGES'], postprocess: messageBody },
       { name: 'MESSAGES$ebnf$1', symbols: [] },
       {
         name: 'MESSAGES$ebnf$1$subexpression$1',
         symbols: ['MESSAGE_LINE', 'NEW_LINE'],
+        postprocess: id,
       },
       {
         name: 'MESSAGES$ebnf$1',
@@ -902,41 +1010,52 @@
         symbols: ['FILE_PATH$ebnf$1'],
         postprocess: filePath,
       },
-      { name: 'RESPONSE_HANDLER$ebnf$1', symbols: ['NEW_LINE'] },
       {
-        name: 'RESPONSE_HANDLER$ebnf$1',
-        symbols: ['RESPONSE_HANDLER$ebnf$1', 'NEW_LINE'],
+        name: 'RESPONSE_HANDLER$subexpression$1$ebnf$1',
+        symbols: ['NEW_LINE'],
+      },
+      {
+        name: 'RESPONSE_HANDLER$subexpression$1$ebnf$1',
+        symbols: ['RESPONSE_HANDLER$subexpression$1$ebnf$1', 'NEW_LINE'],
         postprocess: function arrpush(d) {
           return d[0].concat([d[1]]);
         },
       },
       {
-        name: 'RESPONSE_HANDLER',
+        name: 'RESPONSE_HANDLER$subexpression$1',
         symbols: [
           { literal: '>' },
           '__',
           'HANDLER_SCRIPT',
-          'RESPONSE_HANDLER$ebnf$1',
+          'RESPONSE_HANDLER$subexpression$1$ebnf$1',
         ],
         postprocess: nth(2),
       },
-      { name: 'RESPONSE_HANDLER$ebnf$2', symbols: ['NEW_LINE'] },
       {
-        name: 'RESPONSE_HANDLER$ebnf$2',
-        symbols: ['RESPONSE_HANDLER$ebnf$2', 'NEW_LINE'],
+        name: 'RESPONSE_HANDLER$subexpression$1$ebnf$2',
+        symbols: ['NEW_LINE'],
+      },
+      {
+        name: 'RESPONSE_HANDLER$subexpression$1$ebnf$2',
+        symbols: ['RESPONSE_HANDLER$subexpression$1$ebnf$2', 'NEW_LINE'],
         postprocess: function arrpush(d) {
           return d[0].concat([d[1]]);
         },
       },
       {
-        name: 'RESPONSE_HANDLER',
+        name: 'RESPONSE_HANDLER$subexpression$1',
         symbols: [
           { literal: '>' },
           '__',
           'FILE_PATH',
-          'RESPONSE_HANDLER$ebnf$2',
+          'RESPONSE_HANDLER$subexpression$1$ebnf$2',
         ],
         postprocess: responseHandlerFilePath,
+      },
+      {
+        name: 'RESPONSE_HANDLER',
+        symbols: ['RESPONSE_HANDLER$subexpression$1'],
+        postprocess: responseHandler,
       },
       {
         name: 'HANDLER_SCRIPT$string$1',
@@ -1101,6 +1220,44 @@
         name: 'REQUEST_SEPARATOR',
         symbols: ['REQUEST_SEPARATOR$string$2', 'LINE_TAIL', 'WHIT?'],
         postprocess: stubNull,
+      },
+      {
+        name: 'ENV_VARIABLE$string$1',
+        symbols: [{ literal: '{' }, { literal: '{' }],
+        postprocess: function joiner(d) {
+          return d.join('');
+        },
+      },
+      {
+        name: 'ENV_VARIABLE$ebnf$1',
+        symbols: [{ literal: '$' }],
+        postprocess: id,
+      },
+      {
+        name: 'ENV_VARIABLE$ebnf$1',
+        symbols: [],
+        postprocess: function (d) {
+          return null;
+        },
+      },
+      {
+        name: 'ENV_VARIABLE$string$2',
+        symbols: [{ literal: '}' }, { literal: '}' }],
+        postprocess: function joiner(d) {
+          return d.join('');
+        },
+      },
+      {
+        name: 'ENV_VARIABLE',
+        symbols: [
+          'ENV_VARIABLE$string$1',
+          '_',
+          'ENV_VARIABLE$ebnf$1',
+          'IDENTIFIER',
+          '_',
+          'ENV_VARIABLE$string$2',
+        ],
+        postprocess: envVariable,
       },
     ],
     ParserStart: 'REQUESTS_FILE',

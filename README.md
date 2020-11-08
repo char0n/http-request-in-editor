@@ -17,7 +17,7 @@ There is currently no [CLI](https://en.wikipedia.org/wiki/Command-line_interface
 moment we checked our `.http` files inside our project we should test if those file reflect reality.
 This project provides tool for running `.http` files on your [CI](https://en.wikipedia.org/wiki/Continuous_integration).
 
-**Warning:** Currently we have only implemented the parser which creates documented AST. We're working hard on implementation
+**Warning:** Currently we have only implemented the parser which creates documented CST. We're working hard on implementation
 of runner compatible with JetBrains one. Stay tuned for the runner!
 
 <hr />
@@ -27,7 +27,7 @@ This repo contains reference implementation of [HTTP Request in Editor Spec](htt
 The [HTTP Request in Editor Spec](https://github.com/JetBrains/http-request-in-editor-spec/blob/master/spec.md) is using context-free grammar to present set of production rules.
 We're using [nearley](https://nearley.js.org/) to declaratively map this grammar and generate a JavaScript parser from it.
 
-Parser can parse following syntax and creates [AST](https://en.wikipedia.org/wiki/Abstract_syntax_tree)
+Parser can parse following syntax and creates [CST](https://en.wikipedia.org/wiki/Parse_tree)
 that can be consumed and executed by various runtime environments. I'll provide a reference implementation
 of a reference runtime implementation as soon as the parser is finished.
 
@@ -53,6 +53,7 @@ Authorization: token3
 
 {}
 
+###
 ```
 
 ## Installation
@@ -71,14 +72,14 @@ POST https://httpbin.org/post
 ###
 `;
 
-const ast = parse(http);
-// now process the AST with your favorite http library
+const cst = parse(http);
+// now process the CST with your favorite http library
 ```
 
 
-## AST
+## CST
 
-Parser is producing JSON serializable [AST](https://en.wikipedia.org/wiki/Abstract_syntax_tree). Following [HTTP Request in Editor](https://github.com/JetBrains/http-request-in-editor-spec/blob/master/spec.md) fragment
+Parser is producing JSON serializable [CST](https://en.wikipedia.org/wiki/Parse_tree). Following [HTTP Request in Editor](https://github.com/JetBrains/http-request-in-editor-spec/blob/master/spec.md) fragment
 
 ```http request
 ### post request
@@ -94,36 +95,37 @@ message body
 ###
 ```
 
-will produce following AST:
+will produce following CST:
 
 ```js
-[
-  [
-    {
-      method: 'POST',
-      requestTarget: {
-        value: 'http://www.example.com',
-        meta: {
-          protocol: 'http:',
-          hostname: 'www.example.com',
-          port: '80',
-          pathname: '/',
-          search: ''
-        }
-      },
-      httpVersion: '2.0',
-      headers: [ { name: 'Authorization', value: 'token' } ],
-      body: [ 'message body' ],
-      responseHandler: ' script ',
-      responseRef: '<> ./file.json'
-    }
-  ]
-]
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name))))))
+      (http-version))
+    (headers
+      (header-field
+        (field-name)
+        (field-value)))
+    (message-body
+      (messages
+        (message-line)
+        (message-line)))
+    (response-handler
+      (handler-script))
+    (response-ref
+      (file-path))))
 ```
 
-AST should be self explanatory. The only detail worth mentioning is that request body will contain
-list of message body lines instead of one big multiline string. The reason is that [message-body](https://github.com/JetBrains/http-request-in-editor-spec/blob/master/spec.md#323-message-body)
-can contain `input-file-ref`(s) which needs to be replaced by file contents that they point to by runtime.
+CST should be self-explanatory. For more information checkout our [CST Types](https://github.com/char0n/http-request-in-editor/tree/master/src/parser/cst).
 
 ## Development
 
@@ -155,6 +157,17 @@ Generate random strings that satisfy the grammar defined in`src/parser/grammar.n
  $ npm run unparse
 ```
 
+Regenerates [Corpus file]([CST Types](https://github.com/char0n/http-request-in-editor/tree/master/test/corpus/corpus.txt). Replaces CST representation with the new one.
+```sh
+ $ npm run corpus:regenerate
+```
+
+Lint the source code.
+```sh
+ $ npm run lint
+```
+
 ## Missing features
 
- - No support for multiline `request-target`
+ - Environment variables
+ - Multipart/form-data

@@ -1,9 +1,0 @@
-###
-POST http://www.example.com
-Header: test
-
-###
-POST http://www.example.com
-Header: test
-
-###
