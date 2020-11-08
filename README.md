@@ -171,3 +171,4 @@ Lint the source code.
 
  - Environment variables
  - Multipart/form-data
+ - Query and Fragment - no newline support

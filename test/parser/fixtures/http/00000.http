@@ -1,11 +1,7 @@
 ### post request
-POST http://www.example.com HTTP/2.0
-# comment
-Authorization: token
-
-message body
-
-> {% script %}
-<> ./file.json
+GET mortality.sk
+    /api
+    /html
+    /get?id=123&id2=3#fragment
 
 ###
