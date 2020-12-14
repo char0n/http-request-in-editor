@@ -107,26 +107,23 @@ const requestLine = (
 };
 
 // method :: (Data, Location) -> Method
-const method = ([httpVerb], location) => {
-  return cst.Method({ location, value: httpVerb });
-};
+const method = ([httpVerb], location) =>
+  cst.Method({ location, value: httpVerb });
 
 // httpVersion :: (Data, Location) -> HttpVersion
-const httpVersion = (data, location) => {
-  return cst.HttpVersion({
+const httpVersion = (data, location) =>
+  cst.HttpVersion({
     location,
     value: `${stringify(data[1])}.${stringify(data[3])}`,
   });
-};
 
 /**
  * Request target
  */
 
 // requestTarget :: (Data, Location) -> RequestTarget
-const requestTarget = (data, location) => {
-  return cst.RequestTarget({ location, children: [data[0]] });
-};
+const requestTarget = (data, location) =>
+  cst.RequestTarget({ location, children: [data[0]] });
 
 // originForm :: (Data, Location) -> OriginForm
 const originForm = (
@@ -178,22 +175,19 @@ const absoluteForm = (
 };
 
 // asteriskForm :: (Data, Location) -> AsteriskForm
-const asteriskForm = (data, location) => {
-  return cst.AsteriskForm({ location, value: data[0] });
-};
+const asteriskForm = (data, location) =>
+  cst.AsteriskForm({ location, value: data[0] });
 
 // scheme :: (Data, Location) -> Scheme
-const scheme = (data, location) => {
-  return cst.Scheme({ location, value: stringify(flatten(data)) });
-};
+const scheme = (data, location) =>
+  cst.Scheme({ location, value: stringify(flatten(data)) });
 
 // hierPart :: (Data, Location) -> HierPart
-const hierPart = ([authorityNode, absolutePathNode], location) => {
-  return cst.HierPart({
+const hierPart = ([authorityNode, absolutePathNode], location) =>
+  cst.HierPart({
     location,
     children: [authorityNode, absolutePathNode],
   });
-};
 
 /**
  * Authority
@@ -214,9 +208,8 @@ const authority = (data, location) => {
 };
 
 // port :: (Data, Location) -> Port
-const port = (data, location) => {
-  return cst.Port({ location, value: stringifyId(data) });
-};
+const port = (data, location) =>
+  cst.Port({ location, value: stringifyId(data) });
 
 // host :: (Data, Location) -> Host
 const host = (data, location) => {
@@ -236,69 +229,59 @@ const host = (data, location) => {
 };
 
 // ipv6Address :: (Data, Location) -> Ipv6Address
-const ipv6Address = (data, location) => {
-  return cst.Ipv6Address({ location, value: stringifyId(data) });
-};
+const ipv6Address = (data, location) =>
+  cst.Ipv6Address({ location, value: stringifyId(data) });
 
 // ipv4-or-reg-name :: (Data, Location) -> Ipv4OrRegName
-const ipv4OrRegName = (data, location) => {
-  return cst.Ipv4OrRegName({ location, value: stringifyId(data) });
-};
+const ipv4OrRegName = (data, location) =>
+  cst.Ipv4OrRegName({ location, value: stringifyId(data) });
 
 /**
  * Resource path
  */
 
 // absolutePath :: (Data, Location) -> AbsolutePath
-const absolutePath = (data, location) => {
-  return cst.AbsolutePath({
+const absolutePath = (data, location) =>
+  cst.AbsolutePath({
     location,
     children: flatten(data),
   });
-};
 
 // pathSeparator :: (Data, Location) -> PathSeparator
-const pathSeparator = (data, location) => {
-  return cst.PathSeparator({ location, value: data[0] });
-};
+const pathSeparator = (data, location) =>
+  cst.PathSeparator({ location, value: data[0] });
 
 // segment :: (Data, Location) -> Segment
-const segment = (data, location) => {
-  return cst.Segment({ location, value: stringifyId(data) });
-};
+const segment = (data, location) =>
+  cst.Segment({ location, value: stringifyId(data) });
 
 /**
  * Query and Fragment
  */
 
 // query :: (Data, Location) -> Query
-const query = (data, location) => {
-  return cst.Query({ location, value: stringifyId(data) });
-};
+const query = (data, location) =>
+  cst.Query({ location, value: stringifyId(data) });
 
 // fragment :: (Data, Location) -> Fragment
-const fragment = (data, location) => {
-  return cst.Fragment({ location, value: stringifyId(data) });
-};
+const fragment = (data, location) =>
+  cst.Fragment({ location, value: stringifyId(data) });
 
 /**
  * Headers
  */
 
 // headers :: (Data, Location) -> Headers
-const headers = (data, location) => {
-  return cst.Headers({ location, children: [...data[0]] });
-};
+const headers = (data, location) =>
+  cst.Headers({ location, children: [...data[0]] });
 
 // headerField :: (Data, Location) -> HeaderField
-const headerField = (data, location) => {
-  return cst.HeaderField({ location, children: [data[0], data[3]] });
-};
+const headerField = (data, location) =>
+  cst.HeaderField({ location, children: [data[0], data[3]] });
 
 // fieldName :: (Data, Location) -> FieldName
-const fieldName = (data, location) => {
-  return cst.FieldName({ location, value: stringifyId(data) });
-};
+const fieldName = (data, location) =>
+  cst.FieldName({ location, value: stringifyId(data) });
 
 // fieldValue :: (Data, Location, Reject) -> FieldValue | Reject
 const fieldValue = (data, location, reject) => {
@@ -328,9 +311,8 @@ const messageBody = (data, location) => {
 };
 
 // messages :: (Data, Location) -> Messages
-const messages = (data, location) => {
-  return cst.Messages({ location, children: [...data[0]] });
-};
+const messages = (data, location) =>
+  cst.Messages({ location, children: [...data[0]] });
 
 // messageLine :: (Data, Location, Reject) -> MessageLine | Reject
 const messageLine = (data, location, reject) => {
@@ -349,23 +331,20 @@ const messageLine = (data, location, reject) => {
 };
 
 // inputFileRef :: (Data, Location) -> InputFileRef
-const inputFileRef = (data, location) => {
-  return cst.InputFileRef({ location, children: [data[2]] });
-};
+const inputFileRef = (data, location) =>
+  cst.InputFileRef({ location, children: [data[2]] });
 
 // filePath :: (Data, Location) -> FilePath
-const filePath = (data, location) => {
-  return cst.FilePath({ location, value: stringifyId(data) });
-};
+const filePath = (data, location) =>
+  cst.FilePath({ location, value: stringifyId(data) });
 
 /**
  * Response handler
  */
 
 // responseHandler :: (Data, Location) -> ResponseHandler
-const responseHandler = (data, location) => {
-  return cst.ResponseHandler({ location, children: [data[0]] });
-};
+const responseHandler = (data, location) =>
+  cst.ResponseHandler({ location, children: [data[0]] });
 
 // responseHandlerFilePath :: (Data, Number, Reject) -> String
 const responseHandlerFilePath = (data, location, reject) => {
@@ -390,9 +369,8 @@ const handlerScript = (data, location, reject) => {
  */
 
 // responseRef :: (Data, Location) -> ResponseRef
-const responseRef = (data, location) => {
-  return cst.ResponseRef({ location, children: [data[2]] });
-};
+const responseRef = (data, location) =>
+  cst.ResponseRef({ location, children: [data[2]] });
 
 /**
  * Line Terminators
@@ -417,9 +395,8 @@ const lineComment = (data, location, reject) => {
  */
 
 // envVariable :: (Data, Location) -> EnvVariable
-const envVariable = (data, location) => {
-  return cst.EnvVariable({ location, value: stringify(flatten(data)) });
-};
+const envVariable = (data, location) =>
+  cst.EnvVariable({ location, value: stringify(flatten(data)) });
 
 module.exports = {
   // general postprocessors
