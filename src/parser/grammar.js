@@ -1,4 +1,4 @@
-// Generated automatically by nearley, version 2.19.7
+// Generated automatically by nearley, version 2.20.1
 // http://github.com/Hardmath123/nearley
 (function () {
   function id(x) {
@@ -898,21 +898,61 @@
       { name: 'QUERY$ebnf$1', symbols: [] },
       {
         name: 'QUERY$ebnf$1',
-        symbols: ['QUERY$ebnf$1', /[^\r\n#]/],
+        symbols: ['QUERY$ebnf$1', /[^\r\n\s#]/],
         postprocess: function arrpush(d) {
           return d[0].concat([d[1]]);
         },
       },
-      { name: 'QUERY', symbols: ['QUERY$ebnf$1'], postprocess: query },
+      {
+        name: 'QUERY$ebnf$2$subexpression$1',
+        symbols: ['NEW_LINE_WITH_INDENT', 'QUERY'],
+      },
+      {
+        name: 'QUERY$ebnf$2',
+        symbols: ['QUERY$ebnf$2$subexpression$1'],
+        postprocess: id,
+      },
+      {
+        name: 'QUERY$ebnf$2',
+        symbols: [],
+        postprocess: function (d) {
+          return null;
+        },
+      },
+      {
+        name: 'QUERY',
+        symbols: ['QUERY$ebnf$1', 'QUERY$ebnf$2'],
+        postprocess: query,
+      },
       { name: 'FRAGMENT$ebnf$1', symbols: [] },
       {
         name: 'FRAGMENT$ebnf$1',
-        symbols: ['FRAGMENT$ebnf$1', /[^\r\n\?]/],
+        symbols: ['FRAGMENT$ebnf$1', /[^\r\n\s\?]/],
         postprocess: function arrpush(d) {
           return d[0].concat([d[1]]);
         },
       },
-      { name: 'FRAGMENT', symbols: ['FRAGMENT$ebnf$1'], postprocess: fragment },
+      {
+        name: 'FRAGMENT$ebnf$2$subexpression$1',
+        symbols: ['NEW_LINE_WITH_INDENT', 'FRAGMENT'],
+      },
+      {
+        name: 'FRAGMENT$ebnf$2',
+        symbols: ['FRAGMENT$ebnf$2$subexpression$1'],
+        postprocess: id,
+      },
+      {
+        name: 'FRAGMENT$ebnf$2',
+        symbols: [],
+        postprocess: function (d) {
+          return null;
+        },
+      },
+      {
+        name: 'FRAGMENT',
+        symbols: ['FRAGMENT$ebnf$1', 'FRAGMENT$ebnf$2'],
+        postprocess: fragment,
+      },
       { name: 'HEADERS$ebnf$1', symbols: [] },
       {
         name: 'HEADERS$ebnf$1$subexpression$1',
@@ -1119,7 +1159,11 @@
       { name: 'NEW_LINE', symbols: ['CR'] },
       { name: 'NEW_LINE', symbols: ['LF'] },
       { name: 'NEW_LINE', symbols: ['CRLF'] },
-      { name: 'NEW_LINE_WITH_INDENT', symbols: ['NEW_LINE', '__'] },
+      {
+        name: 'NEW_LINE_WITH_INDENT',
+        symbols: ['NEW_LINE', '__'],
+        postprocess: stubNull,
+      },
       { name: 'LINE_TAIL$ebnf$1', symbols: [] },
       {
         name: 'LINE_TAIL$ebnf$1',

@@ -24,6 +24,10 @@ const isResponseHandler = isNodeType('response-handler');
 
 const isResponseRef = isNodeType('response-ref');
 
+const isQuery = isNodeType('query');
+
+const isFragment = isNodeType('fragment');
+
 module.exports = {
   isMethod,
   isRequestTarget,
@@ -35,4 +39,6 @@ module.exports = {
   isMessageBody,
   isResponseHandler,
   isResponseRef,
+  isQuery,
+  isFragment,
 };
