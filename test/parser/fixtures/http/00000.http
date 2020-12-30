@@ -1,7 +1,12 @@
 ### post request
-GET mortality.sk
+GET vladimirgorej.com
     /api
     /html
-    /get?id=123&id2=3#fragment
+    /get
+    ?id=123
+    &id2=3
+    &id3=4
+    #fragment
+    fragment2
 
 ###

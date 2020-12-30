@@ -1,7 +1,7 @@
 'use strict';
 
 const { flatten, nth, join, pipe } = require('ramda');
-const { flattenDepth, stubNull } = require('ramda-adjunct');
+const { flattenDepth, stubNull, isNotNull } = require('ramda-adjunct');
 
 const cst = require('./cst');
 const {
@@ -11,6 +11,8 @@ const {
   isResponseRef,
   isHttpVersion,
   isMethod,
+  isQuery,
+  isFragment,
 } = require('./cst/predicates');
 
 // Type definitions:
@@ -260,12 +262,32 @@ const segment = (data, location) =>
  */
 
 // query :: (Data, Location) -> Query
-const query = (data, location) =>
-  cst.Query({ location, value: stringifyId(data) });
+const query = (data, location) => {
+  const value = flatten(data)
+    .filter(isNotNull)
+    .map((v) => {
+      if (isQuery(v)) {
+        return v.value;
+      }
+      return v;
+    });
+
+  return cst.Query({ location, value: flatten(value).join('') });
+};
 
 // fragment :: (Data, Location) -> Fragment
-const fragment = (data, location) =>
-  cst.Fragment({ location, value: stringifyId(data) });
+const fragment = (data, location) => {
+  const value = flatten(data)
+    .filter(isNotNull)
+    .map((v) => {
+      if (isFragment(v)) {
+        return v.value;
+      }
+      return v;
+    });
+
+  return cst.Fragment({ location, value: flatten(value).join('') });
+};
 
 /**
  * Headers

@@ -140,9 +140,9 @@ SEGMENT -> [^\r\n/?# ]:* {% segment %}
 # Query and Fragment #
 ######################
 
-QUERY -> [^\r\n#]:* {% query %}
+QUERY -> [^\r\n\s#]:* (NEW_LINE_WITH_INDENT QUERY):? {% query %}
 
-FRAGMENT -> [^\r\n\?]:* {% fragment %}
+FRAGMENT -> [^\r\n\s\?]:* (NEW_LINE_WITH_INDENT FRAGMENT):? {% fragment %}
 
 ###########
 # Headers #
@@ -204,7 +204,7 @@ CRLF -> CR LF
 NEW_LINE -> CR
           | LF
           | CRLF
-NEW_LINE_WITH_INDENT -> NEW_LINE __
+NEW_LINE_WITH_INDENT -> NEW_LINE __ {% stubNull %}
 LINE_TAIL -> INPUT_CHARACTER:* NEW_LINE {% lineTail %}
 
 
