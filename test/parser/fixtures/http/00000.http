@@ -1,12 +1,7 @@
-### post request
-GET vladimirgorej.com
-    /api
-    /html
-    /get
-    ?id=123
-    &id2=3
-    &id3=4
-    #fragment
-    fragment2
+### test
+
+
+POST https://httpbin.org/post HTTP/1.1
+Authorization: token
 
 ###

@@ -818,10 +818,10 @@
       },
       { name: 'HOST$subexpression$1', symbols: ['IPV4_OR_REG_NAME'] },
       { name: 'HOST', symbols: ['HOST$subexpression$1'], postprocess: host },
-      { name: 'IPV6_ADDRESS$ebnf$1', symbols: [/[^\r\n\/\] ]/] },
+      { name: 'IPV6_ADDRESS$ebnf$1', symbols: [/[^\s/\]]/] },
       {
         name: 'IPV6_ADDRESS$ebnf$1',
-        symbols: ['IPV6_ADDRESS$ebnf$1', /[^\r\n\/\] ]/],
+        symbols: ['IPV6_ADDRESS$ebnf$1', /[^\s/\]]/],
         postprocess: function arrpush(d) {
           return d[0].concat([d[1]]);
         },
@@ -831,10 +831,10 @@
         symbols: ['IPV6_ADDRESS$ebnf$1'],
         postprocess: ipv6Address,
       },
-      { name: 'IPV4_OR_REG_NAME$ebnf$1', symbols: [/[^\r\n\/\:\?# ]/] },
+      { name: 'IPV4_OR_REG_NAME$ebnf$1', symbols: [/[^\s/:?#]/] },
       {
         name: 'IPV4_OR_REG_NAME$ebnf$1',
-        symbols: ['IPV4_OR_REG_NAME$ebnf$1', /[^\r\n\/\:\?# ]/],
+        symbols: ['IPV4_OR_REG_NAME$ebnf$1', /[^\s/:?#]/],
         postprocess: function arrpush(d) {
           return d[0].concat([d[1]]);
         },
@@ -972,10 +972,10 @@
         symbols: ['FIELD_NAME', { literal: ':' }, '_', 'FIELD_VALUE', '_'],
         postprocess: headerField,
       },
-      { name: 'FIELD_NAME$ebnf$1', symbols: [/[^\r\n\:]/] },
+      { name: 'FIELD_NAME$ebnf$1', symbols: [/[^\r\n:]/] },
       {
         name: 'FIELD_NAME$ebnf$1',
-        symbols: ['FIELD_NAME$ebnf$1', /[^\r\n\:]/],
+        symbols: ['FIELD_NAME$ebnf$1', /[^\r\n:]/],
         postprocess: function arrpush(d) {
           return d[0].concat([d[1]]);
         },
@@ -1245,7 +1245,7 @@
       },
       {
         name: 'REQUEST_SEPARATOR',
-        symbols: ['REQUEST_SEPARATOR$string$1', 'WHIT?'],
+        symbols: ['REQUEST_SEPARATOR$string$1', 'NEW_LINE', 'WHIT?'],
         postprocess: stubNull,
       },
       {

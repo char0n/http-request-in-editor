@@ -121,9 +121,9 @@ PORT -> DIGIT:+ {% port %}
 
 HOST -> ("[" IPV6_ADDRESS "]" | IPV4_OR_REG_NAME) {% host %}
 
-IPV6_ADDRESS -> [^\r\n\/\] ]:+ {% ipv6Address %}
+IPV6_ADDRESS -> [^\s/\]]:+ {% ipv6Address %}
 
-IPV4_OR_REG_NAME -> [^\r\n\/\:\?# ]:+ {% ipv4OrRegName %}
+IPV4_OR_REG_NAME -> [^\s/:?#]:+ {% ipv4OrRegName %}
 
 #################
 # Resource path #
@@ -150,7 +150,7 @@ FRAGMENT -> [^\r\n\s\?]:* (NEW_LINE_WITH_INDENT FRAGMENT):? {% fragment %}
 
 HEADERS -> (HEADER_FIELD NEW_LINE WHIT? {% id %}):* {% headers %}
 HEADER_FIELD -> FIELD_NAME ":" _ FIELD_VALUE _ {% headerField %}
-FIELD_NAME -> [^\r\n\:]:+ {% fieldName %}
+FIELD_NAME -> [^\r\n:]:+ {% fieldName %}
 FIELD_VALUE -> INPUT_CHARACTER:* {% fieldValue %}
              | NEW_LINE_WITH_INDENT FIELD_VALUE {% nth(1) %}
 
@@ -251,7 +251,7 @@ LINE_COMMENT -> "#" LINE_TAIL {% lineComment %}
 # Request separators #
 ######################
 
-REQUEST_SEPARATOR -> "###" WHIT? {% stubNull %}
+REQUEST_SEPARATOR -> "###" NEW_LINE WHIT? {% stubNull %}
                    | "### " LINE_TAIL WHIT? {% stubNull %}
 
 ########################

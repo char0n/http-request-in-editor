@@ -139,21 +139,24 @@ GET http://www.example.com
 (requests-file
   (request
     (requests-line
+      (method)
       (request-target
         (absolute-form
+          (scheme)
+          (literal)
           (hier-part
             (authority
               (host
                 (ipv4-or-reg-name)))))))
+    (headers
+      (header-field
+        (field-name)
+        (field-value))
+      (header-field
+        (field-name)
+        (field-value)))
     (message-body
       (messages
-        (message-line)
-        (message-line)
-        (message-line)
-        (message-line)
-        (message-line)
-        (message-line)
-        (message-line)
         (message-line)
         (message-line)))
     (response-handler
@@ -273,16 +276,18 @@ POST https://httpbin.org/post
 (requests-file
   (request
     (requests-line
+      (method)
       (request-target
         (absolute-form
+          (scheme)
+          (literal)
           (hier-part
             (authority
               (host
-                (ipv4-or-reg-name)))))))
-    (headers
-      (header-field
-        (field-name)
-        (field-value)))))
+                (ipv4-or-reg-name)))
+            (absolute-path
+              (path-separator)
+              (segment))))))))
 
 ================================================================================
 request: Simple request with comment and http-version
@@ -297,16 +302,19 @@ POST https://httpbin.org/post HTTP/1.1
 (requests-file
   (request
     (requests-line
+      (method)
       (request-target
         (absolute-form
+          (scheme)
+          (literal)
           (hier-part
             (authority
               (host
-                (ipv4-or-reg-name)))))))
-    (headers
-      (header-field
-        (field-name)
-        (field-value)))))
+                (ipv4-or-reg-name)))
+            (absolute-path
+              (path-separator)
+              (segment)))))
+      (http-version))))
 
 ================================================================================
 request: Simple request with http-version
@@ -347,19 +355,49 @@ POST https://httpbin.org/post HTTP/2.0
 (requests-file
   (request
     (requests-line
+      (method)
       (request-target
         (absolute-form
+          (scheme)
+          (literal)
           (hier-part
             (authority
               (host
-                (ipv4-or-reg-name)))))))
-    (headers
-      (header-field
-        (field-name)
-        (field-value)))))
+                (ipv4-or-reg-name)))
+            (absolute-path
+              (path-separator)
+              (segment)))))
+      (http-version))))
 
 ================================================================================
-request: Simple request starting with new line
+request: Simple request with 1.0 http-version and starting with new line
+================================================================================
+
+POST https://httpbin.org/post HTTP/1.0
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))
+            (absolute-path
+              (path-separator)
+              (segment)))))
+      (http-version))))
+
+================================================================================
+request: Simple request with 2.0 http-version and starting with new line
 ================================================================================
 
 POST https://httpbin.org/post HTTP/2.0
@@ -390,7 +428,7 @@ request: Simple request starting with two new lines
 ================================================================================
 
 
-POST https://httpbin.org/post HTTP/2.0
+POST https://httpbin.org/post HTTP/1.0
 
 ###
 
@@ -428,15 +466,115 @@ POST https://httpbin.org/post HTTP/1.1
 (requests-file
   (request
     (requests-line
+      (method)
       (request-target
         (absolute-form
+          (scheme)
+          (literal)
           (hier-part
             (authority
               (host
-                (ipv4-or-reg-name)))))))
-    (message-body
-      (messages
-        (message-line)
-        (message-line)
-        (message-line)))))
+                (ipv4-or-reg-name)))
+            (absolute-path
+              (path-separator)
+              (segment)))))
+      (http-version))))
 
+================================================================================
+request: Request starting with empty line and having single header
+================================================================================
+
+POST https://httpbin.org/post HTTP/1.1
+Authorization: token
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))
+            (absolute-path
+              (path-separator)
+              (segment)))))
+      (http-version))
+    (headers
+      (header-field
+        (field-name)
+        (field-value)))))
+
+================================================================================
+request: Request starting with 2 empty lines and having single header
+================================================================================
+
+
+POST https://httpbin.org/post HTTP/1.1
+Authorization: token
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))
+            (absolute-path
+              (path-separator)
+              (segment)))))
+      (http-version))
+    (headers
+      (header-field
+        (field-name)
+        (field-value)))))
+
+================================================================================
+request: Request starting comment, 2 empty lines and having single header
+================================================================================
+### test
+
+
+POST https://httpbin.org/post HTTP/1.1
+Authorization: token
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))
+            (absolute-path
+              (path-separator)
+              (segment)))))
+      (http-version))
+    (headers
+      (header-field
+        (field-name)
+        (field-value)))))
