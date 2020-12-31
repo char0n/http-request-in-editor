@@ -243,11 +243,17 @@ const ipv4OrRegName = (data, location) =>
  */
 
 // absolutePath :: (Data, Location) -> AbsolutePath
-const absolutePath = (data, location) =>
-  cst.AbsolutePath({
-    location,
-    children: flatten(data),
-  });
+const absolutePath = (data, location, reject) => {
+  const children = flatten(data);
+  const absPath = children.reduce((acc, node) => acc + node.value, '');
+
+  // this is here to distinguish line comments from absolute paths
+  if (absPath.startsWith('//')) {
+    return reject;
+  }
+
+  return cst.AbsolutePath({ location, children });
+};
 
 // pathSeparator :: (Data, Location) -> PathSeparator
 const pathSeparator = (data, location) =>

@@ -33,6 +33,7 @@ describe('corpus', function () {
 
         visit(astTree[0], visitor, { keyMap });
 
+        assert.lengthOf(astTree, 1);
         assert.strictEqual(visitor.result, astRep);
       });
     });
