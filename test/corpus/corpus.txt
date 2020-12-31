@@ -582,3 +582,267 @@ Authorization: token
       (header-field
         (field-name)
         (field-value)))))
+
+================================================================================
+request: Request starting with comment, 2 empty lines with header and body
+================================================================================
+### test
+
+
+POST https://httpbin.org/post HTTP/1.1
+Authorization: token
+
+MESSAGE_BODY
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))
+            (absolute-path
+              (path-separator)
+              (segment)))))
+      (http-version))
+    (headers
+      (header-field
+        (field-name)
+        (field-value)))
+    (message-body
+      (messages
+        (message-line)
+        (message-line)))))
+
+================================================================================
+request: Request starting with 2 empty lines having header and body
+================================================================================
+
+
+POST https://httpbin.org/post HTTP/1.1
+Authorization: token
+
+MESSAGE_BODY
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))
+            (absolute-path
+              (path-separator)
+              (segment)))))
+      (http-version))
+    (headers
+      (header-field
+        (field-name)
+        (field-value)))
+    (message-body
+      (messages
+        (message-line)
+        (message-line)))))
+
+================================================================================
+request: Request starting directly with request-line
+================================================================================
+POST https://httpbin.org/post
+Authorization: token
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))
+            (absolute-path
+              (path-separator)
+              (segment))))))
+    (headers
+      (header-field
+        (field-name)
+        (field-value)))))
+
+================================================================================
+request: Request starting directly with request-separator
+================================================================================
+### separator
+POST https://httpbin.org/post
+Authorization: token
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))
+            (absolute-path
+              (path-separator)
+              (segment))))))
+    (headers
+      (header-field
+        (field-name)
+        (field-value)))))
+
+================================================================================
+request: Request starting directly with request-separator having a message body
+================================================================================
+### separator
+POST https://httpbin.org/post
+Authorization: token
+
+Message body
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))
+            (absolute-path
+              (path-separator)
+              (segment))))))
+    (headers
+      (header-field
+        (field-name)
+        (field-value)))
+    (message-body
+      (messages
+        (message-line)
+        (message-line)))))
+
+================================================================================
+request: Request starting with empty line and explicit request-separator
+================================================================================
+
+### separator
+POST https://httpbin.org/post
+Authorization: token
+
+Message body
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))
+            (absolute-path
+              (path-separator)
+              (segment))))))
+    (headers
+      (header-field
+        (field-name)
+        (field-value)))
+    (message-body
+      (messages
+        (message-line)
+        (message-line)))))
+
+================================================================================
+request: Request containing just request-target
+================================================================================
+http://www.example.com
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))))))))
+
+================================================================================
+request: Request with line comment between request-line and headers
+================================================================================
+POST http://www.example.com HTTP/2.0
+# line comment
+Authorization: token
+
+###
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name))))))
+      (http-version))
+    (headers
+      (header-field
+        (field-name)
+        (field-value)))))

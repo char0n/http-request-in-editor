@@ -1,22 +1,5 @@
-// test
-### test
-
-//test
-
-GET http://www.example.com
-Header1: value1
-// test
-Header2: value2
-
-body
-
-> {% script %}
-<> file.json
-
-// test
-
-// test
-###
-GET http://www.example.com
+POST http://www.example.com HTTP/2.0
+# line comment
+Authorization: token
 
 ###
