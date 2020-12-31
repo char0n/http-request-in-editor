@@ -206,20 +206,24 @@ GET http://www.example.com
 (requests-file
   (request
     (requests-line
+      (method)
       (request-target
-        (origin-form
-          (absolute-path
-            (path-separator)
-            (segment)
-            (path-separator)
-            (segment)))))
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))))))
+    (headers
+      (header-field
+        (field-name)
+        (field-value))
+      (header-field
+        (field-name)
+        (field-value)))
     (message-body
       (messages
-        (message-line)
-        (message-line)
-        (message-line)
-        (message-line)
-        (message-line)
         (message-line)
         (message-line)))
     (response-handler

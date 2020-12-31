@@ -1,7 +1,22 @@
+// test
 ### test
 
+//test
 
-POST https://httpbin.org/post HTTP/1.1
-Authorization: token
+GET http://www.example.com
+Header1: value1
+// test
+Header2: value2
+
+body
+
+> {% script %}
+<> file.json
+
+// test
+
+// test
+###
+GET http://www.example.com
 
 ###
