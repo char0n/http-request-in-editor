@@ -1,5 +1,5 @@
 ================================================================================
-requests-file: Multiple body-less requests
+requests-file: multiple body-less requests
 ================================================================================
 ###
 POST http://www.example.com
@@ -46,7 +46,7 @@ Header: test
         (field-value)))))
 
 ================================================================================
-requests-file: Multiple requests
+requests-file: multiple requests
 ================================================================================
 ###
 GET http://www.example.com
@@ -109,7 +109,7 @@ MESSAGE BODY
       (file-path))))
 
 ================================================================================
-requests-file: Multiple requests with comments
+requests-file: multiple requests with comments
 ================================================================================
 # test
 ### test
@@ -176,7 +176,7 @@ GET http://www.example.com
                 (ipv4-or-reg-name)))))))))
 
 ================================================================================
-requests-file: Multiple requests with multiple comment types
+requests-file: multiple requests with multiple comment types
 ================================================================================
 // test
 ### test
@@ -243,7 +243,7 @@ GET http://www.example.com
                 (ipv4-or-reg-name)))))))))
 
 ================================================================================
-request: Simple request
+request: simple request
 ================================================================================
 POST https://httpbin.org/post
 
@@ -268,7 +268,7 @@ POST https://httpbin.org/post
               (segment))))))))
 
 ================================================================================
-request: Simple request with comment
+request: simple request with comment
 ================================================================================
 ### test
 POST https://httpbin.org/post
@@ -294,7 +294,7 @@ POST https://httpbin.org/post
               (segment))))))))
 
 ================================================================================
-request: Simple request with comment and http-version
+request: simple request with comment and http-version
 ================================================================================
 ### test
 POST https://httpbin.org/post HTTP/1.1
@@ -321,7 +321,7 @@ POST https://httpbin.org/post HTTP/1.1
       (http-version))))
 
 ================================================================================
-request: Simple request with http-version
+request: simple request with http-version
 ================================================================================
 POST https://httpbin.org/post HTTP/1.1
 
@@ -347,7 +347,7 @@ POST https://httpbin.org/post HTTP/1.1
       (http-version))))
 
 ================================================================================
-request: Simple request with 2.0 http-version
+request: simple request with 2.0 http-version
 ================================================================================
 ### test
 POST https://httpbin.org/post HTTP/2.0
@@ -374,7 +374,7 @@ POST https://httpbin.org/post HTTP/2.0
       (http-version))))
 
 ================================================================================
-request: Simple request with 1.0 http-version and starting with new line
+request: simple request with 1.0 http-version and starting with new line
 ================================================================================
 
 POST https://httpbin.org/post HTTP/1.0
@@ -401,7 +401,7 @@ POST https://httpbin.org/post HTTP/1.0
       (http-version))))
 
 ================================================================================
-request: Simple request with 2.0 http-version and starting with new line
+request: simple request with 2.0 http-version and starting with new line
 ================================================================================
 
 POST https://httpbin.org/post HTTP/2.0
@@ -428,7 +428,7 @@ POST https://httpbin.org/post HTTP/2.0
       (http-version))))
 
 ================================================================================
-request: Simple request starting with two new lines
+request: simple request starting with two new lines
 ================================================================================
 
 
@@ -456,7 +456,7 @@ POST https://httpbin.org/post HTTP/1.0
       (http-version))))
 
 ================================================================================
-request: Simple request starting with comment and two new lines
+request: simple request starting with comment and two new lines
 ================================================================================
 ### test
 
@@ -485,7 +485,7 @@ POST https://httpbin.org/post HTTP/1.1
       (http-version))))
 
 ================================================================================
-request: Request starting with empty line and having single header
+request: request starting with empty line and having single header
 ================================================================================
 
 POST https://httpbin.org/post HTTP/1.1
@@ -517,7 +517,7 @@ Authorization: token
         (field-value)))))
 
 ================================================================================
-request: Request starting with 2 empty lines and having single header
+request: request starting with 2 empty lines and having single header
 ================================================================================
 
 
@@ -550,7 +550,7 @@ Authorization: token
         (field-value)))))
 
 ================================================================================
-request: Request starting comment, 2 empty lines and having single header
+request: request starting comment, 2 empty lines and having single header
 ================================================================================
 ### test
 
@@ -584,7 +584,7 @@ Authorization: token
         (field-value)))))
 
 ================================================================================
-request: Request starting with comment, 2 empty lines with header and body
+request: request starting with comment, 2 empty lines with header and body
 ================================================================================
 ### test
 
@@ -624,7 +624,7 @@ MESSAGE_BODY
         (message-line)))))
 
 ================================================================================
-request: Request starting with 2 empty lines having header and body
+request: request starting with 2 empty lines having header and body
 ================================================================================
 
 
@@ -663,7 +663,7 @@ MESSAGE_BODY
         (message-line)))))
 
 ================================================================================
-request: Request starting directly with request-line
+request: request starting directly with request-line
 ================================================================================
 POST https://httpbin.org/post
 Authorization: token
@@ -693,7 +693,7 @@ Authorization: token
         (field-value)))))
 
 ================================================================================
-request: Request starting directly with request-separator
+request: request starting directly with request-separator
 ================================================================================
 ### separator
 POST https://httpbin.org/post
@@ -724,7 +724,7 @@ Authorization: token
         (field-value)))))
 
 ================================================================================
-request: Request starting directly with request-separator having a message body
+request: request starting directly with request-separator having a message body
 ================================================================================
 ### separator
 POST https://httpbin.org/post
@@ -761,7 +761,7 @@ Message body
         (message-line)))))
 
 ================================================================================
-request: Request starting with empty line and explicit request-separator
+request: request starting with empty line and explicit request-separator
 ================================================================================
 
 ### separator
@@ -799,7 +799,7 @@ Message body
         (message-line)))))
 
 ================================================================================
-request: Request containing just request-target
+request: request containing just request-target
 ================================================================================
 http://www.example.com
 
@@ -820,7 +820,7 @@ http://www.example.com
                 (ipv4-or-reg-name)))))))))
 
 ================================================================================
-request: Request with line comment between request-line and headers
+request: request with line comment between request-line and headers
 ================================================================================
 POST http://www.example.com HTTP/2.0
 # line comment
@@ -841,6 +841,401 @@ Authorization: token
             (authority
               (host
                 (ipv4-or-reg-name))))))
+      (http-version))
+    (headers
+      (header-field
+        (field-name)
+        (field-value)))))
+
+================================================================================
+request-target: ipv4
+================================================================================
+GET http://127.0.0.1
+
+###
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))))))))
+
+================================================================================
+request-target: ipv4 with port
+================================================================================
+GET http://127.0.0.1:8080
+
+###
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name))
+              (literal)
+              (port))))))))
+
+================================================================================
+request-target: ipv6-address
+================================================================================
+GET http://[::1]
+
+###
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (literal)
+                (ipv6-address)
+                (literal)))))))))
+
+================================================================================
+request-target: ipv6-address with port
+================================================================================
+GET http://[::1]:8080
+
+###
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (literal)
+                (ipv6-address)
+                (literal))
+              (literal)
+              (port))))))))
+
+================================================================================
+request-target: reg-name
+================================================================================
+GET http://example.com
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))))))))
+
+================================================================================
+request-target: reg-name with port
+================================================================================
+GET http://example.com:8080
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name))
+              (literal)
+              (port))))))))
+
+================================================================================
+request-target: reg-name with query
+================================================================================
+GET http://example.com/api/get?id=42
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))
+            (absolute-path
+              (path-separator)
+              (segment)
+              (path-separator)
+              (segment)))
+          (literal)
+          (query))))))
+
+================================================================================
+request-target: reg-name with port and query
+================================================================================
+GET http://example.com:8080/api/get?id=42
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name))
+              (literal)
+              (port))
+            (absolute-path
+              (path-separator)
+              (segment)
+              (path-separator)
+              (segment)))
+          (literal)
+          (query))))))
+
+================================================================================
+request-target: reg-name with query & fragment
+================================================================================
+GET http://example.com/api/get?id=42#fragment
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))
+            (absolute-path
+              (path-separator)
+              (segment)
+              (path-separator)
+              (segment)))
+          (literal)
+          (query)
+          (literal)
+          (fragment))))))
+
+================================================================================
+request-target: query with new lines
+================================================================================
+GET http://example.com/api/get
+ ?id=42
+ &id2=2
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))
+            (absolute-path
+              (path-separator)
+              (segment)
+              (path-separator)
+              (segment)
+              (path-separator)
+              (segment)))
+          (literal)
+          (query))))))
+
+================================================================================
+request-target: query with new lines & fragment
+================================================================================
+GET http://example.com/api/get
+ ?id=42
+ &id2=2
+ #fragment
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))
+            (absolute-path
+              (path-separator)
+              (segment)
+              (path-separator)
+              (segment)
+              (path-separator)
+              (segment)))
+          (literal)
+          (query)
+          (literal)
+          (fragment))))))
+
+================================================================================
+request-target: query with new lines & fragment with new lines
+================================================================================
+GET http://example.com/api/get
+ ?id=42
+ &id2=2
+ #fragment1
+ fragment2
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))
+            (absolute-path
+              (path-separator)
+              (segment)
+              (path-separator)
+              (segment)
+              (path-separator)
+              (segment)))
+          (literal)
+          (query)
+          (literal)
+          (fragment))))))
+
+================================================================================
+request-target: no method
+================================================================================
+http://www.example.com
+Host:http://example.com:8080
+Host: http://example.com:8080
+Host:
+Host: value
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))))))
+    (headers
+      (header-field
+        (field-name)
+        (field-value))
+      (header-field
+        (field-name)
+        (field-value))
+      (header-field
+        (field-name)
+        (field-value))
+      (header-field
+        (field-name)
+        (field-value)))))
+
+================================================================================
+request-target: asterisk-form
+================================================================================
+OPTIONS * HTTP/1.1
+Host: http://example.com:8080
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (asterisk-form))
       (http-version))
     (headers
       (header-field
