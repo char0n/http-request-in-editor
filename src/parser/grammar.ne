@@ -89,7 +89,7 @@ METHOD -> "GET" {% id %}
         | "OPTIONS" {% id %}
         | "TRACE" {% id %}
 
-HTTP_VERSION -> "HTTP/" DIGIT:+ "." DIGIT:+ {% httpVersion %}
+HTTP_VERSION -> "HTTP/" DIGIT "." DIGIT {% httpVersion %}
 
 ##################
 # Request target #
@@ -117,7 +117,7 @@ ASTERISK_FORM -> "*" {% asteriskForm %}
 
 AUTHORITY -> HOST (":" PORT):? {% authority %}
 
-PORT -> DIGIT:+ {% port %}
+PORT -> DIGIT {% port %}
 
 HOST -> ("[" IPV6_ADDRESS "]" | IPV4_OR_REG_NAME) {% host %}
 

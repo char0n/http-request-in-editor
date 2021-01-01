@@ -1,5 +1,4 @@
-POST http://www.example.com HTTP/2.0
-# line comment
-Authorization: token
+OPTIONS * HTTP/1.1
+Host: http://example.com:8080
 
 ###

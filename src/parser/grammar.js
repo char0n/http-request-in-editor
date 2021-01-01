@@ -601,30 +601,9 @@
           return d.join('');
         },
       },
-      { name: 'HTTP_VERSION$ebnf$1', symbols: ['DIGIT'] },
-      {
-        name: 'HTTP_VERSION$ebnf$1',
-        symbols: ['HTTP_VERSION$ebnf$1', 'DIGIT'],
-        postprocess: function arrpush(d) {
-          return d[0].concat([d[1]]);
-        },
-      },
-      { name: 'HTTP_VERSION$ebnf$2', symbols: ['DIGIT'] },
-      {
-        name: 'HTTP_VERSION$ebnf$2',
-        symbols: ['HTTP_VERSION$ebnf$2', 'DIGIT'],
-        postprocess: function arrpush(d) {
-          return d[0].concat([d[1]]);
-        },
-      },
       {
         name: 'HTTP_VERSION',
-        symbols: [
-          'HTTP_VERSION$string$1',
-          'HTTP_VERSION$ebnf$1',
-          { literal: '.' },
-          'HTTP_VERSION$ebnf$2',
-        ],
+        symbols: ['HTTP_VERSION$string$1', 'DIGIT', { literal: '.' }, 'DIGIT'],
         postprocess: httpVersion,
       },
       { name: 'REQUEST_TARGET$subexpression$1', symbols: ['ORIGIN_FORM'] },
@@ -803,15 +782,7 @@
         symbols: ['HOST', 'AUTHORITY$ebnf$1'],
         postprocess: authority,
       },
-      { name: 'PORT$ebnf$1', symbols: ['DIGIT'] },
-      {
-        name: 'PORT$ebnf$1',
-        symbols: ['PORT$ebnf$1', 'DIGIT'],
-        postprocess: function arrpush(d) {
-          return d[0].concat([d[1]]);
-        },
-      },
-      { name: 'PORT', symbols: ['PORT$ebnf$1'], postprocess: port },
+      { name: 'PORT', symbols: ['DIGIT'], postprocess: port },
       {
         name: 'HOST$subexpression$1',
         symbols: [{ literal: '[' }, 'IPV6_ADDRESS', { literal: ']' }],

@@ -235,8 +235,16 @@ const ipv6Address = (data, location) =>
   cst.Ipv6Address({ location, value: stringifyId(data) });
 
 // ipv4-or-reg-name :: (Data, Location) -> Ipv4OrRegName
-const ipv4OrRegName = (data, location) =>
-  cst.Ipv4OrRegName({ location, value: stringifyId(data) });
+const ipv4OrRegName = (data, location, reject) => {
+  const value = stringifyId(data);
+
+  // asterisk-form takes precedence over ipv4-or-reg-name
+  if (value === '*') {
+    return reject;
+  }
+
+  return cst.Ipv4OrRegName({ location, value });
+};
 
 /**
  * Resource path
