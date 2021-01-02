@@ -1789,3 +1789,29 @@ Authorization: token
         (input-file-ref
           (file-path))
         (message-line)))))
+
+================================================================================
+response-ref: response-ref right after request-line
+================================================================================
+GET http://www.example.com
+
+<> ./file.json
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))))))
+    (response-ref
+      (file-path))))

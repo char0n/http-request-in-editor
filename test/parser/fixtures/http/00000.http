@@ -1,10 +1,5 @@
-### separator
-POST https://httpbin.org/post
-Authorization: token
+GET http://www.example.com
 
-< ./file1.json
-
-
-< ./file2.json
+<> ./file.json
 
 ###
