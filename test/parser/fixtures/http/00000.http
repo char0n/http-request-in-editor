@@ -1,8 +1,12 @@
-POST https://httpbin.org/post
-Authorization: token
-Header1:
- value1
-Header2:
-   value2
+###
+GET http://www.example.com
+
+MESSAGE BODY
+
+> {% script %}
+
+
+<> ./file.json
+
 
 ###

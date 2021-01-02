@@ -1378,3 +1378,254 @@ Header2:
       (header-field
         (field-name)
         (field-value)))))
+
+================================================================================
+message-body: single line message-body
+================================================================================
+### separator
+POST https://httpbin.org/post
+Authorization: token
+
+MESSAGE BODY
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))
+            (absolute-path
+              (path-separator)
+              (segment))))))
+    (headers
+      (header-field
+        (field-name)
+        (field-value)))
+    (message-body
+      (messages
+        (message-line)
+        (message-line)))))
+
+================================================================================
+message-body: input-file-ref between two message-line(s)
+================================================================================
+POST https://httpbin.org/post
+Authorization: token
+
+{}
+< ./file.json
+{}
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))
+            (absolute-path
+              (path-separator)
+              (segment))))))
+    (headers
+      (header-field
+        (field-name)
+        (field-value)))
+    (message-body
+      (messages
+        (message-line)
+        (input-file-ref
+          (file-path))
+        (message-line)
+        (message-line)))))
+
+================================================================================
+message-body: message-body followed by a response-handler file-path
+================================================================================
+###
+GET http://www.example.com
+
+MESSAGE BODY
+
+> ./file.js
+
+###
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))))))
+    (message-body
+      (messages
+        (message-line)
+        (message-line)))
+    (response-handler
+      (file-path))))
+
+================================================================================
+message-body: message-body followed by a response-handler handler-script
+================================================================================
+###
+GET http://www.example.com
+
+MESSAGE BODY
+
+> {% script %}
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))))))
+    (message-body
+      (messages
+        (message-line)
+        (message-line)))
+    (response-handler
+      (handler-script))))
+
+================================================================================
+message-body: message-body followed by a response-ref
+================================================================================
+###
+GET http://www.example.com
+
+MESSAGE BODY
+
+<> ./file.json
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))))))
+    (message-body
+      (messages
+        (message-line)
+        (message-line)))
+    (response-ref
+      (file-path))))
+
+================================================================================
+message-body: message-body followed by handler-script and response-ref
+================================================================================
+###
+GET http://www.example.com
+
+MESSAGE BODY
+
+> {% script %}
+<> ./file.json
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))))))
+    (message-body
+      (messages
+        (message-line)
+        (message-line)))
+    (response-handler
+      (handler-script))
+    (response-ref
+      (file-path))))
+
+================================================================================
+message-body: message-body followed by handler-script and response-ref separated by empty lines
+================================================================================
+###
+GET http://www.example.com
+
+MESSAGE BODY
+
+> {% script %}
+
+
+<> ./file.json
+
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))))))
+    (message-body
+      (messages
+        (message-line)
+        (message-line)))
+    (response-handler
+      (handler-script))
+    (response-ref
+      (file-path))))
