@@ -1,12 +1,10 @@
-###
-GET http://www.example.com
+### separator
+POST https://httpbin.org/post
+Authorization: token
 
-MESSAGE BODY
-
-> {% script %}
+< ./file1.json
 
 
-<> ./file.json
-
+< ./file2.json
 
 ###

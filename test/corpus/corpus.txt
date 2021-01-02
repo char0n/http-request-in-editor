@@ -1629,3 +1629,163 @@ MESSAGE BODY
       (handler-script))
     (response-ref
       (file-path))))
+
+================================================================================
+input-file-ref: single one right after headers
+================================================================================
+### separator
+POST https://httpbin.org/post
+Authorization: token
+
+< ./file.json
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))
+            (absolute-path
+              (path-separator)
+              (segment))))))
+    (headers
+      (header-field
+        (field-name)
+        (field-value)))
+    (message-body
+      (messages
+        (input-file-ref
+          (file-path))))))
+
+================================================================================
+input-file-ref: single one right after headers followed by new line
+================================================================================
+### separator
+POST https://httpbin.org/post
+Authorization: token
+
+< ./file.json
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))
+            (absolute-path
+              (path-separator)
+              (segment))))))
+    (headers
+      (header-field
+        (field-name)
+        (field-value)))
+    (message-body
+      (messages
+        (input-file-ref
+          (file-path))
+        (message-line)))))
+
+================================================================================
+input-file-ref: two refs
+================================================================================
+### separator
+POST https://httpbin.org/post
+Authorization: token
+
+< ./file1.json
+< ./file2.json
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))
+            (absolute-path
+              (path-separator)
+              (segment))))))
+    (headers
+      (header-field
+        (field-name)
+        (field-value)))
+    (message-body
+      (messages
+        (input-file-ref
+          (file-path))
+        (input-file-ref
+          (file-path))
+        (message-line)))))
+
+================================================================================
+input-file-ref: two refs separated by multiple empty lines
+================================================================================
+### separator
+POST https://httpbin.org/post
+Authorization: token
+
+< ./file1.json
+
+
+< ./file2.json
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))
+            (absolute-path
+              (path-separator)
+              (segment))))))
+    (headers
+      (header-field
+        (field-name)
+        (field-value)))
+    (message-body
+      (messages
+        (input-file-ref
+          (file-path))
+        (message-line)
+        (message-line)
+        (input-file-ref
+          (file-path))
+        (message-line)))))
