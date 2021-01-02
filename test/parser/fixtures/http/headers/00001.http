@@ -1,7 +1,0 @@
-GET http://www.example.com
-Header1:
- value1
-Header2:
-   value2
-
-###
