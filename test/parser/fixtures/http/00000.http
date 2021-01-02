@@ -1,5 +1,7 @@
+###
 GET http://www.example.com
+Header: value
 
-<> ./file.json
+> {% script %}
 
 ###

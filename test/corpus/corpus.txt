@@ -1815,3 +1815,157 @@ GET http://www.example.com
                 (ipv4-or-reg-name)))))))
     (response-ref
       (file-path))))
+
+================================================================================
+response-handler: handler-script after message-body
+================================================================================
+###
+GET http://www.example.com
+
+MESSAGE BODY
+
+> {% script %}
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))))))
+    (message-body
+      (messages
+        (message-line)
+        (message-line)))
+    (response-handler
+      (handler-script))))
+
+================================================================================
+response-handler: handler-script defined on multiple lines
+================================================================================
+###
+GET http://www.example.com
+
+MESSAGE BODY
+
+> {%
+script
+ %}
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))))))
+    (message-body
+      (messages
+        (message-line)
+        (message-line)))
+    (response-handler
+      (handler-script))))
+
+================================================================================
+response-handler: handler-script without message-body
+================================================================================
+###
+GET http://www.example.com
+
+> {% script %}
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))))))
+    (response-handler
+      (handler-script))))
+
+================================================================================
+response-handler: file-path without message-body
+================================================================================
+###
+GET http://www.example.com
+
+> ./file.js
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))))))
+    (response-handler
+      (file-path))))
+
+================================================================================
+response-handler: headers followed directly by handler-script
+================================================================================
+###
+GET http://www.example.com
+Header: value
+
+> {% script %}
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))))))
+    (headers
+      (header-field
+        (field-name)
+        (field-value)))
+    (response-handler
+      (handler-script))))
