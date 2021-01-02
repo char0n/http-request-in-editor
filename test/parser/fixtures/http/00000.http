@@ -1,7 +1,14 @@
-###
-GET http://www.example.com
-Header: value
+POST http://example.com/api/upload
+Content-Type: multipart/form-data; boundary=abcd
 
-> {% script %}
+--abcd
+Content-Disposition: form-data; name="text"
+
+Text
+--abcd
+Content-Disposition: form-data; name="file_to_send"; filename="input.txt"
+
+< ./input.txt
+--abcd--
 
 ###

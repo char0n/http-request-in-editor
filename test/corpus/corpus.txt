@@ -1969,3 +1969,58 @@ Header: value
         (field-value)))
     (response-handler
       (handler-script))))
+
+================================================================================
+multipart-form-data: should be parsed as standard message-line(s)
+================================================================================
+POST http://example.com/api/upload
+Content-Type: multipart/form-data; boundary=abcd
+
+--abcd
+Content-Disposition: form-data; name="text"
+
+Text
+--abcd
+Content-Disposition: form-data; name="file_to_send"; filename="input.txt"
+
+< ./input.txt
+--abcd--
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))
+            (absolute-path
+              (path-separator)
+              (segment)
+              (path-separator)
+              (segment))))))
+    (headers
+      (header-field
+        (field-name)
+        (field-value)))
+    (message-body
+      (messages
+        (message-line)
+        (message-line)
+        (message-line)
+        (message-line)
+        (message-line)
+        (message-line)
+        (message-line)
+        (input-file-ref
+          (file-path))
+        (message-line)
+        (message-line)))))
