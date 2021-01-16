@@ -7,17 +7,17 @@ const { trim, split, map, tail, splitEvery, pipe } = require('ramda');
 
 const { parse } = require('../../src/parser');
 const { visit } = require('../../src/visitor');
-const { Visitor, keyMap } = require('../helpers');
+const { RepresentationVisitor } = require('../helpers');
 
 const documentSeparator = '='.repeat(80);
-const httpASTSeparator = '-'.repeat(80);
+const httpCSTSeparator = '-'.repeat(80);
 const transformer = pipe(
   split(documentSeparator),
   tail,
   splitEvery(2),
-  map(([header, httpAstPair]) => {
-    const [http, astRep] = split(httpASTSeparator, httpAstPair);
-    return [trim(header), http, trim(astRep)];
+  map(([header, httpCSTPair]) => {
+    const [http, cstRep] = split(httpCSTSeparator, httpCSTPair);
+    return [trim(header), http, trim(cstRep)];
   })
 );
 const corpus = transformer(
@@ -25,16 +25,16 @@ const corpus = transformer(
 );
 
 describe('corpus', function () {
-  corpus.forEach(([header, http, astRep]) => {
+  corpus.forEach(([header, http, cstRep]) => {
     context(header, function () {
       specify('should verify corpus record', function () {
-        const astTree = parse(http);
-        const visitor = Visitor();
+        const cstTree = parse(http);
+        const visitor = RepresentationVisitor();
 
-        visit(astTree[0], visitor, { keyMap });
+        visit(cstTree[0], visitor);
 
-        assert.lengthOf(astTree, 1);
-        assert.strictEqual(visitor.result, astRep);
+        assert.lengthOf(cstTree, 1);
+        assert.strictEqual(visitor.result, cstRep);
       });
     });
   });
