@@ -1,6 +1,6 @@
 'use strict';
 
-const { prop, pipe, curryN } = require('ramda');
+const { prop, pipe, curryN, always } = require('ramda');
 const { isFunction, isString, isNotNil } = require('ramda-adjunct');
 
 // getVisitFn :: (Visitor, String, Boolean) -> Function
@@ -37,6 +37,13 @@ const getVisitFn = (visitor, type, isLeaving) => {
 
   return null;
 };
+
+const defaultKeyMap = new Proxy(
+  {},
+  {
+    get: always(['children']),
+  }
+);
 
 const BREAK = {};
 
@@ -143,7 +150,7 @@ const visit = (
   // @ts-ignore
   visitor,
   {
-    keyMap = null,
+    keyMap = defaultKeyMap,
     state = {},
     breakSymbol = BREAK,
     visitFnGetter = getVisitFn,
@@ -294,6 +301,7 @@ const visit = (
 
 module.exports = {
   getVisitFn,
+  keyMap: defaultKeyMap,
   BREAK,
   getNodeType,
   isNode,

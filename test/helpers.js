@@ -1,9 +1,8 @@
 'use strict';
 
 const stampit = require('stampit');
-const { always } = require('ramda');
 
-const Visitor = stampit({
+const RepresentationVisitor = stampit({
   props: {
     nestingLevel: 0,
     result: '',
@@ -22,14 +21,6 @@ const Visitor = stampit({
   },
 });
 
-const keyMap = new Proxy(
-  {},
-  {
-    get: always(['children']),
-  }
-);
-
 module.exports = {
-  Visitor,
-  keyMap,
+  RepresentationVisitor,
 };
