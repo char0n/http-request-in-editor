@@ -1,5 +1,12 @@
 ###
-POST http://www.example.com
-Header: test
+POST https://httpbin.org
+  /post
+  ?search1=value1
+  &search2=value2
+  #fragment1
+  fragment2
+Content-Type: application/json
+
+{}
 
 ###

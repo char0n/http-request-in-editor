@@ -1,7 +1,12 @@
-GET http://example.com/api/get
- ?id=42
- &id2=2
- #fragment1
- fragment2
+###
+POST https://httpbin.org
+  /post
+  ?search1=value1
+  &search2=value2
+  #fragment1
+  fragment2
+Content-type: application/json
+
+{}
 
 ###

@@ -27,6 +27,12 @@ const AbsoluteFormVisitor = stampit({
 
       return false;
     },
+    query(node) {
+      this.absoluteForm += `?${node.value}`;
+    },
+    fragment(node) {
+      this.absoluteForm += `#${node.value}`;
+    },
   },
 });
 

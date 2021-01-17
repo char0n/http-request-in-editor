@@ -4,6 +4,7 @@ const stampit = require('stampit');
 
 const { visit } = require('../../../visitor');
 const RequestTargetVisitor = require('../../visitors/generics/RequestTargetVisitor');
+const MessageBodyVisitor = require('../../visitors/generics/MessageBodyVisitor');
 
 const AxiosVisitor = stampit({
   props: {
@@ -30,7 +31,27 @@ const AxiosVisitor = stampit({
       const visitor = RequestTargetVisitor();
 
       visit(node, visitor);
-      this.config.url = visitor.requestTarget;
+
+      const url = new URL(visitor.requestTarget);
+
+      this.config.url = url.pathname;
+      this.config.baseURL = `${url.protocol}//${url.hostname}/`;
+      this.config.params = url.searchParams;
+
+      return false;
+    },
+    headers() {
+      this.config.headers = {};
+    },
+    'header-field': function headerField(node) {
+      this.config.headers[node.fieldName.value] = node.fieldValue.value;
+    },
+    'message-body': function messageBody(node) {
+      const visitor = MessageBodyVisitor();
+
+      visit(node, visitor);
+
+      this.config.data = visitor.messageBody;
 
       return false;
     },

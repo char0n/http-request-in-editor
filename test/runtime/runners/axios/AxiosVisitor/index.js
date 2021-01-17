@@ -42,7 +42,28 @@ describe('runtime', function () {
           });
 
           specify('should construct proper url', function () {
-            assert.strictEqual(config.url, 'http://www.example.com');
+            assert.strictEqual(config.url, '/post');
+          });
+
+          specify('should construct proper baseURL', function () {
+            assert.strictEqual(config.baseURL, 'https://httpbin.org/');
+          });
+
+          specify('should construct proper params', function () {
+            assert.instanceOf(config.params, URLSearchParams);
+            assert.strictEqual(config.params.get('search1'), 'value1');
+            assert.strictEqual(config.params.get('search2'), 'value2');
+          });
+
+          specify('should construct proper headers', function () {
+            assert.strictEqual(
+              config.headers['Content-Type'],
+              'application/json'
+            );
+          });
+
+          specify('should construct proper data', function () {
+            assert.strictEqual(config.data, '{}');
           });
         });
       });
