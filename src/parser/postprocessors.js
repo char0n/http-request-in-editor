@@ -13,6 +13,7 @@ const {
   isMethod,
   isQuery,
   isFragment,
+  isAbsolutePath,
 } = require('./cst/predicates');
 
 // Type definitions:
@@ -185,11 +186,18 @@ const scheme = (data, location) =>
   cst.Scheme({ location, value: stringify(flatten(data)) });
 
 // hierPart :: (Data, Location) -> HierPart
-const hierPart = ([authorityNode, absolutePathNode], location) =>
-  cst.HierPart({
+const hierPart = ([authorityNode, absolutePathNode], location) => {
+  const children = [authorityNode];
+
+  if (isAbsolutePath(absolutePathNode)) {
+    children.push(absolutePathNode);
+  }
+
+  return cst.HierPart({
     location,
-    children: [authorityNode, absolutePathNode],
+    children,
   });
+};
 
 /**
  * Authority

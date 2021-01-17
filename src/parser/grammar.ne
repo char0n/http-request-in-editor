@@ -129,7 +129,7 @@ IPV4_OR_REG_NAME -> [^\s/:?#]:+ {% ipv4OrRegName %}
 # Resource path #
 #################
 
-ABSOLUTE_PATH -> "/" | (PATH_SEPARATOR SEGMENT):+ {% absolutePath %}
+ABSOLUTE_PATH -> (PATH_SEPARATOR SEGMENT):+ {% absolutePath %}
 
 PATH_SEPARATOR -> ("/" {% id %} | NEW_LINE_WITH_INDENT {% () => '\n' %}) {% pathSeparator %}
 
