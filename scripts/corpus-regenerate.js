@@ -6,7 +6,7 @@ const { trim, split, map, tail, splitEvery, pipe } = require('ramda');
 
 const { parse } = require('../src/parser');
 const { visit } = require('../src/visitor');
-const { Visitor, keyMap } = require('../test/helpers');
+const { RepresentationVisitor, keyMap } = require('../test/helpers');
 
 const documentSeparator = '='.repeat(80);
 const httpASTSeparator = '-'.repeat(80);
@@ -25,7 +25,7 @@ const corpus = transformer(fs.readFileSync(corpusPath).toString());
 const regeneratedCorpus = corpus
   .map(([header, http]) => {
     const astTree = parse(http);
-    const visitor = Visitor();
+    const visitor = RepresentationVisitor();
 
     visit(astTree[0], visitor, { keyMap });
     return `${documentSeparator}\n${header}\n${documentSeparator}${http}${httpASTSeparator}\n\n${visitor.result}\n\n`;

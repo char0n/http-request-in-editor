@@ -815,7 +815,6 @@
         symbols: ['IPV4_OR_REG_NAME$ebnf$1'],
         postprocess: ipv4OrRegName,
       },
-      { name: 'ABSOLUTE_PATH', symbols: [{ literal: '/' }] },
       {
         name: 'ABSOLUTE_PATH$ebnf$1$subexpression$1',
         symbols: ['PATH_SEPARATOR', 'SEGMENT'],

@@ -12,6 +12,8 @@ const isHttpVersion = isNodeType('http-version');
 
 const isOriginForm = isNodeType('origin-form');
 
+const isAbsolutePath = isNodeType('absolute-path');
+
 const isLiteral = isNodeType('literal');
 
 const isFilePath = isNodeType('file-path');
@@ -33,6 +35,7 @@ module.exports = {
   isRequestTarget,
   isHttpVersion,
   isOriginForm,
+  isAbsolutePath,
   isLiteral,
   isFilePath,
   isHeaders,

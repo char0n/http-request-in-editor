@@ -915,6 +915,32 @@ GET http://[::1]
                 (literal)))))))))
 
 ================================================================================
+request-target: ipv6-address with with single path-separator
+================================================================================
+GET http://[::1]/
+
+###
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (literal)
+                (ipv6-address)
+                (literal)))
+            (absolute-path
+              (path-separator)
+              (segment))))))))
+
+================================================================================
 request-target: ipv6-address with port
 ================================================================================
 GET http://[::1]:8080
@@ -2024,3 +2050,4 @@ Content-Disposition: form-data; name="file_to_send"; filename="input.txt"
           (file-path))
         (message-line)
         (message-line)))))
+

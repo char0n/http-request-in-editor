@@ -1,14 +1,7 @@
-POST http://example.com/api/upload
-Content-Type: multipart/form-data; boundary=abcd
-
---abcd
-Content-Disposition: form-data; name="text"
-
-Text
---abcd
-Content-Disposition: form-data; name="file_to_send"; filename="input.txt"
-
-< ./input.txt
---abcd--
+GET http://example.com/api/get
+ ?id=42
+ &id2=2
+ #fragment1
+ fragment2
 
 ###
