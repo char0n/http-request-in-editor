@@ -2,8 +2,8 @@
 
 const stampit = require('stampit');
 
-const { visit } = require('../../visitor');
-const RequestTargetVisitor = require('./generics/RequestTargetVisitor');
+const { visit } = require('../../../visitor');
+const RequestTargetVisitor = require('../../visitors/generics/RequestTargetVisitor');
 
 const AxiosVisitor = stampit({
   props: {
