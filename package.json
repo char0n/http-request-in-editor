@@ -5,6 +5,7 @@
   "main": "./src/index.js",
   "type": "commonjs",
   "scripts": {
+    "postinstall": "husky install",
     "compile": "nearleyc ./src/parser/grammar.ne --out ./src/parser/grammar.js",
     "test": "npm run test:parser",
     "test:parser": "npm run compile && mocha",
