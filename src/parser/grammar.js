@@ -925,9 +925,21 @@
         postprocess: fragment,
       },
       { name: 'HEADERS$ebnf$1', symbols: [] },
+      { name: 'HEADERS$ebnf$1$subexpression$1$ebnf$1', symbols: [] },
+      {
+        name: 'HEADERS$ebnf$1$subexpression$1$ebnf$1',
+        symbols: ['HEADERS$ebnf$1$subexpression$1$ebnf$1', 'LINE_COMMENT'],
+        postprocess: function arrpush(d) {
+          return d[0].concat([d[1]]);
+        },
+      },
       {
         name: 'HEADERS$ebnf$1$subexpression$1',
-        symbols: ['HEADER_FIELD', 'NEW_LINE', 'WHIT?'],
+        symbols: [
+          'HEADER_FIELD',
+          'NEW_LINE',
+          'HEADERS$ebnf$1$subexpression$1$ebnf$1',
+        ],
         postprocess: id,
       },
       {
@@ -965,8 +977,56 @@
         },
       },
       {
+        name: 'FIELD_VALUE$ebnf$2$subexpression$1$subexpression$1',
+        symbols: [{ literal: '#' }],
+      },
+      {
+        name: 'FIELD_VALUE$ebnf$2$subexpression$1$subexpression$1$string$1',
+        symbols: [{ literal: '/' }, { literal: '/' }],
+        postprocess: function joiner(d) {
+          return d.join('');
+        },
+      },
+      {
+        name: 'FIELD_VALUE$ebnf$2$subexpression$1$subexpression$1',
+        symbols: [
+          'FIELD_VALUE$ebnf$2$subexpression$1$subexpression$1$string$1',
+        ],
+      },
+      { name: 'FIELD_VALUE$ebnf$2$subexpression$1$ebnf$1', symbols: [] },
+      {
+        name: 'FIELD_VALUE$ebnf$2$subexpression$1$ebnf$1',
+        symbols: [
+          'FIELD_VALUE$ebnf$2$subexpression$1$ebnf$1',
+          'INPUT_CHARACTER',
+        ],
+        postprocess: function arrpush(d) {
+          return d[0].concat([d[1]]);
+        },
+      },
+      {
+        name: 'FIELD_VALUE$ebnf$2$subexpression$1',
+        symbols: [
+          '__',
+          'FIELD_VALUE$ebnf$2$subexpression$1$subexpression$1',
+          'FIELD_VALUE$ebnf$2$subexpression$1$ebnf$1',
+        ],
+      },
+      {
+        name: 'FIELD_VALUE$ebnf$2',
+        symbols: ['FIELD_VALUE$ebnf$2$subexpression$1'],
+        postprocess: id,
+      },
+      {
+        name: 'FIELD_VALUE$ebnf$2',
+        symbols: [],
+        postprocess: function (d) {
+          return null;
+        },
+      },
+      {
         name: 'FIELD_VALUE',
-        symbols: ['FIELD_VALUE$ebnf$1'],
+        symbols: ['FIELD_VALUE$ebnf$1', 'FIELD_VALUE$ebnf$2'],
         postprocess: fieldValue,
       },
       {

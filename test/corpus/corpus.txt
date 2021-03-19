@@ -1406,6 +1406,103 @@ Header2:
         (field-value)))))
 
 ================================================================================
+headers: headers first after multiline request-target
+================================================================================
+###
+POST https://httpbin.org
+  /post
+  ?search1=value1
+  &search2=value2
+  #fragment1
+  fragment2
+Content-type: application/json
+
+{"prop": "value"}
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))
+            (absolute-path
+              (path-separator)
+              (segment)
+              (path-separator)
+              (segment)
+              (path-separator)
+              (segment)))
+          (literal)
+          (query)
+          (literal)
+          (fragment))))
+    (headers
+      (header-field
+        (field-name)
+        (field-value)))
+    (message-body
+      (messages
+        (message-line)
+        (message-line)))))
+
+================================================================================
+headers: comments within headers
+================================================================================
+###
+POST https://httpbin.org
+# comment 1
+Content-type: application/json
+# comment 2
+Content-type: application/json
+# comment 3
+# comment 4
+Content-type: application/json
+# comment 5
+
+{"prop": "value"}
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))))))
+    (headers
+      (header-field
+        (field-name)
+        (field-value))
+      (header-field
+        (field-name)
+        (field-value))
+      (header-field
+        (field-name)
+        (field-value)))
+    (message-body
+      (messages
+        (message-line)
+        (message-line)))))
+
+================================================================================
 message-body: single line message-body
 ================================================================================
 ### separator

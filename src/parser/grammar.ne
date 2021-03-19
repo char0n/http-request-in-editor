@@ -148,10 +148,10 @@ FRAGMENT -> [^\r\n\s\?]:* (NEW_LINE_WITH_INDENT FRAGMENT):? {% fragment %}
 # Headers #
 ###########
 
-HEADERS -> (HEADER_FIELD NEW_LINE WHIT? {% id %}):* {% headers %}
+HEADERS -> (HEADER_FIELD NEW_LINE LINE_COMMENT:* {% id %}):* {% headers %}
 HEADER_FIELD -> FIELD_NAME ":" _ FIELD_VALUE _ {% headerField %}
 FIELD_NAME -> [^\r\n:]:+ {% fieldName %}
-FIELD_VALUE -> INPUT_CHARACTER:* {% fieldValue %}
+FIELD_VALUE -> INPUT_CHARACTER:* (__ ("#" | "//") INPUT_CHARACTER:*):? {% fieldValue %}
              | NEW_LINE_WITH_INDENT FIELD_VALUE {% nth(1) %}
 
 ################
