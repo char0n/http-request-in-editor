@@ -1,7 +1,7 @@
 'use strict';
 
 const { flatten, nth, join, pipe } = require('ramda');
-const { flattenDepth, stubNull, isNotNull, compact } = require('ramda-adjunct');
+const { flattenDepth, stubNull, isNotNull } = require('ramda-adjunct');
 
 const cst = require('./cst');
 const {
@@ -317,7 +317,7 @@ const fragment = (data, location) => {
 
 // headers :: (Data, Location) -> Headers
 const headers = (data, location) =>
-  cst.Headers({ location, children: [...compact(data[0])] });
+  cst.Headers({ location, children: [...data[0]] });
 
 // headerField :: (Data, Location) -> HeaderField
 const headerField = (data, location) =>
