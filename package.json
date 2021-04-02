@@ -46,7 +46,7 @@
     "stampit": "=4.3.2"
   },
   "devDependencies": {
-    "@commitlint/cli": "=12.0.1",
+    "@commitlint/cli": "=12.1.1",
     "@commitlint/config-conventional": "=12.1.1",
     "chai": "=4.3.4",
     "dedent": "=0.7.0",
