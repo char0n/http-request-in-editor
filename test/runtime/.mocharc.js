@@ -2,5 +2,5 @@
 
 module.exports = {
   recursive: true,
-  spec: 'test/'
+  spec: 'test/runtime/',
 };

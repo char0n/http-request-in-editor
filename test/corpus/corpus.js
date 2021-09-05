@@ -6,8 +6,7 @@ const { assert } = require('chai');
 const { trim, split, map, tail, splitEvery, pipe } = require('ramda');
 
 const { parse } = require('../../src/parser');
-const { visit } = require('../../src/visitor');
-const { RepresentationVisitor } = require('../helpers');
+const { sexprs } = require('../../src');
 
 const documentSeparator = '='.repeat(80);
 const httpCSTSeparator = '-'.repeat(80);
@@ -29,12 +28,9 @@ describe('corpus', function () {
     context(header, function () {
       specify('should verify corpus record', function () {
         const cstTree = parse(http);
-        const visitor = RepresentationVisitor();
-
-        visit(cstTree[0], visitor);
 
         assert.lengthOf(cstTree, 1);
-        assert.strictEqual(visitor.result, cstRep);
+        assert.strictEqual(sexprs(cstTree[0]), cstRep);
       });
     });
   });

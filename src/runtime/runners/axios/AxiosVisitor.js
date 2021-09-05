@@ -45,6 +45,8 @@ const AxiosVisitor = stampit({
     },
     'header-field': function headerField(node) {
       this.config.headers[node.fieldName.value] = node.fieldValue.value;
+
+      return false;
     },
     'message-body': function messageBody(node) {
       const visitor = MessageBodyVisitor();
