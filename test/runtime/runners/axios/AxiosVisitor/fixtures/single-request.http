@@ -10,15 +10,3 @@ Content-Type: application/json
 {}
 
 ###
-
-POST https://httpbin.org1
-  /post
-  ?search1=value1
-  &search2=value2
-  #fragment1
-  fragment2
-Content-Type: application/json
-
-{}
-
-###

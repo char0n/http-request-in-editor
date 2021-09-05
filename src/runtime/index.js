@@ -8,7 +8,7 @@ const AxiosRunner = require('./runners/axios');
 const runSpec = async (httpSpec, options = {}) => {
   const cstTree = parse(httpSpec);
   const runner = pathOr(AxiosRunner, ['runner'], options)({ cstTree });
-  const result = await runner.run();
+  return runner.run();
 };
 
 module.exports = {

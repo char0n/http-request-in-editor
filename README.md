@@ -62,6 +62,8 @@ Authorization: token3
  $ npm i http-request-in-editor
 ```
 
+## Parser
+
 ```js
 const { parse } = require('http-request-in-editor');
 
@@ -77,7 +79,7 @@ const cst = parse(http);
 ```
 
 
-## CST
+### CST
 
 Parser is producing JSON serializable [CST](https://en.wikipedia.org/wiki/Parse_tree). Following [HTTP Request in Editor](https://github.com/JetBrains/http-request-in-editor-spec/blob/master/spec.md) fragment
 
@@ -127,6 +129,16 @@ will produce following CST:
 
 CST should be self-explanatory. For more information checkout our [CST Types](https://github.com/char0n/http-request-in-editor/tree/master/src/parser/cst).
 
+## Runner
+
+```js
+const fs = require('fs');
+const { runSpec } = require('http-request-in-editor');
+
+const spec = fs.readFileSync('./spec-file.http');
+const result = await runSpec(spec); // returns list of response objects
+```
+
 ## Development
 
 Fork the repo, clone in and install by
@@ -157,7 +169,7 @@ Generate random strings that satisfy the grammar defined in`src/parser/grammar.n
  $ npm run unparse
 ```
 
-Regenerates [Corpus file](https://github.com/char0n/http-request-in-editor/tree/master/test/corpus/corpus.txt). Replaces CST representation with the new one.
+Regenerates [Corpus file](https://github.com/char0n/http-request-in-editor/tree/master/test/corpus/corpus.txt). Replaces CST S-expression representation with the new one.
 ```sh
  $ npm run corpus:regenerate
 ```
