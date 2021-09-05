@@ -2,7 +2,9 @@
 
 const stampit = require('stampit');
 
-const RepresentationVisitor = stampit({
+const { visit } = require('../../visitor');
+
+const SexpressionVisitor = stampit({
   props: {
     nestingLevel: 0,
     result: '',
@@ -21,6 +23,12 @@ const RepresentationVisitor = stampit({
   },
 });
 
+const sexprs = (cst) => {
+  const visitor = SexpressionVisitor();
+  visit(cst, visitor);
+  return visitor.result;
+};
+
 module.exports = {
-  RepresentationVisitor,
+  sexprs,
 };

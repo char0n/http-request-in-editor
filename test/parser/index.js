@@ -28,10 +28,10 @@ describe('parser', function () {
         ###
       `;
 
-      specify('should parse and return AST', function () {
-        const actualAst = parse(http);
+      specify('should parse and return CST', function () {
+        const actualCST = parse(http);
 
-        assert.isArray(actualAst);
+        assert.isArray(actualCST);
       });
     });
 
