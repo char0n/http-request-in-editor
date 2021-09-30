@@ -43,7 +43,7 @@
     "axios": "=0.21.4",
     "nearley": "=2.20.1",
     "ramda": "=0.27.1",
-    "ramda-adjunct": "=2.33.0",
+    "ramda-adjunct": "=2.34.0",
     "stampit": "=4.3.2"
   },
   "devDependencies": {
