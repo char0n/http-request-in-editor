@@ -126,7 +126,7 @@ const httpVersion = (data, location) =>
 
 // requestTarget :: (Data, Location) -> RequestTarget
 const requestTarget = (data, location) =>
-  cst.RequestTarget({ location, children: [data[0]] });
+  cst.RequestTarget({ location, children: data[0] });
 
 // originForm :: (Data, Location) -> OriginForm
 const originForm = (
