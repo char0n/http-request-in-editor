@@ -2,6 +2,7 @@
 /.tmp
 /.nyc_output
 /.github
+/.husky
 /node_modules
 /npm-debug.log
 /scripts/**/*
