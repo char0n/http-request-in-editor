@@ -31,7 +31,7 @@ Parser can parse following syntax and creates [CST](https://en.wikipedia.org/wik
 that can be consumed and executed by various runtime environments. I'll provide a reference implementation
 of a reference runtime implementation as soon as the parser is finished.
 
-```http request
+```
 ### request 1
 POST https://httpbin.org/post HTTP/1.1
 Authorization: token
@@ -83,7 +83,7 @@ const cst = parse(http);
 
 Parser is producing JSON serializable [CST](https://en.wikipedia.org/wiki/Parse_tree). Following [HTTP Request in Editor](https://github.com/JetBrains/http-request-in-editor-spec/blob/master/spec.md) fragment
 
-```http request
+```
 ### post request
 POST http://www.example.com HTTP/2.0
 # comment
