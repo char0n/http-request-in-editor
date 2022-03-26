@@ -37,6 +37,7 @@
     segment,
     // Query and Fragment
     query,
+    querySegment,
     fragment,
     // Headers
     headers,
@@ -60,7 +61,8 @@
     // Comments
     lineComment,
     // Environment variables
-    envVariable,
+    envVariableStatic,
+    envVariableDynamic,
   } = require('./postprocessors');
   var grammar = {
     Lexer: undefined,
@@ -782,7 +784,10 @@
         symbols: ['HOST', 'AUTHORITY$ebnf$1'],
         postprocess: authority,
       },
-      { name: 'PORT', symbols: ['DIGIT'], postprocess: port },
+      { name: 'PORT$subexpression$1', symbols: ['ENV_VARIABLE'] },
+      { name: 'PORT$subexpression$1', symbols: ['DIGIT'] },
+      { name: 'PORT', symbols: ['PORT$subexpression$1'], postprocess: port },
+      { name: 'HOST$subexpression$1', symbols: ['ENV_VARIABLE'] },
       {
         name: 'HOST$subexpression$1',
         symbols: [{ literal: '[' }, 'IPV6_ADDRESS', { literal: ']' }],
@@ -816,16 +821,38 @@
         postprocess: ipv4OrRegName,
       },
       {
+        name: 'ABSOLUTE_PATH$ebnf$1$subexpression$1$subexpression$1',
+        symbols: ['SEGMENT'],
+      },
+      {
+        name: 'ABSOLUTE_PATH$ebnf$1$subexpression$1$subexpression$1',
+        symbols: ['ENV_VARIABLE'],
+      },
+      {
         name: 'ABSOLUTE_PATH$ebnf$1$subexpression$1',
-        symbols: ['PATH_SEPARATOR', 'SEGMENT'],
+        symbols: [
+          'PATH_SEPARATOR',
+          'ABSOLUTE_PATH$ebnf$1$subexpression$1$subexpression$1',
+        ],
       },
       {
         name: 'ABSOLUTE_PATH$ebnf$1',
         symbols: ['ABSOLUTE_PATH$ebnf$1$subexpression$1'],
       },
       {
+        name: 'ABSOLUTE_PATH$ebnf$1$subexpression$2$subexpression$1',
+        symbols: ['SEGMENT'],
+      },
+      {
+        name: 'ABSOLUTE_PATH$ebnf$1$subexpression$2$subexpression$1',
+        symbols: ['ENV_VARIABLE'],
+      },
+      {
         name: 'ABSOLUTE_PATH$ebnf$1$subexpression$2',
-        symbols: ['PATH_SEPARATOR', 'SEGMENT'],
+        symbols: [
+          'PATH_SEPARATOR',
+          'ABSOLUTE_PATH$ebnf$1$subexpression$2$subexpression$1',
+        ],
       },
       {
         name: 'ABSOLUTE_PATH$ebnf$1',
@@ -866,25 +893,19 @@
         },
       },
       { name: 'SEGMENT', symbols: ['SEGMENT$ebnf$1'], postprocess: segment },
-      { name: 'QUERY$ebnf$1', symbols: [] },
+      { name: 'QUERY$subexpression$1', symbols: ['QUERY_SEGMENT'] },
+      { name: 'QUERY$subexpression$1', symbols: ['ENV_VARIABLE'] },
       {
-        name: 'QUERY$ebnf$1',
-        symbols: ['QUERY$ebnf$1', /[^\r\n\s#]/],
-        postprocess: function arrpush(d) {
-          return d[0].concat([d[1]]);
-        },
-      },
-      {
-        name: 'QUERY$ebnf$2$subexpression$1',
+        name: 'QUERY$ebnf$1$subexpression$1',
         symbols: ['NEW_LINE_WITH_INDENT', 'QUERY'],
       },
       {
-        name: 'QUERY$ebnf$2',
-        symbols: ['QUERY$ebnf$2$subexpression$1'],
+        name: 'QUERY$ebnf$1',
+        symbols: ['QUERY$ebnf$1$subexpression$1'],
         postprocess: id,
       },
       {
-        name: 'QUERY$ebnf$2',
+        name: 'QUERY$ebnf$1',
         symbols: [],
         postprocess: function (d) {
           return null;
@@ -892,8 +913,21 @@
       },
       {
         name: 'QUERY',
-        symbols: ['QUERY$ebnf$1', 'QUERY$ebnf$2'],
+        symbols: ['QUERY$subexpression$1', 'QUERY$ebnf$1'],
         postprocess: query,
+      },
+      { name: 'QUERY_SEGMENT$ebnf$1', symbols: [] },
+      {
+        name: 'QUERY_SEGMENT$ebnf$1',
+        symbols: ['QUERY_SEGMENT$ebnf$1', /[^\r\n\s#]/],
+        postprocess: function arrpush(d) {
+          return d[0].concat([d[1]]);
+        },
+      },
+      {
+        name: 'QUERY_SEGMENT',
+        symbols: ['QUERY_SEGMENT$ebnf$1'],
+        postprocess: querySegment,
       },
       { name: 'FRAGMENT$ebnf$1', symbols: [] },
       {
@@ -1297,42 +1331,65 @@
         postprocess: stubNull,
       },
       {
-        name: 'ENV_VARIABLE$string$1',
+        name: 'ENV_VARIABLE',
+        symbols: ['ENV_VARIABLE_STATIC'],
+        postprocess: id,
+      },
+      {
+        name: 'ENV_VARIABLE',
+        symbols: ['ENV_VARIABLE_DYNAMIC'],
+        postprocess: id,
+      },
+      {
+        name: 'ENV_VARIABLE_STATIC$string$1',
         symbols: [{ literal: '{' }, { literal: '{' }],
         postprocess: function joiner(d) {
           return d.join('');
         },
       },
       {
-        name: 'ENV_VARIABLE$ebnf$1',
-        symbols: [{ literal: '$' }],
-        postprocess: id,
-      },
-      {
-        name: 'ENV_VARIABLE$ebnf$1',
-        symbols: [],
-        postprocess: function (d) {
-          return null;
-        },
-      },
-      {
-        name: 'ENV_VARIABLE$string$2',
+        name: 'ENV_VARIABLE_STATIC$string$2',
         symbols: [{ literal: '}' }, { literal: '}' }],
         postprocess: function joiner(d) {
           return d.join('');
         },
       },
       {
-        name: 'ENV_VARIABLE',
+        name: 'ENV_VARIABLE_STATIC',
         symbols: [
-          'ENV_VARIABLE$string$1',
+          'ENV_VARIABLE_STATIC$string$1',
           '_',
-          'ENV_VARIABLE$ebnf$1',
           'IDENTIFIER',
           '_',
-          'ENV_VARIABLE$string$2',
+          'ENV_VARIABLE_STATIC$string$2',
         ],
-        postprocess: envVariable,
+        postprocess: envVariableStatic,
+      },
+      {
+        name: 'ENV_VARIABLE_DYNAMIC$string$1',
+        symbols: [{ literal: '{' }, { literal: '{' }],
+        postprocess: function joiner(d) {
+          return d.join('');
+        },
+      },
+      {
+        name: 'ENV_VARIABLE_DYNAMIC$string$2',
+        symbols: [{ literal: '}' }, { literal: '}' }],
+        postprocess: function joiner(d) {
+          return d.join('');
+        },
+      },
+      {
+        name: 'ENV_VARIABLE_DYNAMIC',
+        symbols: [
+          'ENV_VARIABLE_DYNAMIC$string$1',
+          '_',
+          { literal: '$' },
+          'IDENTIFIER',
+          '_',
+          'ENV_VARIABLE_DYNAMIC$string$2',
+        ],
+        postprocess: envVariableDynamic,
       },
     ],
     ParserStart: 'REQUESTS_FILE',

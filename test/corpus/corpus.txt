@@ -2148,3 +2148,84 @@ Content-Disposition: form-data; name="file_to_send"; filename="input.txt"
         (message-line)
         (message-line)))))
 
+================================================================================
+env-variable: should support env variable in host
+================================================================================
+GET http://{{host}}/
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (env-variable)))
+            (absolute-path
+              (path-separator)
+              (segment))))))))
+
+================================================================================
+env-variable: should support env variable in port
+================================================================================
+GET http://example.com:{{port}}/
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name))
+              (literal)
+              (port
+                (env-variable)))
+            (absolute-path
+              (path-separator)
+              (segment))))))))
+
+================================================================================
+env-variable: should support env variable path
+================================================================================
+GET http://www.example.com/path1/{{path2}}/path3
+
+###
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))
+            (absolute-path
+              (path-separator)
+              (segment)
+              (path-separator)
+              (env-variable)
+              (path-separator)
+              (segment))))))))

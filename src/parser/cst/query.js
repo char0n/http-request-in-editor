@@ -2,9 +2,9 @@
 
 const stampit = require('stampit');
 
-const ValueNode = require('./value-node');
+const Node = require('./node');
 
-const Query = stampit(ValueNode, {
+const Query = stampit(Node, {
   statics: {
     type: 'query',
   },

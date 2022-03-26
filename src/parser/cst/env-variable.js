@@ -8,11 +8,12 @@ const EnvVariable = stampit(ValueNode, {
   statics: {
     type: 'env-variable',
   },
-  methods: {
-    get name() {
-      return this.value.match(/^{{\s*(?<variable_name>[a-zA-Z0-9_-]+)\s*}}$/)
-        .groups.variable_name;
-    },
+  props: {
+    isDynamic: false,
+  },
+  init({ value = this.value, isDynamic = false } = {}) {
+    this.value = value;
+    this.isDynamic = isDynamic;
   },
 });
 

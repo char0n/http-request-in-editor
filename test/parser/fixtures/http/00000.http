@@ -1,12 +1,3 @@
-###
-POST https://httpbin.org
-  /post
-  ?search1=value1
-  &search2=value2
-  #fragment1
-  fragment2
-Content-type: application/json
-
-{}
+GET http://www.example.com/?param1=value1&{{param2}}=value2&param3={{param3}}
 
 ###

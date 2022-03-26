@@ -30,6 +30,8 @@ const isQuery = isNodeType('query');
 
 const isFragment = isNodeType('fragment');
 
+const isEnvVariable = isNodeType('env-variable');
+
 module.exports = {
   isMethod,
   isRequestTarget,
@@ -44,4 +46,5 @@ module.exports = {
   isResponseRef,
   isQuery,
   isFragment,
+  isEnvVariable,
 };

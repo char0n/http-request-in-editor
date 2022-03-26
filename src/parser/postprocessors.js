@@ -1,7 +1,12 @@
 'use strict';
 
-const { flatten, nth, join, pipe } = require('ramda');
-const { flattenDepth, stubNull, isNotNull } = require('ramda-adjunct');
+const { flatten, nth, join, pipe, last } = require('ramda');
+const {
+  flattenDepth,
+  stubNull,
+  isNotNull,
+  isString,
+} = require('ramda-adjunct');
 
 const cst = require('./cst');
 const {
@@ -14,6 +19,8 @@ const {
   isQuery,
   isFragment,
   isAbsolutePath,
+  isEnvVariable,
+  isLiteral,
 } = require('./cst/predicates');
 
 // Type definitions:
@@ -218,8 +225,12 @@ const authority = (data, location) => {
 };
 
 // port :: (Data, Location) -> Port
-const port = (data, location) =>
-  cst.Port({ location, value: stringifyId(data) });
+const port = (data, location) => {
+  if (isEnvVariable(data[0][0])) {
+    return cst.Port({ location, children: [data[0][0]] });
+  }
+  return cst.Port({ location, value: stringifyId(data) });
+};
 
 // host :: (Data, Location) -> Host
 const host = (data, location) => {
@@ -250,6 +261,10 @@ const ipv4OrRegName = (data, location, reject) => {
   if (value === '*') {
     return reject;
   }
+  // env variable takes precedence over ipv4-or-reg-name
+  if (value.startsWith('{{') && value.endsWith('}}')) {
+    return reject;
+  }
 
   return cst.Ipv4OrRegName({ location, value });
 };
@@ -261,7 +276,9 @@ const ipv4OrRegName = (data, location, reject) => {
 // absolutePath :: (Data, Location) -> AbsolutePath
 const absolutePath = (data, location, reject) => {
   const children = flatten(data);
-  const absPath = children.reduce((acc, node) => acc + node.value, '');
+  const absPath = children
+    .filter((node) => isString(node.value))
+    .reduce((acc, node) => acc + node.value, '');
 
   // this is here to distinguish line comments from absolute paths
   if (absPath.startsWith('//')) {
@@ -275,9 +292,16 @@ const absolutePath = (data, location, reject) => {
 const pathSeparator = (data, location) =>
   cst.PathSeparator({ location, value: data[0] });
 
-// segment :: (Data, Location) -> Segment
-const segment = (data, location) =>
-  cst.Segment({ location, value: stringifyId(data) });
+// segment :: (Data, Location, Reject) -> Segment | Reject
+const segment = (data, location, reject) => {
+  const value = stringifyId(data);
+
+  if (value.startsWith('{{') && value.endsWith('}}')) {
+    return reject;
+  }
+
+  return cst.Segment({ location, value });
+};
 
 /**
  * Query and Fragment
@@ -285,16 +309,43 @@ const segment = (data, location) =>
 
 // query :: (Data, Location) -> Query
 const query = (data, location) => {
-  const value = flatten(data)
+  const children = flatten(data)
     .filter(isNotNull)
-    .map((v) => {
-      if (isQuery(v)) {
-        return v.value;
+    .reduce((acc, v) => {
+      if (isString(v)) {
+        const lastLiteral = last(acc);
+        if (isLiteral(lastLiteral)) {
+          lastLiteral.value += v;
+        } else {
+          acc.push(cst.Literal({ value: v, location }));
+        }
+      } else if (isQuery(v)) {
+        const lastLiteral = last(acc);
+        if (isLiteral(lastLiteral)) {
+          lastLiteral.value += v.value;
+        } else {
+          acc.push(cst.Literal({ value: v.value, location }));
+        }
+      } else {
+        acc.push(v);
       }
-      return v;
-    });
 
-  return cst.Query({ location, value: flatten(value).join('') });
+      return acc;
+    }, []);
+
+  console.dir(children);
+
+  return cst.Query({ location, children });
+};
+
+const querySegment = (data, location, reject) => {
+  const value = stringifyId(data);
+
+  if (value.includes('{{')) {
+    return reject;
+  }
+
+  return cst.Literal({ location, value });
 };
 
 // fragment :: (Data, Location) -> Fragment
@@ -438,9 +489,17 @@ const lineComment = (data, location, reject) => {
  * Environment variables
  */
 
-// envVariable :: (Data, Location) -> EnvVariable
-const envVariable = (data, location) =>
-  cst.EnvVariable({ location, value: stringify(flatten(data)) });
+// envVariableStatic :: (Data, Location) -> EnvVariable
+const envVariableStatic = (data, location) =>
+  cst.EnvVariable({ location, value: stringify(flatten(data[2])) });
+
+// envVariableDynamic :: (Data, Location) -> EnvVariable
+const envVariableDynamic = (data, location) =>
+  cst.EnvVariable({
+    location,
+    value: stringify(flatten(data[3])),
+    isDynamic: true,
+  });
 
 module.exports = {
   // general postprocessors
@@ -474,6 +533,7 @@ module.exports = {
   segment,
   // Query and Fragment
   query,
+  querySegment,
   fragment,
   // Headers
   headers,
@@ -497,5 +557,6 @@ module.exports = {
   // Comments
   lineComment,
   // Environment variables
-  envVariable,
+  envVariableStatic,
+  envVariableDynamic,
 };

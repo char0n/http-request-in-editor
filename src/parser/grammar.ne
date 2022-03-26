@@ -32,6 +32,7 @@ const {
   segment,
   // Query and Fragment
   query,
+  querySegment,
   fragment,
   // Headers
   headers,
@@ -55,7 +56,8 @@ const {
   // Comments
   lineComment,
   // Environment variables
-  envVariable,
+  envVariableStatic,
+  envVariableDynamic,
 } = require('./postprocessors');
 %}
 
@@ -117,9 +119,9 @@ ASTERISK_FORM -> "*" {% asteriskForm %}
 
 AUTHORITY -> HOST (":" PORT):? {% authority %}
 
-PORT -> DIGIT {% port %}
+PORT -> (ENV_VARIABLE | DIGIT) {% port %}
 
-HOST -> ("[" IPV6_ADDRESS "]" | IPV4_OR_REG_NAME) {% host %}
+HOST -> (ENV_VARIABLE | "[" IPV6_ADDRESS "]" | IPV4_OR_REG_NAME) {% host %}
 
 IPV6_ADDRESS -> [^\s/\]]:+ {% ipv6Address %}
 
@@ -129,7 +131,7 @@ IPV4_OR_REG_NAME -> [^\s/:?#]:+ {% ipv4OrRegName %}
 # Resource path #
 #################
 
-ABSOLUTE_PATH -> (PATH_SEPARATOR SEGMENT):+ {% absolutePath %}
+ABSOLUTE_PATH -> (PATH_SEPARATOR (SEGMENT | ENV_VARIABLE)):+ {% absolutePath %}
 
 PATH_SEPARATOR -> ("/" {% id %} | NEW_LINE_WITH_INDENT {% () => '\n' %}) {% pathSeparator %}
 
@@ -141,6 +143,7 @@ SEGMENT -> [^\r\n/?# ]:* {% segment %}
 ######################
 
 QUERY -> [^\r\n\s#]:* (NEW_LINE_WITH_INDENT QUERY):? {% query %}
+QUERY_SEGMENT -> [^\r\n\s#]:* {% querySegment %}
 
 FRAGMENT -> [^\r\n\s\?]:* (NEW_LINE_WITH_INDENT FRAGMENT):? {% fragment %}
 
@@ -254,8 +257,12 @@ LINE_COMMENT -> "#" LINE_TAIL {% lineComment %}
 REQUEST_SEPARATOR -> "###" NEW_LINE WHIT? {% stubNull %}
                    | "### " LINE_TAIL WHIT? {% stubNull %}
 
+
 ########################
 # Environment variable #
 ########################
 
-ENV_VARIABLE -> "{{" _ "$":? IDENTIFIER _ "}}" {% envVariable %}
+ENV_VARIABLE -> ENV_VARIABLE_STATIC  {% id %}
+              | ENV_VARIABLE_DYNAMIC {% id %}
+ENV_VARIABLE_STATIC -> "{{" _ IDENTIFIER _ "}}" {% envVariableStatic %}
+ENV_VARIABLE_DYNAMIC -> "{{" _ "$" IDENTIFIER _ "}}" {% envVariableDynamic %}
