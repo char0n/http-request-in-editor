@@ -2148,3 +2148,159 @@ Content-Disposition: form-data; name="file_to_send"; filename="input.txt"
         (message-line)
         (message-line)))))
 
+================================================================================
+env-variable: should support environment variables in host
+================================================================================
+GET http://{host}/api/
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))
+            (absolute-path
+              (path-separator)
+              (segment)
+              (path-separator)
+              (segment))))))))
+
+================================================================================
+env-variable: should support environment variables in port
+================================================================================
+GET http://example.com:{{port}}/api/
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name))
+              (literal)
+              (port))
+            (absolute-path
+              (path-separator)
+              (segment)
+              (path-separator)
+              (segment))))))))
+
+================================================================================
+env-variable: should support environment variables in path
+================================================================================
+GET https://example.com/path1/{{path2}}/path3
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))
+            (absolute-path
+              (path-separator)
+              (segment)
+              (path-separator)
+              (segment)
+              (path-separator)
+              (segment))))))))
+
+================================================================================
+env-variable: should support environment variables in query param or value
+================================================================================
+GET https://example.com/?{{param1}}=value1&param2={{value2}}
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))
+            (absolute-path
+              (path-separator)
+              (segment)))
+          (literal)
+          (query))))))
+
+================================================================================
+env-variable: should support environment variables in header value
+================================================================================
+GET https://example.com
+Header-field: {{headerValue}}
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))))))
+    (headers
+      (header-field
+        (field-name)
+        (field-value)))))
+
+================================================================================
+env-variable: should support environment variables in request body
+================================================================================
+POST https://example.com
+
+Request-Body
+{{bodyVariable}}
+
+--------------------------------------------------------------------------------
+
+(requests-file
+  (request
+    (requests-line
+      (method)
+      (request-target
+        (absolute-form
+          (scheme)
+          (literal)
+          (hier-part
+            (authority
+              (host
+                (ipv4-or-reg-name)))))))
+    (message-body
+      (messages
+        (message-line)
+        (message-line)
+        (message-line)))))

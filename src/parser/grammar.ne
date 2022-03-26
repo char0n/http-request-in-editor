@@ -117,7 +117,7 @@ ASTERISK_FORM -> "*" {% asteriskForm %}
 
 AUTHORITY -> HOST (":" PORT):? {% authority %}
 
-PORT -> DIGIT {% port %}
+PORT -> (DIGIT {% id %} | ENV_VARIABLE {% envVariable %}) {% port %}
 
 HOST -> ("[" IPV6_ADDRESS "]" | IPV4_OR_REG_NAME) {% host %}
 
@@ -258,4 +258,4 @@ REQUEST_SEPARATOR -> "###" NEW_LINE WHIT? {% stubNull %}
 # Environment variable #
 ########################
 
-ENV_VARIABLE -> "{{" _ "$":? IDENTIFIER _ "}}" {% envVariable %}
+ENV_VARIABLE -> "{{" _ "$":? IDENTIFIER _ "}}"

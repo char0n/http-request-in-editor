@@ -14,6 +14,7 @@ const {
   isQuery,
   isFragment,
   isAbsolutePath,
+  isEnvVariable,
 } = require('./cst/predicates');
 
 // Type definitions:
@@ -218,8 +219,10 @@ const authority = (data, location) => {
 };
 
 // port :: (Data, Location) -> Port
-const port = (data, location) =>
-  cst.Port({ location, value: stringifyId(data) });
+const port = (data, location) => {
+  const value = isEnvVariable(data[0]) ? data[0].value : stringifyId(data);
+  return cst.Port({ location, value });
+};
 
 // host :: (Data, Location) -> Host
 const host = (data, location) => {
