@@ -782,7 +782,13 @@
         symbols: ['HOST', 'AUTHORITY$ebnf$1'],
         postprocess: authority,
       },
-      { name: 'PORT', symbols: ['DIGIT'], postprocess: port },
+      { name: 'PORT$subexpression$1', symbols: ['DIGIT'], postprocess: id },
+      {
+        name: 'PORT$subexpression$1',
+        symbols: ['ENV_VARIABLE'],
+        postprocess: envVariable,
+      },
+      { name: 'PORT', symbols: ['PORT$subexpression$1'], postprocess: port },
       {
         name: 'HOST$subexpression$1',
         symbols: [{ literal: '[' }, 'IPV6_ADDRESS', { literal: ']' }],
@@ -1332,7 +1338,6 @@
           '_',
           'ENV_VARIABLE$string$2',
         ],
-        postprocess: envVariable,
       },
     ],
     ParserStart: 'REQUESTS_FILE',

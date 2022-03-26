@@ -184,7 +184,3 @@ Lint the source code.
 
 1. `Multipart-form-data` will not be part of resulting CST. It's just a special shape of `message-body` and requires
 no special handling even during runtime.
-
-## Missing features
-
- - Environment variables
