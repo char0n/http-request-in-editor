@@ -7,6 +7,8 @@ const {
   stringifyId,
   // Request file
   requestsFile,
+  requestSeparator,
+  requestWithSeparator,
   // Request
   request,
   // Request line
@@ -64,7 +66,7 @@ const {
 #################
 
 REQUESTS_FILE -> WHIT? (REQUEST_SEPARATOR):* REQUEST (REQUEST_WITH_SEPARATOR):* (REQUEST_SEPARATOR):* {% requestsFile %}
-REQUEST_WITH_SEPARATOR -> REQUEST_SEPARATOR:+ REQUEST {% nth(1) %}
+REQUEST_WITH_SEPARATOR -> REQUEST_SEPARATOR:+ REQUEST {% requestWithSeparator %}
 
 ###########
 # Request #
@@ -251,8 +253,8 @@ LINE_COMMENT -> "#" LINE_TAIL {% lineComment %}
 # Request separators #
 ######################
 
-REQUEST_SEPARATOR -> "###" NEW_LINE WHIT? {% stubNull %}
-                   | "### " LINE_TAIL WHIT? {% stubNull %}
+REQUEST_SEPARATOR -> "###" NEW_LINE WHIT? {% requestSeparator %}
+                   | "### " LINE_TAIL WHIT? {% requestSeparator %}
 
 ########################
 # Environment variable #

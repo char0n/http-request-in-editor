@@ -12,6 +12,8 @@
     stringifyId,
     // Request file
     requestsFile,
+    requestSeparator,
+    requestWithSeparator,
     // Request
     request,
     // Request line
@@ -384,7 +386,7 @@
       {
         name: 'REQUEST_WITH_SEPARATOR',
         symbols: ['REQUEST_WITH_SEPARATOR$ebnf$1', 'REQUEST'],
-        postprocess: nth(1),
+        postprocess: requestWithSeparator,
       },
       { name: 'REQUEST$ebnf$1', symbols: [] },
       {
@@ -1283,7 +1285,7 @@
       {
         name: 'REQUEST_SEPARATOR',
         symbols: ['REQUEST_SEPARATOR$string$1', 'NEW_LINE', 'WHIT?'],
-        postprocess: stubNull,
+        postprocess: requestSeparator,
       },
       {
         name: 'REQUEST_SEPARATOR$string$2',
@@ -1300,7 +1302,7 @@
       {
         name: 'REQUEST_SEPARATOR',
         symbols: ['REQUEST_SEPARATOR$string$2', 'LINE_TAIL', 'WHIT?'],
-        postprocess: stubNull,
+        postprocess: requestSeparator,
       },
       {
         name: 'ENV_VARIABLE$string$1',

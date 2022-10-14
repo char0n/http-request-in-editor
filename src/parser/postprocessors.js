@@ -1,6 +1,6 @@
 'use strict';
 
-const { flatten, nth, join, pipe } = require('ramda');
+const { flatten, nth, join, pipe, startsWith, trim } = require('ramda');
 const { flattenDepth, stubNull, isNotNull } = require('ramda-adjunct');
 
 const cst = require('./cst');
@@ -38,7 +38,21 @@ const stringifyId = pipe(nth(0), stringify);
 
 // requestsFile :: (Data, Location) -> Request
 const requestsFile = (data, location) => {
+  // looking for possible tags before the first request
+  const tags = flatten(data[0])
+    .map(trim)
+    .filter(startsWith('@'))
+    .map((tag) => cst.Tag({ location, value: tag }));
+  console.dir(tags);
+
   const requests = flattenDepth(2, [data[2], data[3]]);
+  const [firstRequest] = requests;
+
+  // assigning tags to the first request
+  if (firstRequest && tags.length > 0) {
+    const children = [...tags, ...firstRequest.children];
+    firstRequest.children = children;
+  }
 
   return cst.RequestsFile({
     location,
@@ -46,13 +60,31 @@ const requestsFile = (data, location) => {
   });
 };
 
+const requestSeparator = (data, location) => {
+  // looking for possible tags before the first request
+  const tags = flatten(data)
+    .map(trim)
+    .filter(startsWith('@'))
+    .map((tag) => cst.Tag({ location, value: tag }));
+
+  return tags;
+};
+
+const requestWithSeparator = (data) => {
+  const [[tags], request] = data;
+
+  request.children = [...tags, ...request.children];
+
+  return request;
+};
+
 /**
  * Request
  */
 
 // request :: ([RequestLine,,, Headers,, ResponseHandler, ResponseRef], Location) -> Request
-const request = (
-  [
+const request = (data, location) => {
+  const [
     requestLineNode,
     ,
     ,
@@ -61,9 +93,7 @@ const request = (
     messageBodyNode,
     responseHandlerNode,
     responseRefNode,
-  ],
-  location
-) => {
+  ] = data;
   const children = [requestLineNode];
 
   if (isHeaders(headersNode) && headersNode.children.length > 0) {
@@ -452,6 +482,8 @@ module.exports = {
   stringifyId,
   // Request file
   requestsFile,
+  requestSeparator,
+  requestWithSeparator,
   // Request
   request,
   // Request line

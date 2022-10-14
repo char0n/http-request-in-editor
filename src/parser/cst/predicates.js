@@ -28,6 +28,8 @@ const isResponseRef = isNodeType('response-ref');
 
 const isQuery = isNodeType('query');
 
+const isTag = isNodeType('tag');
+
 const isFragment = isNodeType('fragment');
 
 const isEnvVariable = isNodeType('env-variable');
@@ -45,6 +47,7 @@ module.exports = {
   isResponseHandler,
   isResponseRef,
   isQuery,
+  isTag,
   isFragment,
   isEnvVariable,
 };

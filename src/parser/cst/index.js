@@ -35,6 +35,7 @@ const ResponseHandler = require('./response-handler');
 const HandlerScript = require('./handler-script');
 const ResponseRef = require('./response-ref');
 const EnvVariable = require('./env-variable');
+const Tag = require('./tag');
 
 module.exports = {
   Literal,
@@ -72,4 +73,5 @@ module.exports = {
   HandlerScript,
   ResponseRef,
   EnvVariable,
+  Tag,
 };

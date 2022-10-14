@@ -1,12 +1,13 @@
 ###
-POST https://httpbin.org
-  /post
-  ?search1=value1
-  &search2=value2
-  #fragment1
-  fragment2
-Content-type: application/json
+// @no-log
+// @
+// @no-redirect
+// @use-os-credentials
+GET https://httpbin.org
 
-{}
+###
+# @no-cookie-jar
+# @tag2
+POST https://httpbin.org
 
 ###
