@@ -59,7 +59,7 @@
     "eslint-plugin-prettier": "=4.2.1",
     "glob": "=8.1.0",
     "husky": "=8.0.3",
-    "lint-staged": "=13.2.3",
+    "lint-staged": "=14.0.0",
     "mocha": "=10.2.0",
     "prettier": "=2.8.8"
   }
